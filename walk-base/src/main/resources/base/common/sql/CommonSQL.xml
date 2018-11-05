@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CommonSQL">
+<cache type="org.walkframework.batis.cache.L2Cache">
+	<property name="cacheSeconds" value="28800"/><!-- 缓存8小时 -->
+</cache>
+	<!-- 查询静态参数列表 -->
+	<select id="selectStaticList" resultType="org.walkframework.base.mvc.entity.TdSParam" useCache="true">
+		SELECT T.*
+		  FROM TD_S_PARAM T
+		 WHERE 1 = 1
+		   AND T.VALID_FLAG = '1'
+	   	   AND T.TYPE_ID = #{typeId}
+		   <if test="dataId != null and dataId != ''">
+		   	   <if test="like == true">
+			   		AND T.DATA_ID like #{dataId} || '%'
+			   </if>
+			   <if test="like != true">
+			   		AND T.DATA_ID = #{dataId}
+			   </if>
+		   </if>
+		   <if test="dataName != null and dataName != ''">
+			   AND T.DATA_NAME = #{dataName}
+		   </if>
+		   ORDER BY T.TYPE_ID, T.ORDER_NO
+	</select>
+	
+	<!-- 查询指定参数表指定值 -->
+	<select id="selectCodeName" resultType="org.walkframework.data.util.DataMap" useCache="true">
+		SELECT ${colName} CODE_NAME
+		  FROM ${tableName}
+		 WHERE 1 = 1
+		   AND ${colCode} = '${value}'
+	</select>
+	
+	<!-- 查询静态参数表列表 -->
+	<select id="selectAllStaticList" resultType="org.walkframework.data.util.DataMap" useCache="false">
+		SELECT T.*
+		  FROM TD_S_PARAM T
+		 WHERE T.VALID_FLAG = '1'
+	     ORDER BY T.TYPE_ID, T.ORDER_NO, T.DATA_ID
+	</select>
+	
+	<!-- 查询指定静态参数表列表 -->
+	<select id="selectTableList" resultType="org.walkframework.data.util.DataMap" useCache="false">
+		SELECT *
+		  FROM ${key}
+		 WHERE 1 = 1
+		 <if test="condition != null and condition != ''">
+			AND ${condition}
+		 </if>
+	</select>
+	
+	<!-- 获取序列 长度：默认  (oracle专属)-->
+	<select id="selectSequence" resultType="java.lang.String" useCache="false" flushCache="true">
+		SELECT TO_CHAR(${_parameter}.NEXTVAL) FROM DUAL
+	</select>
+	
+	<!-- 获取数据库当前时间  (oracle专属) -->
+	<select id="selectCurrentTime" resultType="java.lang.String" useCache="false" flushCache="true">
+		select TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') from dual
+	</select>
+	
+	<!-- 获取序列 长度：默认  (mysql专属) 。某些情况下，项目禁止使用存储过程。
+	<select id="selectSequence_mysql" parameterType="org.walkframework.data.util.DataMap" statementType="CALLABLE" useCache="false" flushCache="true">
+		{CALL NEXTVAL(#{i_seq_name, mode=IN, jdbcType=VARCHAR}, #{o_nextval, mode=OUT, jdbcType=VARCHAR})}
+	</select>
+	-->
+	
+	<!-- 获取序列 长度：默认  (mysql专属)-->
+	<insert id="selectSequence_mysql" parameterType="org.walkframework.data.util.DataMap" useGeneratedKeys="true">
+		<selectKey resultType="string" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO ${seq_name} VALUES(NULL)
+	</insert>
+	
+	<!-- 清空序列表，防止数据量过大(mysql专属)-->
+	<delete id="clearSeqTable">
+		DELETE FROM ${seq_name}
+	</delete>
+	
+	<!-- 获取数据库当前时间  (oracle专属) -->
+	<select id="selectDbTime_mysql" resultType="java.lang.String" useCache="false" flushCache="true">
+		SELECT STR_TO_DATE(NOW(),'%Y-%m-%d %H:%i:%s')
+	</select>
+	
+	<!-- 查询导出日志列表 -->
+	<select id="queryExportList" resultType="org.walkframework.data.util.DataMap" useCache="false" flushCache="true">
+		SELECT a.*,
+			   CASE WHEN a.export_mode = '1' THEN '同步' WHEN a.export_mode = '2' THEN '异步' END export_mode_name,
+			   CASE WHEN a.export_state = '0' THEN '导出中' WHEN a.export_state = '1' THEN '导出成功' WHEN a.export_state = '2' THEN '导出失败' END export_state_name
+		  FROM tl_m_exportlog a
+		<where>
+			<if test="exportId != null and exportId != ''">
+				AND a.log_id = #{exportId}
+			</if>
+			<if test="exportName != null and exportName != ''">
+				AND a.export_name like '%' || #{exportName} || '%'
+			</if>
+			<if test="exportMode != null and exportMode != ''">
+				AND a.export_mode = #{exportMode}
+			</if>
+			<if test="exportState != null and exportState != ''">
+				AND a.export_state = #{exportState}
+			</if>
+			<if test="createStaff != null and createStaff != ''">
+				AND a.create_staff = #{createStaff}
+			</if>
+			<!-- 开始时间 -->
+			<if test="beginDate != null and beginDate != ''">
+				<![CDATA[AND a.create_time >= TO_DATE(#{beginDate}, 'YYYY-MM-DD')]]>
+			</if>
+			<!-- 结束时间 -->
+			<if test="endDate != null and endDate != ''">
+				<![CDATA[AND a.create_time <= TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1]]>
+			</if>
+		</where>
+		ORDER BY a.create_time DESC
+	</select>
+	
+</mapper>

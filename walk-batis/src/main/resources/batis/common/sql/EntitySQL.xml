@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="EntitySQL">
+<cache type="org.walkframework.batis.cache.L2Cache"/>
+
+	<!-- 这里的语句与写哪个数据库的sql无关，不为空就可以，实际运行的时候会做替换。resultType也是随便写，实际运行时做替换 -->
+	<!-- 在这里关闭缓存，在WalkbatisPlugin插件里对缓存自处理 -->
+	<select id="select" resultType="java.util.HashMap" useCache="false">
+		select * from dual where 1 = 2
+	</select>
+	   
+	<update id="update">
+		select * from dual where 1 = 2
+	</update>
+	
+	<!-- mysql专用：获取最后一个主键值，用于mysql的insert操作返回自增主键 -->
+	<select id="mysql_getLastInsertId" resultType="string" useCache="false">
+		SELECT LAST_INSERT_ID()
+	</select>
+</mapper> 

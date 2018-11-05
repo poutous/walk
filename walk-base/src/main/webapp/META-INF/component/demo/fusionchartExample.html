@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="../resources/css/common.css"/>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/seajs/seajs/2.2.1/sea.js"></script>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/config.js"></script>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/jquery/jquery/1.12.4/jquery.js"></script>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/jquery/jquery/1.12.4/jquery-extend.js"></script>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/walk.js"></script>
+<script type="text/javascript" src="../resources/scripts/seajs/sea-modules/init.js"></script>
+<title>图表示例</title>
+<style>
+.chartSel tr td {cursor: pointer;}
+.chartSel .selectedTd {background: #d9edf7}
+</style>
+</head>
+<body>
+<div class="wrapper">
+	<table cellpadding="5" cellspacing="0" border="0" class="chartSel" id="chartSel">
+		<tr>
+			<td value="area2D">area2D</td>
+			<td value="bar2D">bar2D</td>
+			<td value="bubble">bubble</td>
+			<td value="column2D">column2D</td>
+			<td value="column3D">column3D</td>
+			<td value="doughnut2D">doughnut2D</td>
+			<td value="doughnut3D">doughnut3D</td>
+			<td value="funnel">funnel</td>
+		</tr>
+		<tr>
+			<td value="inverseMSArea">inverseMSArea</td>
+			<td value="inverseMSColumn2D">inverseMSColumn2D</td>
+			<td value="inverseMSLine">inverseMSLine</td>
+			<td value="line">line</td>
+			<td value="logMSColumn2D">logMSColumn2D</td>
+			<td value="logMSLine">logMSLine</td>
+			<td value="marimekko">marimekko</td>
+			<td value="msArea">msArea</td>
+		</tr>
+		<tr>
+			<td value="msBar2D">msBar2D</td>
+			<td value="msBar3D">msBar3D</td>
+			<td value="msColumn2D">msColumn2D</td>
+			<td value="msColumn3D">msColumn3D</td>
+			<td value="msColumn3DLineDY">msColumn3DLineDY</td>
+			<td value="msColumnLine3D">msColumnLine3D</td>
+			<td value="msCombi2D">msCombi2D</td>
+			<td value="msCombi3D">msCombi3D</td>
+		</tr>
+		<tr>
+			<td value="msCombiDY2D">msCombiDY2D</td>
+			<td value="msLine">msLine</td>
+			<td value="msSpline">msSpline</td>
+			<td value="msSplineArea">msSplineArea</td>
+			<td value="pareto2D">pareto2D</td>
+			<td value="pareto3D">pareto3D</td>
+			<td value="pie2D">pie2D</td>
+			<td value="pie3D">pie3D</td>
+		</tr>
+		<tr>
+			<td value="pyramid">pyramid</td>
+			<td value="radar">radar</td>
+			<td value="scatter">scatter</td>
+			<td value="scrollArea2D">scrollArea2D</td>
+			<td value="scrollColumn2D">scrollColumn2D</td>
+			<td value="scrollCombi2D">scrollCombi2D</td>
+			<td value="scrollCombiDY2D">scrollCombiDY2D</td>
+			<td value="scrollLine2D">scrollLine2D</td>
+		</tr>
+		<tr>
+			<td value="scrollStackedColumn2D">scrollStackedColumn2D</td>
+			<td value="spline">spline</td>
+			<td value="splineArea">splineArea</td>
+			<td value="ssGrid">ssGrid</td>
+			<td value="stackedArea2D">stackedArea2D</td>
+			<td value="stackedBar2D">stackedBar2D</td>
+			<td value="stackedBar3D">stackedBar3D</td>
+			<td value="stackedColumn2D">stackedColumn2D</td>
+		</tr>
+		<tr>
+			<td value="stackedColumn2DLine">stackedColumn2DLine</td>
+			<td value="stackedColumn3D">stackedColumn3D</td>
+			<td value="stackedColumn3DLine">stackedColumn3DLine</td>
+			<td value="stackedColumn3DLineDY">stackedColumn3DLineDY</td>
+			<td value="zoomLine" colspan="4">zoomLine</td>
+		</tr>
+	</table>
+	<div id="templateText" style="display: inline;"></div>
+	<div id="ChartDiv"></div>
+</div>
+</body>
+<script type="text/javascript">
+//页面初始化
+$(function(){
+	$("#chartSel").find("td").click(function(){
+		var td = $(this);
+		$("#chartSel").find("td").removeClass("selectedTd");
+		td.addClass("selectedTd");
+		var templateName = td.attr("value");
+		viewChart(templateName);
+	});
+	
+	$("#chartSel").find("td").first().click();
+});
+
+//显示图片
+function viewChart(templateName){
+	$.ajax( {
+		url : '../../example/queryChart',
+		method : "POST",
+		data : {
+			templateName : templateName
+		},
+		cache : false,
+		success : function(response) {
+			if (response != null) {
+				var width = $(document).width() - 40;
+				//显示图表
+				seajs.use('Fusioncharts', function(Fusioncharts){
+					Fusioncharts.renderChartByJson("ChartDiv", response, width, "440", "../..");
+				});
+			}
+		}
+	});
+}
+
+//图表点击事件
+function ChartLink(){
+	alert("图表点击事件！");
+}
+</script>
+</html>

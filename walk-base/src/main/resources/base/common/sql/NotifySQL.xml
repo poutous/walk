@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="NotifySQL">
+	<!-- 查询通知列表 oracle专用 -->
+	<select id="queryNotifyList" resultType="org.walkframework.base.mvc.entity.TfMNotify">
+		SELECT A.NOTIFY_ID, A.OBJECT_CODE, A.OBJECT_TYPE, A.SERVICE_ID, A.NOTIFY_CONTENT, A.NOTIFY_MODE, A.NOTIFY_ADDR, 
+			   A.NOTIFY_STATE, A.NOTIFY_PLAN_TIME, A.NOTIFY_FINISH_TIME, A.RSP_TYPE, A.ENQUEUE_TIME, A.TIMEOUT_MILLIS, 
+			   A.RETRY_COUNT, A.RETRY_LIMIT_NUMS, A.OBJECT_HANDLE_CLASS, A.BATCH_ID, A.THREAD_NO, A.CREATE_TIME, A.CREATE_STAFF_ID, A.REMARK, 
+			   A.RSVALUE1, A.RSVALUE2, A.RSVALUE3 
+		  FROM TF_M_NOTIFY A
+		 WHERE A.NOTIFY_MODE IN ('01', '02')					<!-- 取非人工通知的数据 -->
+		   AND A.NOTIFY_PLAN_TIME <![CDATA[<=]]> SYSDATE		<!-- 取计划通知时间小于当前时间的数据 -->
+		   AND A.RETRY_COUNT <![CDATA[<]]> A.RETRY_LIMIT_NUMS	<!-- 取重试次数小于重试最大限制次数的数据 -->
+		   AND (A.NOTIFY_STATE IN ('0', '2') OR					<!-- 取状态为未通知和通知失败的数据或者状态为通知中但已经超时的数据 -->
+		       (A.NOTIFY_STATE = '9' AND A.TIMEOUT_MILLIS > (SYSDATE - NVL(A.ENQUEUE_TIME, SYSDATE)) * 86400000))
+		 ORDER BY A.NOTIFY_MODE, A.NOTIFY_PLAN_TIME 
+	</select>
+	
+	<!-- 查询通知列表 mysql专用-->
+	<select id="queryNotifyList_org_walkframework_batis_dialect_MySQLDialect" resultType="org.walkframework.base.mvc.entity.TfMNotify">
+		SELECT A.NOTIFY_ID, A.OBJECT_CODE, A.OBJECT_TYPE, A.SERVICE_ID, A.NOTIFY_CONTENT, A.NOTIFY_MODE, A.NOTIFY_ADDR, 
+			   A.NOTIFY_STATE, A.NOTIFY_PLAN_TIME, A.NOTIFY_FINISH_TIME, A.RSP_TYPE, A.ENQUEUE_TIME, A.TIMEOUT_MILLIS, 
+			   A.RETRY_COUNT, A.RETRY_LIMIT_NUMS, A.OBJECT_HANDLE_CLASS, A.BATCH_ID, A.THREAD_NO, A.CREATE_TIME, A.CREATE_STAFF_ID, A.REMARK, 
+			   A.RSVALUE1, A.RSVALUE2, A.RSVALUE3 
+		  FROM TF_M_NOTIFY A
+		 WHERE A.NOTIFY_MODE IN ('01', '02')					<!-- 取非人工通知的数据 -->
+		   AND A.NOTIFY_PLAN_TIME <![CDATA[<=]]> NOW()			<!-- 取计划通知时间小于当前时间的数据 -->
+		   AND A.RETRY_COUNT <![CDATA[<]]> A.RETRY_LIMIT_NUMS	<!-- 取重试次数小于重试最大限制次数的数据 -->
+		   AND (A.NOTIFY_STATE IN ('0', '2') OR					<!-- 取状态为未通知和通知失败的数据或者状态为通知中但已经超时的数据 -->
+		       (A.NOTIFY_STATE = '9' AND A.TIMEOUT_MILLIS > (NOW() - IFNULL(A.ENQUEUE_TIME, NOW())) * 86400000))
+		 ORDER BY A.NOTIFY_MODE, A.NOTIFY_PLAN_TIME 
+	</select>
+</mapper>

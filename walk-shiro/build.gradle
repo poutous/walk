@@ -1,0 +1,120 @@
+version = "$walk_version"
+ext {
+	build = "build"
+	classes="src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/java"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-shiro", "Implementation-Version": version
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+        	repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-shiro"
+                packaging "jar"
+                description "walk-shiro"
+                groupId "org.walkframework"
+            	artifactId "walk-shiro"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                    	id "$developerId"
+                        name "$developerName"
+                    }
+                }
+                dependencies {
+                	dependency {
+                		groupId "org.apache.shiro"
+                		artifactId "shiro-cas"
+                		version "${shiro_version}"
+                		scope "compile"
+                		exclusions {
+                			exclusion {
+                				groupId "org.jasig.cas.client"
+                				artifactId "cas-client-core"
+                			}
+                		}
+                	}
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	//walk框架相关jar包
+	compile "org.walkframework:walk-cache:${walk_version}"
+	
+	//apache shiro 相关jar包
+	compile "org.apache.shiro:shiro-core:${shiro_version}"
+	compile "org.apache.shiro:shiro-web:${shiro_version}"
+	compile "org.apache.shiro:shiro-aspectj:${shiro_version}"
+	compile "org.apache.shiro:shiro-features:${shiro_version}"
+	compile "org.apache.shiro:shiro-guice:${shiro_version}"
+	compile "org.apache.shiro:shiro-quartz:${shiro_version}"
+	compile "org.apache.shiro:shiro-spring:${shiro_version}"
+	compileOnly ("org.apache.shiro:shiro-cas:${shiro_version}"){
+		exclude group:"org.jasig.cas.client"
+	}
+	
+	//修改的cas客户端
+	compile "org.jasig.cas.client:cas-client-core-modified:${cas_client_version}"
+	
+	//jcaptcha 验证码
+	compileOnly "com.octo.captcha:jcaptcha-api:${jcaptcha_version}"
+	compileOnly "com.octo.captcha:jcaptcha:${jcaptcha_version}"
+	
+	//其他jar包
+	compile "commons-collections:commons-collections:${commons_collections_version}"
+	
+	compileOnly "javax.servlet:servlet-api:${servlet_api_version}"
+}
+
+//eclipse工程设置
+eclipse {
+	//设置工程名称
+	project.name = file(".").name
+	
+	//设置eclipse编译输出路径
+	classpath {
+		defaultOutputDir = file("$classes")
+	}
+}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <!-- 定义日志级别 -->
+    <property name="log.level" value="INFO"/>
+
+    <!-- 定义日志文件名。！！！注意修改此处！！！ -->
+    <property name="log.name" value="cocenter"/>
+
+    <!-- 定义日志文件的存储地址-->
+    <property name="log.path" value="logs/${log.name}"/>
+
+    <!-- 定义日志文件名格式化-->
+    <property name="log.timeFormat" value="yyyy-MM-dd"/>
+
+    <!-- 定义日志文件的输出格式。%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+
+    <!-- 定义日志文件保留天数 -->
+    <property name="log.maxHistory" value="90"/>
+
+    <!-- 定义日志文件最大限制 -->
+    <property name="log.maxFileSize" value="10MB"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<file>${log.path}/${log.name}.log</file>
+    	<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.path}/${log.name}.%d{${log.timeFormat}}-%i.log</FileNamePattern>
+            <MaxHistory>${log.maxHistory}</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>${log.maxFileSize}</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件。仅记录错误日志 -->
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<file>${log.path}/error/${log.name}_error.log</file>
+    	<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.path}/error/${log.name}_error.%d{${log.timeFormat}}-%i.log</FileNamePattern>
+            <MaxHistory>${log.maxHistory}</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>${log.maxFileSize}</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!--日志异步到数据库
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+           <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+              <driverClass>com.mysql.jdbc.Driver</driverClass>
+              <url>jdbc:mysql://127.0.0.1:3309/logdb?useUnicode=true&amp;characterEncoding=UTF-8</url>
+              <user>root</user>
+              <password></password>
+            </dataSource>
+		</connectionSource>
+	</appender>
+	-->
+
+    <!-- 日志输出级别 -->
+    <root level="${log.level}">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE-ERROR"/>
+        <!--<appender-ref ref="DB"/>-->
+    </root>
+
+	<!-- 各组件的特殊设置 -->
+    <logger name="com.asiainfo.walk" level="${log.level}"/>
+    <logger name="org.walkframework" level="${log.level}"/>
+    <logger name="org.springframework" level="${log.level}"/>
+    <logger name="com.ai" level="${log.level}"/>
+    <logger name="org.apache" level="${log.level}"/>
+    <logger name="org.jasig" level="${log.level}"/>
+    <logger name="com.alibaba" level="${log.level}"/>
+    <logger name="bitronix.tm" level="${log.level}"/>
+    <logger name="java.sql.Connection" level="${log.level}"/>
+    <logger name="java.sql.Statement" level="${log.level}"/>
+    <logger name="java.sql.PreparedStatement" level="${log.level}"/>
+    <logger name="java.sql.ResultSet" level="${log.level}"/>
+</configuration>

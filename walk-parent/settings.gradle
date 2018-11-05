@@ -1,0 +1,152 @@
+//多项目构建配置，全部编译或发布按项目名排序
+//Start:技术框架================================================================================
+
+	/**
+	 * 工具模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p01-walk-tools"
+	project(":p01-walk-tools").projectDir = new File(settingsDir, "../walk-tools")
+	
+	/**
+	 * 数据总线 
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p02-walk-data"
+	project(":p02-walk-data").projectDir = new File(settingsDir, "../walk-data")
+	
+	/**
+	 * redis模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p03-walk-redis"
+	project(":p03-walk-redis").projectDir = new File(settingsDir, "../walk-redis")
+	
+	/**
+	 * 缓存模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p04-walk-cache"
+	project(":p04-walk-cache").projectDir = new File(settingsDir, "../walk-cache")
+	
+	/**
+	 * orm框架，基于mybatis
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p05-walk-batis"
+	project(":p05-walk-batis").projectDir = new File(settingsDir, "../walk-batis")
+	
+	/**
+	 * 消息队列模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p06-walk-mq"
+	project(":p06-walk-mq").projectDir = new File(settingsDir, "../walk-mq")
+	
+	/**
+	 * 安全管理模块，基于shiro
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p07-walk-shiro"
+	project(":p07-walk-shiro").projectDir = new File(settingsDir, "../walk-shiro")
+	
+	/**
+	 * 图表工具模块，基于fusioncharts
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p08-walk-fusioncharts"
+	project(":p08-walk-fusioncharts").projectDir = new File(settingsDir, "../walk-fusioncharts")
+	
+	/**
+	 * walk框架基础模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p09-walk-base"
+	project(":p09-walk-base").projectDir = new File(settingsDir, "../walk-base")
+	
+	/**
+	 * restful模块
+	 * 
+	 * 基于此模块可开发标准http+json restful接口
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p10-walk-restful"
+	project(":p10-walk-restful").projectDir = new File(settingsDir, "../walk-restful")
+	
+	/**
+	 * logger模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author MengQK
+	 */
+	include ":p11-walk-logger"
+	project(":p11-walk-logger").projectDir = new File(settingsDir, "../walk-logger")
+	
+	/**
+	 * console模块
+	 * 
+	 * 管理控制台
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p12-walk-console"
+	project(":p12-walk-console").projectDir = new File(settingsDir, "../walk-console")
+	
+	/**
+	 * boot模块
+	 * 
+	 * 加入spring boot支持
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p13-walk-boot"
+	project(":p13-walk-boot").projectDir = new File(settingsDir, "../walk-boot")
+	
+	/**
+	 * boot plugin模块
+	 * 
+	 * 加入spring boot支持
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p14-walk-boot-plugin"
+	project(":p14-walk-boot-plugin").projectDir = new File(settingsDir, "../walk-boot-plugin")
+	
+//End:技术框架================================================================================

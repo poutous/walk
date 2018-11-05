@@ -1,0 +1,87 @@
+version = "$walk_version"
+ext {
+	build = "build"
+	classes="src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/resources"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-batis", "Implementation-Version": version
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+        	repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-batis"
+                packaging "jar"
+                description "walk-batis"
+                groupId "org.walkframework"
+            	artifactId "walk-batis"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                    	id "$developerId"
+                        name "$developerName"
+                    }
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	compile "org.walkframework:walk-data:${walk_version}"
+	compile "org.walkframework:walk-cache:${walk_version}"
+	compile "org.mybatis:mybatis:${mybatis_version}"
+	compile "org.mybatis:mybatis-spring:${mybatis_spring_version}"
+	compile "com.alibaba:fastjson:${fastjson_version}"
+	//mybatis本地开发热部署插件，仅编译时使用，运行时需将该jar包放入容器(tomcat/weblogic)lib目录中
+	compile "net.sf.jpathwatch:jpathwatch:${jpathwatch_version}"
+}
+
+//eclipse工程设置
+eclipse {
+	//设置工程名称
+	project.name = file(".").name
+	
+	//设置eclipse编译输出路径
+	classpath {
+		defaultOutputDir = file("$classes")
+	}
+}

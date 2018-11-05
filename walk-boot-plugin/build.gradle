@@ -1,0 +1,108 @@
+version = "$walk_version"
+ext {
+	build = "build"
+	classes = "src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/java"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-boot-plugin", "Implementation-Version": version
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+        	repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-boot-plugin"
+                packaging "jar"
+                description "walk-boot-plugin"
+                groupId "org.walkframework"
+            	artifactId "walk-boot-plugin"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                    	id "$developerId"
+                        name "$developerName"
+                    }
+                }
+                dependencies {
+                	dependency {
+                		groupId "org.springframework.boot"
+                		artifactId "spring-boot-gradle-plugin"
+                		version "${spring_boot_version}"
+                		scope "compile"
+                		exclusions {
+                			exclusion {
+                				groupId "org.springframework.boot"
+                				artifactId "spring-boot-loader-tools"
+                			}
+                		}
+                	}
+                	dependency {
+                		groupId "org.springframework.boot"
+                		artifactId "spring-boot-maven-plugin"
+                		version "${spring_boot_version}"
+                		scope "compile"
+                		exclusions {
+                			exclusion {
+                				groupId "org.springframework.boot"
+                				artifactId "spring-boot-loader-tools"
+                			}
+                		}
+                	}
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+artifacts {
+    archives jar
+    //archives sourcesJar
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	compile "org.springframework.boot:spring-boot-loader-tools-patch:${spring_boot_loader_tools_patch_version}"
+	compile "org.springframework:spring-core:${spring_version}"
+}
+
+//eclipse工程设置
+eclipse {
+	//设置工程名称
+	project.name = file(".").name
+	
+	//设置eclipse编译输出路径
+	classpath {
+		defaultOutputDir = file("$classes")
+	}
+}

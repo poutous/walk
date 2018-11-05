@@ -1,0 +1,117 @@
+version = "$walk_version"
+ext {
+	build = "build"
+	classes = "src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/resources"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-restful", "Implementation-Version": version
+	}
+}
+
+//复制相关文件
+jar.doFirst {
+	//从原始swagger-annotations.jar复制class
+	configurations.runtime.each { File f -> 
+		if (f.name.startsWith("swagger-annotations")){
+			println project.name + " copyfiles..."
+			copy {
+				from zipTree(f.path)
+				into "$build/classes/main"
+				include "io/**"
+				exclude "io/**/Api.class"
+				exclude "io/**/ApiOperation.class"
+			}
+		}
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+        	repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-restful"
+                packaging "jar"
+                description "walk-restful"
+                groupId "org.walkframework"
+            	artifactId "walk-restful"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                    	id "$developerId"
+                        name "$developerName"
+                    }
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	compile "org.walkframework:walk-base:${walk_version}"
+	
+	//swagger2
+	compile "io.springfox:springfox-swagger2:${springfox_swagger2_version}"
+	
+	//swagger-hibernate-validations
+	compile "io.swagger:swagger-hibernate-validations:${swagger_hibernate_validations_version}"
+	
+	//hibernate-validator
+	compile "org.hibernate:hibernate-validator:${hibernate_validator_version}"
+	//compileOnly "org.glassfish.web:javax.el:${javax_el_version}"
+	
+	//beetl
+	compile "com.ibeetl:beetl:${beetl_version}"
+	
+	//poi
+	compile "org.apache.poi:poi-ooxml-schemas:${poi_version}"
+	compile "org.apache.poi:poi-ooxml:${poi_version}"
+	
+	compileOnly "javax.servlet:servlet-api:${servlet_api_version}"
+}
+
+//eclipse工程设置
+eclipse {
+	//设置工程名称
+	project.name = file(".").name
+	
+	//设置eclipse编译输出路径
+	classpath {
+		defaultOutputDir = file("$classes")
+	}
+}

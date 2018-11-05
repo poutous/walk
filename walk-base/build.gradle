@@ -1,0 +1,169 @@
+version = "$walk_version"
+ext {
+	build = "build"
+	classes = "src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/resources"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-base", "Implementation-Version": version
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+            repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-base"
+                packaging "jar"
+                description "walk-base"
+                groupId "org.walkframework"
+            	artifactId "walk-base"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                        id "$developerId"
+                        name "$developerName"
+                    }
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+//资源文件
+task webapp(type: Jar){
+	classifier = "walk-webapp"
+	from ("src/main/webapp")
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives webapp
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	//walk框架相关jar包
+	compile "org.walkframework:walk-tools:${walk_version}"
+	compile "org.walkframework:walk-data:${walk_version}"
+	compile "org.walkframework:walk-cache:${walk_version}"
+	compile "org.walkframework:walk-batis:${walk_version}"
+	compile "org.walkframework:walk-mq:${walk_version}"
+	compile "org.walkframework:walk-shiro:${walk_version}"
+	compile "org.walkframework:walk-fusioncharts:${walk_version}"
+	
+	//spring相关jar包
+	compile "org.springframework:spring-context-support:${spring_version}"
+	compile "org.springframework:spring-aspects:${spring_version}"
+	compile "org.springframework:spring-orm:${spring_version}"
+	compile "org.springframework:spring-tx:${spring_version}"
+	compile "org.springframework:spring-web:${spring_version}"
+	compile "org.springframework:spring-webmvc:${spring_version}"
+	compile "org.springframework:spring-websocket:${spring_version}"
+	compile "org.springframework:spring-test:${spring_version}"
+	
+	//utils 相关jar包
+	compile "commons-collections:commons-collections:${commons_collections_version}"
+	compile "commons-io:commons-io:${commons_io_version}"
+	compile "commons-codec:commons-codec:${commons_codec_version}"
+	compile "commons-beanutils:commons-beanutils:${commons_beanutils_version}"
+	compile "commons-fileupload:commons-fileupload:${commons_fileupload_version}"
+	compile "org.apache.commons:commons-lang3:${commons_lang3_version}"
+	compile "org.apache.commons:commons-compress:${commons_compress_version}"
+	compile "org.apache.ant:ant:${ant_version}"
+	compile "com.google.guava:guava:${guava_version}"
+	compile "uk.com.robust-it:cloning:${cloning_version}"
+	compile "org.aspectj:aspectjrt:${aspectjrt_version}"
+	compile "org.aspectj:aspectjweaver:${aspectjweaver_version}"
+	compile "org.javassist:javassist:${javassist_version}"
+	
+	//httpclient相关jar包
+	compile "org.apache.httpcomponents:httpclient:${httpclient_version}"
+	compile "org.apache.httpcomponents:httpmime:${httpclient_version}"
+	
+	//其他
+	compile "com.alibaba:fastjson:${fastjson_version}"
+	compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
+	compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+	compile "org.json:json:${org_json_version}"
+	compile "org.jsoup:jsoup:${jsoup_version}"
+	compile "org.apache.poi:poi:${poi_version}"
+	compile "org.freemarker:freemarker:${freemarker_version}"
+	compile "org.jdom:jdom:${jdom_version}"
+	compile "dom4j:dom4j:${dom4j_version}"
+	
+	//日志相关
+	compile "org.slf4j:slf4j-api:${slf4j_version}"
+	compile "org.slf4j:jcl-over-slf4j:${slf4j_version}"
+	compile "ch.qos.logback:logback-classic:${logback_version}"
+	
+	//data source 相关jar包
+//	compile "commons-dbcp:commons-dbcp:${commons_dbcp_version}"
+//	compile "com.zaxxer:${hikaricp_version}"
+//	compile "com.alibaba:druid:${druid_version}"
+//	compile "org.codehaus.btm:btm:${btm_version}"
+//	compile "com.atomikos:transactions-jta:${atomikos_version}"
+	
+	//jcaptcha 验证码
+	compile "com.octo.captcha:jcaptcha-api:${jcaptcha_version}"
+	compile "com.octo.captcha:jcaptcha:${jcaptcha_version}"
+	
+	//日期美化
+//	compile "org.ocpsoft.prettytime:prettytime:${prettytime_version}"
+//	compile "joda-time:joda-time:${joda_time_version}"
+	
+	//校验api
+	compile "javax.validation:validation-api:${validation_api_version}"
+	
+	//web相关jar包
+	compileOnly "com.oracle:ojdbc6:${ojdbc_version}"
+	compileOnly "javax.servlet:jstl:${jstl_version}"
+	compileOnly "javax.servlet:servlet-api:${servlet_api_version}"
+	compileOnly "javax.servlet.jsp:jsp-api:${jsp_api_version}"
+	
+	//测试相关jar包
+	//testCompile "junit:junit:${junit_version}"
+	//testCompile "org.mockito:mockito-all:${mockito_all_version}"
+	
+}
+
+//eclipse工程设置
+eclipse {
+	//设置工程名称
+	project.name = file(".").name
+		
+	//设置eclipse编译输出路径
+	classpath {
+		defaultOutputDir = file("$classes")
+	}
+}

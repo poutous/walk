@@ -1,0 +1,28 @@
+subprojects {
+	apply plugin: "java"
+	apply plugin: "eclipse"
+	apply plugin: "maven"
+		
+	//编译器选项
+	[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+	sourceCompatibility = "${jdk_version}"
+    targetCompatibility = "${jdk_version}"
+	
+	//maven远程仓库
+	repositories {
+//		//公共仓库
+//		jcenter()
+//		
+//		//maven中央仓库
+//		mavenCentral()
+		
+		//私服设置
+		maven {url "$repoHost/$repoPath"}
+		
+		//其他
+		maven {url "https://oss.sonatype.org/content/repositories/sourceforge-releases"}
+	}
+	
+	//编译工程：双击执行build_build.cmd，选择数字进行相应操作
+	//发布工程：双击执行build_release.cmd，选择数字进行相应操作
+}
