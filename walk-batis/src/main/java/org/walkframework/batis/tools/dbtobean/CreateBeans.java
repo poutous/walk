@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -200,10 +201,10 @@ public class CreateBeans {
 	private static void createFildName() {
 		sb.append("\r");
 		for (ColumnBeans columnBeans : lists) {
-			sb.append("\t /**");
+			sb.append("\t/**");
 			sb.append("\t\r");
 			sb.append("\t *");
-			sb.append(columnBeans.getComments());
+			sb.append(" " + columnBeans.getComments());
 			sb.append("\t\r");
 			sb.append("\t */");
 			sb.append("\t\r");
@@ -221,8 +222,7 @@ public class CreateBeans {
 	}
 
 	public static String getSchema(Connection connection) throws Exception {
-		String connUrl = connection.getMetaData().getURL().toLowerCase();
-		if (connUrl.startsWith("jdbc:oracle")) {// oracle
+		if (isOracle(connection)) {// oracle
 			String schema = connection.getMetaData().getUserName();
 			if ((schema == null) || (schema.length() == 0)) {
 				throw new Exception("Oracle database schema is not allowed to empty.");
@@ -243,10 +243,15 @@ public class CreateBeans {
 	private static String queryTableComments(Connection connection, String tableName) {
 		ResultSet rs = null;
 		try {
+			if(isMysql(connection)){
+				return getCommentByTableNameFromMysql(connection, tableName);
+			}
 			rs = connection.getMetaData().getTables(null, getSchema(connection), tableName.toUpperCase(), new String[] { "TABLE" });
 			while (rs.next()) {
-				if (rs.getString("REMARKS") != null)
-					return rs.getString("REMARKS");
+				String comments = rs.getString("REMARKS");
+				if (comments != null){
+					return comments;
+				}
 			}
 			return null;
 		} catch (Exception e) {
@@ -260,6 +265,44 @@ public class CreateBeans {
 		}
 	}
 	
+	/**
+	 * mysql获取表备注
+	 * 
+	 * @param connection
+	 * @param tableName
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getCommentByTableNameFromMysql(Connection connection, String tableName) throws Exception {
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SHOW CREATE TABLE " + tableName);
+		String comment = "";
+		if (rs != null && rs.next()) {
+			String createDDL = rs.getString(2);
+			comment = parse(createDDL);
+		}
+		rs.close();
+		stmt.close();
+		return comment;
+	}
+	
+	/**
+	 * 返回注释信息
+	 * @param all
+	 * @return
+	 */
+	
+	public static String parse(String all) {
+		String comment = null;
+		int index = all.indexOf("COMMENT='");
+		if (index < 0) {
+			return "";
+		}
+		comment = all.substring(index + 9);
+		comment = comment.substring(0, comment.length() - 1);
+		return comment;
+	}
+
 	/**
 	 * 获取表字段信息
 	 * 
@@ -308,12 +351,15 @@ public class CreateBeans {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Map<String, String> getComments(Connection connection, String tableName)throws Exception {
+	private static Map<String, String> getComments(Connection connection, String tableName) throws Exception {
 		tableName = tableName.toUpperCase();
 		
 		ResultSet rs = null;
 		Map<String, String> columnsMap = new HashMap<String, String>();
 		try {
+			if(isMysql(connection)){
+				return getColumnCommentsFromMysql(connection, tableName);
+			}
 			rs = connection.getMetaData().getColumns(null, getSchema(connection), tableName, "%");
 			while (rs.next()) {
 				columnsMap.put(rs.getString("COLUMN_NAME"), rs.getString("REMARKS"));
@@ -329,7 +375,24 @@ public class CreateBeans {
 		}
 		return columnsMap;
 	}
-
+	
+	 /**
+     * 获取表中字段的所有注释
+     * @param tableName
+     * @return
+     */
+    public static Map<String, String> getColumnCommentsFromMysql(Connection connection, String tableName) throws Exception{
+    	Map<String, String> columnsMap = new HashMap<String, String>();
+    	Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("show full columns from " + tableName);
+		while (rs.next()) {
+			columnsMap.put(rs.getString("Field").toUpperCase(), rs.getString("Comment"));
+		} 
+		rs.close();
+		stmt.close();
+        return columnsMap;
+    }
+    
 	/**
 	 * 创建javabean Class信息
 	 * 
@@ -549,4 +612,22 @@ public class CreateBeans {
 		else
 			return (new StringBuilder()).append(Character.toUpperCase(s.charAt(0))).append(s.substring(1)).toString();
 	}
+	
+	private static boolean isMysql(Connection connection){
+		try {
+			String connUrl = connection.getMetaData().getURL().toLowerCase();
+			return connUrl.startsWith("jdbc:mysql");
+		} catch (SQLException e) {
+			return false;
+		}
+    }
+    
+    private static boolean isOracle(Connection connection){
+    	try {
+    		String connUrl = connection.getMetaData().getURL().toLowerCase();
+    		return connUrl.startsWith("jdbc:oracle");
+    	} catch (SQLException e) {
+    		return false;
+    	}
+    }
 }

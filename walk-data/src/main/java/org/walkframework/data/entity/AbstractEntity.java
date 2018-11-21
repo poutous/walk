@@ -38,6 +38,8 @@ public abstract class AbstractEntity implements Entity {
 		} else {
 			operColumn.setOperColumnValue(value);
 		}
+		
+		this.isNoAnyCondition = false;
 		return operColumn;
 	}
 	
