@@ -19,6 +19,7 @@ import org.walkframework.base.system.common.Common;
 import org.walkframework.restful.constant.RspConstants;
 import org.walkframework.restful.model.rsp.RspInfo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -29,35 +30,52 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2HttpMessageConverter {
 
-	private final static ObjectMapper objectMapper = new ObjectMapper();
+	protected final static ObjectMapper objectMapper = new ObjectMapper();
 	
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	private static final ThreadLocal<Long> startTimeThreadLocal = new NamedThreadLocal<Long>("ThreadLocal StartTime");
+	
+	private static final ThreadLocal<RestfulLog> restfulLogThreadLocal = new NamedThreadLocal<RestfulLog>("ThreadLocal RestfulLog");
 	
 	@Autowired
 	private HttpServletRequest request;
 	
 	@Override
 	public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-		Object object = super.read(type, contextClass, inputMessage);
-		
-		//打印请求信息
+		RestfulLog restfulLog = null;
 		if (log.isInfoEnabled()) {
-			try {
-				//设置开始时间
-				startTimeThreadLocal.set(System.currentTimeMillis());
-				log.info("*********** Request source IP: {}", Common.getInstance().getIpAddr(request));
-				log.info("*********** Request Headers: {}", objectMapper.writeValueAsString(inputMessage.getHeaders()));
-				log.info("*********** Request URL: {}", request.getRequestURI());
-				log.info("*********** Request Body: {}", objectMapper.writeValueAsString(object));
-			} catch (Throwable thr) {
-				log.error(thr.getMessage(), thr);
+			restfulLog = new RestfulLog();
+			restfulLog.setRequestURL(request.getRequestURI());
+			restfulLog.setRequestHeaders(inputMessage.getHeaders());
+			restfulLog.setSourceIP(Common.getInstance().getIpAddr(request));
+			
+			//设置开始时间
+			startTimeThreadLocal.set(System.currentTimeMillis());
+			
+			//设置日志对象
+			restfulLogThreadLocal.set(restfulLog);
+		}
+		
+		Object object = null;
+		try {
+			object = super.read(type, contextClass, inputMessage);
+			if(restfulLog != null){
+				restfulLog.setRequestBody(object);
 			}
+		} catch (IOException e) {
+			printErrorCallLog(e);
+			throw e;
+		} catch (HttpMessageNotReadableException e) {
+			printErrorCallLog(e);
+			throw e;
+		} catch (Exception e) {
+			printErrorCallLog(e);
+			throw new RuntimeException(e);
 		}
 		return object;
 	}
-
+	
 	@Override
 	protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 		try {
@@ -65,12 +83,7 @@ public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2Ht
 
 			//打印返回信息
 			if (log.isInfoEnabled()) {
-				log.info("*********** Response Body: {}", objectMapper.writeValueAsString(object));
-				log.info("*********** Response Headers: {}", objectMapper.writeValueAsString(outputMessage.getHeaders()));
-				Long beginTime = startTimeThreadLocal.get();
-				if(beginTime != null){
-					log.info("*********** Cost time: {}", ((double) (System.currentTimeMillis() - beginTime) / (double) 1000));
-				}
+				printCallLog(object);
 			}
 		} catch (Throwable e) {
 			Object errorMessage = e.getMessage();
@@ -86,17 +99,45 @@ public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2Ht
 			
 			//打印返回信息
 			if (log.isInfoEnabled()) {
-				try {
-					log.info("*********** Response Body: {}", objectMapper.writeValueAsString(msg));
-					log.info("*********** Response Headers: {}", objectMapper.writeValueAsString(outputMessage.getHeaders()));
-					Long beginTime = startTimeThreadLocal.get();
-					if(beginTime != null){
-						log.info("*********** Cost time: {}", ((double) (System.currentTimeMillis() - beginTime) / (double) 1000));
-					}
-				} catch (Throwable thr) {
-					log.error(thr.getMessage(), thr);
-				}
+				printCallLog(msg);
 			}
+		}
+	}
+	
+	/**
+	 * 打印日志
+	 * 
+	 * @param object
+	 */
+	private void printCallLog(Object object){
+		RestfulLog restfulLog = restfulLogThreadLocal.get();
+		if(restfulLog != null){
+			Long beginTime = startTimeThreadLocal.get();
+			Double endTime = null;
+			if(beginTime != null){
+				endTime = ((double) (System.currentTimeMillis() - beginTime) / (double) 1000);
+			}
+			
+			restfulLog.setResponseBody(object);
+			try {
+				log.info("<====> Call success, cost time: {}, call log: {}", endTime, objectMapper.writeValueAsString(restfulLog));
+			} catch (JsonProcessingException e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+	}
+	
+	/**
+	 * 打印错误日志
+	 * 
+	 * @param e
+	 */
+	private void printErrorCallLog(Exception e){
+		if (log.isInfoEnabled()) {
+			Object errorMessage = e.getMessage();
+			String errorMsg = RspConstants.RSP.get(RspConstants.OTHER_ERROR) + "：" + errorMessage;
+			Object msg = getRspInfo(RspConstants.OTHER_ERROR, errorMsg);
+			printCallLog(msg);
 		}
 	}
 	
