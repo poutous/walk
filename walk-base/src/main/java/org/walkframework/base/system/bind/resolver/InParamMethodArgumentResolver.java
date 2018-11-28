@@ -26,7 +26,7 @@ import org.walkframework.data.util.InParamHelper;
  */
 public class InParamMethodArgumentResolver extends BaseMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-	@Override
+	@Override 
 	public boolean supportsParameter(MethodParameter parameter) {
 		return InParam.class.isAssignableFrom(parameter.getParameterType());
 	}
