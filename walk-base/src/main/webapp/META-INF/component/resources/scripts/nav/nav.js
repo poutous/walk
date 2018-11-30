@@ -30,7 +30,7 @@ function initTopMenu(){
 	//添加属性
 	$("#nav-mid").find(".menuModule .menuList .menu").each(function(i){
 		if(!$(this).attr("menuId")){
-			$(this).attr("menuId", "menuId_" + (i+1));
+			$(this).attr("menuId", "menuId_" + (i+1) + $.walk.getRandomParam());
 		}
 		$(this).attr("title", $.trim($(this).text()));
 	});
@@ -81,7 +81,7 @@ function startInitLeftMenu(){
 	//添加属性
 	$("#nav-mid").find(".menuModule .menuList .menu").each(function(i){
 		if(!$(this).attr("menuId")){
-			$(this).attr("menuId", "menuId_" + (i+1));
+			$(this).attr("menuId", "menuId_" + (i+1) + $.walk.getRandomParam());
 		}
 	});
 	
