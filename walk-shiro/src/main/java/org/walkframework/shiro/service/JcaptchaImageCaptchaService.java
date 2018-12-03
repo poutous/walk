@@ -25,6 +25,8 @@ public class JcaptchaImageCaptchaService extends GenericManageableCaptchaService
 	
 	private String verifyCodeName = "verifyCode";
 	
+	private boolean isNewSession = true;
+	
 	public JcaptchaImageCaptchaService(CaptchaStore captchaStore, CaptchaEngine captchaEngine, int minGuarantedStorageDelayInSeconds, int maxCaptchaStoreSize, int captchaStoreLoadBeforeGarbageCollection) {
 		super(captchaStore, captchaEngine, minGuarantedStorageDelayInSeconds, maxCaptchaStoreSize, captchaStoreLoadBeforeGarbageCollection);
 	}
@@ -39,7 +41,7 @@ public class JcaptchaImageCaptchaService extends GenericManageableCaptchaService
 			response.setHeader("Pragma", "no-cache");
 			response.setContentType("image/jpeg");
 			
-			BufferedImage bufferedImage = getImageChallengeForID(getNewSessionId());
+			BufferedImage bufferedImage = getImageChallengeForID(getSessionId());
 			out = response.getOutputStream();
 			ImageIO.write(bufferedImage, "jpg", out);
 			if(out != null){
@@ -63,13 +65,17 @@ public class JcaptchaImageCaptchaService extends GenericManageableCaptchaService
 	 * 
 	 * @return
 	 */
-	private String getNewSessionId() {
+	private String getSessionId() {
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
-		if(session != null) {
+		if(isNewSession()){
 			session.stop();
+			session = subject.getSession(true);
 		}
-		return subject.getSession(true).getId().toString();
+		if(session != null){
+			return session.getId().toString();
+		}
+		return null;
 	}
 
 	//校验验证码, 并删除已生成的验证码
@@ -88,5 +94,13 @@ public class JcaptchaImageCaptchaService extends GenericManageableCaptchaService
 
 	public void setVerifyCodeName(String verifyCodeName) {
 		this.verifyCodeName = verifyCodeName;
+	}
+	
+	public boolean isNewSession() {
+		return isNewSession;
+	}
+
+	public void setNewSession(boolean isNewSession) {
+		this.isNewSession = isNewSession;
 	}
 }
