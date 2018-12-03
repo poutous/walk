@@ -134,5 +134,5 @@ exit
 :build
 if "%project%"=="" echo 开始发布所有工程...
 if not "%project%"=="" echo 开始发布%project%...
-call gradle %project%clean %project%uploadArchives -x test
+call gradle/gradlew.bat %project%clean %project%uploadArchives -x test
 goto cl

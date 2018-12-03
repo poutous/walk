@@ -134,5 +134,5 @@ exit
 :build
 if "%project%"=="" echo 开始编译所有工程...
 if not "%project%"=="" echo 开始编译%project%...
-call gradle %project%cleanEclipseClasspath %project%eclipse %project%clean
+call gradle/gradlew.bat %project%cleanEclipseClasspath %project%eclipse %project%clean
 goto cl
