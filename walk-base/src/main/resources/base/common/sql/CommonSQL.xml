@@ -88,8 +88,8 @@
 	<!-- 查询导出日志列表 -->
 	<select id="queryExportList" resultType="org.walkframework.data.util.DataMap" useCache="false" flushCache="true">
 		SELECT a.*,
-			   CASE WHEN a.export_mode = '1' THEN '同步' WHEN a.export_mode = '2' THEN '异步' END export_mode_name,
-			   CASE WHEN a.export_state = '0' THEN '导出中' WHEN a.export_state = '1' THEN '导出成功' WHEN a.export_state = '2' THEN '导出失败' END export_state_name
+			   CASE WHEN a.export_mode = '1' THEN '同步' WHEN a.export_mode = '2' THEN '异步' END EXPORT_MODE_NAME,
+			   CASE WHEN a.export_state = '0' THEN '导出中' WHEN a.export_state = '1' THEN '导出成功' WHEN a.export_state = '2' THEN '导出失败' END EXPORT_STATE_NAME
 		  FROM tl_m_exportlog a
 		<where>
 			<if test="exportId != null and exportId != ''">
