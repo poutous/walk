@@ -32,6 +32,9 @@ public abstract class ParamTranslateUtil {
 	 * @return
 	 */
 	public static String convertStatic(String typeId, String value) {
+		if(StringUtil.isEmpty(value)){
+			return null;
+		}
 		// 尝试从缓存取
 		IData<String, Object> cacheData = StaticParamUtil.getCache(StaticParamConstants.TD_S_STATIC).getValue(StaticParamUtil.getMapCacheKey(typeId));
 		if (cacheData != null && !cacheData.isEmpty()) {
