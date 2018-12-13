@@ -160,7 +160,7 @@ public class TimeTicketUtil {
 	
 	/**
 	 * 取key
-	 * app.properties文件中如果没配securityKey，则取默认
+	 * 属性配置文件中如果没配securityKey，则取默认
 	 * 
 	 * @return
 	 */

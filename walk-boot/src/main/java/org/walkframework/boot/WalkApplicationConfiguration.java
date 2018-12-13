@@ -16,20 +16,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ErrorPage;
+import org.springframework.boot.web.servlet.ErrorPageRegistrar;
+import org.springframework.boot.web.servlet.ErrorPageRegistry;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -38,6 +42,7 @@ import org.walkframework.boot.config.ErrorPageProperties;
 import org.walkframework.boot.context.WalkConfigEmbeddedWebApplicationContext;
 import org.walkframework.boot.filter.BootJspFilter;
 import org.walkframework.boot.reader.BootXmlBeanDefinitionReader;
+import org.walkframework.boot.startup.WalkSpringApplication;
 
 /**
  * spring boot方式启动工程
@@ -55,23 +60,17 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 
 	private static final String DEFAULT_DS_LOCATION = "classpath:boot-ds.xml";
 
-	private static ApplicationContext context;
-
+	@Autowired
+	private Environment environment;
+	
+	@Autowired
+	private ApplicationContext context;
+	
 	@Autowired
 	private ErrorPageProperties errorPageProperties;
-
+	
 	/**
-	 * 启动工程入口
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) {
-		run(args, WalkApplicationConfiguration.class);
-	}
-
-	/**
-	 * 运行
+	 * jar或直接运行BootRun方式启动工程入口
 	 * 
 	 * spring boot启动时调用
 	 * 
@@ -80,59 +79,28 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 	public static void run(String[] args, Object... sources) {
 		Set<String> arguments = new HashSet<String>(Arrays.asList(args));
 		// 设定默认属性文件为app.properties
-		arguments.add("--spring.config.name=app");
+		//arguments.add("--spring.config.name=app");
+		arguments.add("--spring.load.embedded=true");
 
-		SpringApplication app = new SpringApplication(sources) {
-			@Override
-			protected void load(ApplicationContext context, Object[] sources) {
-				WalkApplicationConfiguration.context = context;
-
-				// 类增强器初始化
-				enhanceInitialized();
-
-				super.load(context, sources);
-			}
-		};
+		SpringApplication app = new WalkSpringApplication(sources);
 		app.setApplicationContextClass(WalkConfigEmbeddedWebApplicationContext.class);
-		app.run(arguments.toArray(new String[arguments.size()]));
+		ApplicationContext applicationContext = app.run(arguments.toArray(new String[arguments.size()]));
 		
 		//打印项目启动信息
-		printProjectInfo();
-	}
-	
-	/**
-	 * 打印项目启动信息
-	 */
-	protected static void printProjectInfo() {
-		String serverPort = context.getEnvironment().getProperty("server.port");
-		String serverContextPath = context.getEnvironment().getProperty("server.context-path");
+		String serverPort = applicationContext.getEnvironment().getProperty("server.port");
+		String serverContextPath = applicationContext.getEnvironment().getProperty("server.context-path");
 		System.out.println("====================================================");
 		System.out.println(String.format("Project is running at http://127.0.0.1:%s%s", serverPort, serverContextPath));
 		System.out.println("====================================================");
 	}
-
-	/**
-	 * 类增强器初始化
-	 * 
-	 * @param event
-	 */
-	protected static void enhanceInitialized() {
-		try {
-			String enhanceConfigLocation = context.getEnvironment().getProperty("spring.boot.enhance.location");
-			if (!StringUtils.isEmpty(enhanceConfigLocation)) {
-				new ClassPathXmlApplicationContext(enhanceConfigLocation);
-			}
-		} catch (Exception e) {
-			log.error("class enhancer loading failed...", e);
-		}
-	}
-
+	
 	/**
 	 * tomcat个性化设置
 	 * 
 	 * @return
 	 */
 	@Bean
+	@ConditionalOnProperty("spring.load.embedded")
 	public TomcatEmbeddedServletContainerFactory tomcatEmbeddedServletContainerFactory() {
 		// 自定义port、context-path
 		TomcatEmbeddedServletContainerFactory container = new TomcatEmbeddedServletContainerFactory() {
@@ -140,13 +108,13 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 			protected void customizeConnector(Connector connector) {
 				super.customizeConnector(connector);
 				// 一些个性化设置
-				connector.setUseBodyEncodingForURI(Boolean.valueOf(context.getEnvironment().getProperty("server.tomcat.use-body-encoding-for-uri", "false")));
+				connector.setUseBodyEncodingForURI(Boolean.valueOf(environment.getProperty("server.tomcat.use-body-encoding-for-uri", "false")));
 			}
 
 			@Override
 			protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(Tomcat tomcat) {
 				// 开启命名服务。使用JNDI
-				if ("true".equals(context.getEnvironment().getProperty("ds.enable-naming", "true"))) {
+				if ("true".equals(environment.getProperty("ds.enable-naming", "true"))) {
 					tomcat.enableNaming();
 				}
 				return super.getTomcatEmbeddedServletContainer(tomcat);
@@ -161,11 +129,9 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 			}
 		};
 
-		// 定义错误页面
-		container.setErrorPages(errorPageProperties.resolveErrorPages());
 		return container;
 	}
-
+	
 	/**
 	 * 自定义配置
 	 * 
@@ -173,8 +139,8 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 	 */
 	protected void processContextConfig(Context ctx) {
 		// 从XML文件中加载JNDI数据源
-		if ("true".equals(context.getEnvironment().getProperty("ds.enable-naming", "true"))) {
-			String contextXml = context.getEnvironment().getProperty("ds.location");
+		if ("true".equals(environment.getProperty("ds.enable-naming", "true"))) {
+			String contextXml = environment.getProperty("ds.location");
 			Resource resource = context.getResource(contextXml);
 			if (!resource.exists()) {
 				log.warn("The specified datasource[{}] file does not exist, using the default file [{}].", contextXml, DEFAULT_DS_LOCATION);
@@ -187,32 +153,50 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 			}
 		}
 	}
-
+	
+	/**
+	 * 错误页面定义
+	 * 
+	 * @return
+	 */
+	@Bean
+	public ErrorPageRegistrar errorPageRegistrarFactory(){
+		return new ErrorPageRegistrar(){
+			@Override
+			public void registerErrorPages(ErrorPageRegistry registry) {
+				Set<ErrorPage> errorPages = errorPageProperties.resolveErrorPages();
+				if(!CollectionUtils.isEmpty(errorPages)){
+					registry.addErrorPages(errorPages.toArray(new ErrorPage[errorPages.size()]));
+				}
+			}
+		};
+	}
+	
 	@Override
 	public void onStartup(ServletContext container) throws ServletException {
 		// Spring MVC配置
-		if ("true".equals(context.getEnvironment().getProperty("spring.boot.mvc.load", "true"))) {
+		if ("true".equals(environment.getProperty("spring.boot.mvc.load", "true"))) {
 			DispatcherServlet springMVC = new DispatcherServlet();
-			springMVC.setContextConfigLocation(context.getEnvironment().getProperty("spring.boot.mvc.location", "classpath:spring/spring-mvc.xml"));
+			springMVC.setContextConfigLocation(environment.getProperty("spring.boot.mvc.location", "classpath:spring/spring-mvc.xml"));
 			ServletRegistration.Dynamic springMVCRegistration = container.addServlet("springMVC", springMVC);
 			springMVCRegistration.setLoadOnStartup(1);
 			springMVCRegistration.addMapping("/");
 		}
 
 		// 过滤器1：不允许直接访问pages目录下的jsp 直接跳转到404页面
-		if ("true".equals(context.getEnvironment().getProperty("spring.boot.jspfilter.load", "true"))) {
+		if ("true".equals(environment.getProperty("spring.boot.jspfilter.load", "true"))) {
 			FilterRegistration.Dynamic jspFilterRegistration = container.addFilter("jspFilter", new BootJspFilter());
 			jspFilterRegistration.addMappingForUrlPatterns(null, true, "/pages/*");
 		}
 
 		// 过滤器2：解决post请求中文乱码。get请求乱码解决办法：如果是tomcat的话需在server.xml第一个Connector中加入URIEncoding="UTF-8"
-		if ("true".equals(context.getEnvironment().getProperty("spring.boot.encodingfilter.load", "true"))) {
+		if ("true".equals(environment.getProperty("spring.boot.encodingfilter.load", "true"))) {
 			FilterRegistration.Dynamic encodingFilterRegistration = container.addFilter("encodingFilter", new CharacterEncodingFilter("UTF-8", true));
 			encodingFilterRegistration.addMappingForUrlPatterns(null, true, "/*");
 		}
 
 		// 过滤器3：shiro 安全过滤器
-		if ("true".equals(context.getEnvironment().getProperty("spring.boot.shiro.load", "true"))) {
+		if ("true".equals(environment.getProperty("spring.boot.shiro.load", "true"))) {
 			DelegatingFilterProxy shiroFilter = new DelegatingFilterProxy();
 			shiroFilter.setTargetFilterLifecycle(true);
 			FilterRegistration.Dynamic shiroFilterRegistration = container.addFilter("shiroFilter", shiroFilter);
@@ -220,7 +204,7 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 		}
 
 		// fusioncharts导出图片servlet
-		if ("true".equals(context.getEnvironment().getProperty("spring.boot.fusionchartsexporter.load", "true"))) {
+		if ("true".equals(environment.getProperty("spring.boot.fusionchartsexporter.load", "true"))) {
 			try {
 				ServletRegistration.Dynamic fcexporterRegistration = container.addServlet("FCExporter", "com.fusioncharts.exporter.servlet.FCExporter");
 				fcexporterRegistration.setLoadOnStartup(1);
@@ -231,7 +215,4 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 		}
 	}
 
-	public static ApplicationContext getApplicationContext() {
-		return context;
-	}
 }

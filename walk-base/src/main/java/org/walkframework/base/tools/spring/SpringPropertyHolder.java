@@ -1,6 +1,5 @@
 package org.walkframework.base.tools.spring;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -11,6 +10,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.walkframework.base.tools.utils.EncryptUtil;
 
@@ -18,7 +18,7 @@ import org.walkframework.base.tools.utils.EncryptUtil;
  * @ClassName: SpringPropertyHolder
  * @Description: 实例化在applicationcontext中，用来获取配置在Spring中的Property值
  */
-public class SpringPropertyHolder extends PropertyPlaceholderConfigurer{
+public class SpringPropertyHolder extends PropertyPlaceholderConfigurer implements ApplicationContextAware{
 	
 	private static final Logger log = LoggerFactory.getLogger(SpringPropertyHolder.class);
 	
@@ -33,8 +33,6 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer{
 
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
-		tryGetApplicationContextFromBootEnvironment();
-		
 		PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper(placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
 		for (Object key : props.keySet()) {
 			String keyStr = key.toString();
@@ -55,19 +53,7 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer{
 	}
 	
 	/**
-	 * 尝试从spring boot启动环境中获取ApplicationContext对象
-	 */
-	private void tryGetApplicationContextFromBootEnvironment() {
-		try {
-			Class<?> clazz = Class.forName("org.walkframework.boot.WalkApplicationConfiguration");
-			Method method = clazz.getMethod("getApplicationContext");
-			applicationContext = (ApplicationContext) method.invoke(null);
-		} catch (Exception e) {
-		}
-	}
-	
-	/**
-	 * 兼容spring boot方式启动外部指定参数优先启动
+	 * getProperty
 	 * 
 	 * @param key
 	 * @param defaultValue
@@ -121,5 +107,10 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer{
 	
 	public static Map<String, String> getProperties() {
 		return ctxPropertiesMap;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 }
