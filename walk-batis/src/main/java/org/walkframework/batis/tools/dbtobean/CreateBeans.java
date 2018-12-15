@@ -423,8 +423,8 @@ public class CreateBeans {
 		sb.append("* @author " + System.getProperty("user.name") + "\r");
 		sb.append("* @date " + getNewTime() + "\r");
 		sb.append("* \r");
-		sb.append("* 1、本类由工具类DbToBeanUtil自动生成\r");
-		sb.append("* 2、数据表新增字段时建议使用DbToBeanUtil工具类重新生成\r");
+		sb.append("* 1、本类由工具类DbToEntity自动生成\r");
+		sb.append("* 2、数据表新增字段时建议使用DbToEntity工具类重新生成\r");
 		sb.append("* 3、不建议直接修改本类，如果想对本类扩展，建议创建子类，在子类里进行扩展，子类的set/get方法无需按照父类的写法，用开发工具直接生成就好\r");
 		sb.append("*/\t\r");
 	}
