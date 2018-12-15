@@ -223,14 +223,19 @@ public class TranslatorEnhancer implements InitializingBean {
 			if (hasAddEnhance) {
 				if (isSpringBootBuildJar()) {
 					String entryName = getClassPathInBootJar(classAbsolutePath);
-					if(entryName.indexOf(".jar!") == -1){
-						inBootJarClass.put(entryName, ctClass);
-					} else {
+					if(entryName.indexOf(".jar!") > -1){
 						entryName = "BOOT-INF/classes" + entryName.substring(entryName.indexOf("jar!") + 4, entryName.length());
 						//判断BOOT-INF/lib下jar中class文件是否已经在BOOT-INF/classes下生成增强类
 						if(new JarFile(getBootJarPath()).getEntry(entryName) == null){
 							inBootJarClass.put(entryName, ctClass);
 						}
+					} else if(entryName.indexOf(".war!") > -1){
+						entryName = "WEB-INF/classes" + entryName.substring(entryName.indexOf("war!") + 4, entryName.length());
+						if(new JarFile(getBootJarPath()).getEntry(entryName) == null){
+							inBootJarClass.put(entryName, ctClass);
+						}
+					} else {
+						inBootJarClass.put(entryName, ctClass);
 					}
 				} else {
 					String classPath = this.getClass().getClassLoader().getResource("").getPath();
@@ -348,7 +353,7 @@ public class TranslatorEnhancer implements InitializingBean {
 	 */
 	public boolean isSpringBootBuildJar() {
 		String classPath = this.getClass().getClassLoader().getResource("").getPath();
-		return classPath.startsWith("file:") && classPath.indexOf(".jar!/BOOT-INF/") > 0;
+		return classPath.startsWith("file:") && (classPath.indexOf(".jar!/BOOT-INF/") > 0 || classPath.indexOf(".war!") > 0);
 	}
 
 	/**
@@ -358,7 +363,9 @@ public class TranslatorEnhancer implements InitializingBean {
 	 */
 	private String getBootJarPath() {
 		String classPath = this.getClass().getClassLoader().getResource("").getPath();
-		return classPath.substring(classPath.indexOf("file:") + 5, classPath.indexOf("jar!") + 3);
+		int end = classPath.indexOf("jar!");
+		end = end == -1 ? classPath.indexOf("war!") : end;
+		return classPath.substring(classPath.indexOf("file:") + 5, end + 3);
 	}
 
 	/**
@@ -368,7 +375,12 @@ public class TranslatorEnhancer implements InitializingBean {
 	 * @return
 	 */
 	private String getClassPathInBootJar(String classAbsolutePath) {
-		return classAbsolutePath.substring(classAbsolutePath.indexOf("/BOOT-INF") + 1, classAbsolutePath.length()).replaceFirst("classes!", "classes");
+		if(classAbsolutePath.indexOf(".jar!/BOOT-INF/") > -1){
+			return classAbsolutePath.substring(classAbsolutePath.indexOf("/BOOT-INF") + 1, classAbsolutePath.length()).replaceFirst("classes!", "classes");
+		} else if (classAbsolutePath.indexOf(".war!") > -1){
+			return classAbsolutePath.substring(classAbsolutePath.indexOf("/WEB-INF") + 1, classAbsolutePath.length()).replaceFirst("classes!", "classes");
+		}
+		return classAbsolutePath;
 	}
 
 	/**
