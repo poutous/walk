@@ -37,7 +37,7 @@ public class FileController extends BaseController{
 	@RequestMapping(value = "/upload")
 	public void upload(MultipartHttpServletRequest request) throws Exception{
 		List<MultipartFile> files = FileUtil.getUpFiles(request);
-		fileService.upFiles(files);
+		fileService.doUpFiles(files);
 	}
 
 	/**
