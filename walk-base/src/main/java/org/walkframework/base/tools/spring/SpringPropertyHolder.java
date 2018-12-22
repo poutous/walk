@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.walkframework.base.tools.utils.EncryptUtil;
 
@@ -24,8 +25,8 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer implemen
 	
 	private String key;
 	
-	private ApplicationContext applicationContext;
-
+	private static Environment environment;
+	
 	/**
 	 * @Fields ctxPropertiesMap : 将Properties保存在静态Map中
 	 */
@@ -59,9 +60,9 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer implemen
 	 * @param defaultValue
 	 * @return
 	 */
-	private String getProperty(String key, String defaultValue) {
-		if(applicationContext != null) {
-			return applicationContext.getEnvironment().getProperty(key, defaultValue);
+	private static String getProperty(String key, String defaultValue) {
+		if(environment != null) {
+			return environment.getProperty(key, defaultValue);
 		}
 		return defaultValue;
 	}
@@ -94,7 +95,7 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer implemen
 	 * @return 属性值
 	 */
 	public static String getContextProperty(String name, String defVal) {
-		return ctxPropertiesMap.get(name) == null ? defVal : ctxPropertiesMap.get(name);
+		return ctxPropertiesMap.get(name) == null ? getProperty(name, defVal) : ctxPropertiesMap.get(name);
 	}
 
 	public String getKey() {
@@ -111,6 +112,6 @@ public class SpringPropertyHolder extends PropertyPlaceholderConfigurer implemen
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+		environment = applicationContext.getEnvironment();
 	}
 }
