@@ -44,10 +44,10 @@ public class FileService extends AbstractBaseService {
 	 * @param tdMFile
 	 * @throws Exception
 	 */
-	public TdMFile upFile(MultipartFile multipartFile) throws Exception {
+	public TdMFile doUpFile(MultipartFile multipartFile) throws Exception {
 		List<MultipartFile> multipartFiles = new ArrayList<MultipartFile>();
 		multipartFiles.add(multipartFile);
-		List<TdMFile> files = upFiles(multipartFiles);
+		List<TdMFile> files = doUpFiles(multipartFiles);
 		return files.size() > 0 ? files.get(0) : null;
 	}
 
@@ -56,7 +56,7 @@ public class FileService extends AbstractBaseService {
 	 * 
 	 * @param tdMFile
 	 */
-	public List<TdMFile> upFiles(List<MultipartFile> multipartFiles) throws Exception {
+	public List<TdMFile> doUpFiles(List<MultipartFile> multipartFiles) throws Exception {
 		List<TdMFile> tdMFiles = new ArrayList<TdMFile>();
 		List<File> files = new ArrayList<File>();
 		String uploadremote = SpringPropertyHolder.getContextProperty("uploadremote", "false");
