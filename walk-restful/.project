@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>walk-restful</name>
+	<name>p10-walk-restful</name>
 	<comment></comment>
 	<projects/>
 	<natures>
@@ -27,4 +27,5 @@
 		</buildCommand>
 	</buildSpec>
 	<linkedResources/>
+	<filteredResources/>
 </projectDescription>

@@ -104,16 +104,6 @@
 	project(":p10-walk-restful").projectDir = new File(settingsDir, "../walk-restful")
 	
 	/**
-	 * logger模块
-	 * 
-	 * 框架归属: 技术框架
-	 * 发布方式: jar
-	 * @author MengQK
-	 */
-	include ":p11-walk-logger"
-	project(":p11-walk-logger").projectDir = new File(settingsDir, "../walk-logger")
-	
-	/**
 	 * console模块
 	 * 
 	 * 管理控制台
