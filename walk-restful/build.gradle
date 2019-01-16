@@ -104,14 +104,3 @@ dependencies {
 	
 	compileOnly "javax.servlet:servlet-api:${servlet_api_version}"
 }
-
-//eclipse工程设置
-eclipse {
-	//设置工程名称
-	project.name = file(".").name
-	
-	//设置eclipse编译输出路径
-	classpath {
-		defaultOutputDir = file("$classes")
-	}
-}

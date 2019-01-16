@@ -95,14 +95,3 @@ dependencies {
 	compile "org.springframework.boot:spring-boot-loader-tools-patch:${spring_boot_loader_tools_patch_version}"
 	compile "org.springframework:spring-core:${spring_version}"
 }
-
-//eclipse工程设置
-eclipse {
-	//设置工程名称
-	project.name = file(".").name
-	
-	//设置eclipse编译输出路径
-	classpath {
-		defaultOutputDir = file("$classes")
-	}
-}
