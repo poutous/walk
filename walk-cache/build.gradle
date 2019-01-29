@@ -72,14 +72,3 @@ dependencies {
 	compile "org.terracotta:ehcache-probe-remove-slf4j:${ehcache_probe_version}"
 	compile "com.alibaba:fastjson:${fastjson_version}"
 }
-
-//eclipse工程设置
-eclipse {
-	//设置工程名称
-	project.name = file(".").name
-	
-	//设置eclipse编译输出路径
-	classpath {
-		defaultOutputDir = file("$classes")
-	}
-}

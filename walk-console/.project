@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>walk-console</name>
+	<name>p12-walk-console</name>
 	<comment></comment>
 	<projects/>
 	<natures>
@@ -23,4 +23,5 @@
 		</buildCommand>
 	</buildSpec>
 	<linkedResources/>
+	<filteredResources/>
 </projectDescription>

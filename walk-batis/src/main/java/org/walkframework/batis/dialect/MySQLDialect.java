@@ -31,7 +31,7 @@ public class MySQLDialect implements Dialect {
 	public String getPagingSql(String sql, int start, int end) {
 		StringBuilder str = new StringBuilder();
 		str.append(sql);
-		str.append(" LIMIT " + start + ", " + (end - start));
+		str.append(" LIMIT " + start + ", " + end);
 		return str.toString();
 	}
 

@@ -74,14 +74,3 @@ dependencies {
 	//mybatis本地开发热部署插件，仅编译时使用，运行时需将该jar包放入容器(tomcat/weblogic)lib目录中
 	compile "net.sf.jpathwatch:jpathwatch:${jpathwatch_version}"
 }
-
-//eclipse工程设置
-eclipse {
-	//设置工程名称
-	project.name = file(".").name
-	
-	//设置eclipse编译输出路径
-	classpath {
-		defaultOutputDir = file("$classes")
-	}
-}

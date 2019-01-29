@@ -72,14 +72,3 @@ dependencies {
 	//spring-amqp
 	//compile "org.springframework.amqp:spring-rabbit:1.6.6.RELEASE"
 }
-
-//eclipse工程设置
-eclipse {
-	//设置工程名称
-	project.name = file(".").name
-	
-	//设置eclipse编译输出路径
-	classpath {
-		defaultOutputDir = file("$classes")
-	}
-}
