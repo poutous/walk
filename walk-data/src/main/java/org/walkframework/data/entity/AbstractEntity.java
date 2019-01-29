@@ -28,6 +28,21 @@ public abstract class AbstractEntity implements Entity {
 	 * @param type
 	 */
 	protected OperColumn addOperColumn(String column, String property, Object value, Class<?> type) {
+		OperColumn operColumn = privateAddOperColumn(column, property, value, type);
+		this.isNoAnyCondition = false;
+		return operColumn;
+	}
+	
+	/**
+	 * 记录操作的列
+	 * 每次调用Setter方法的时候自动调用
+	 * 
+	 * @param column
+	 * @param property
+	 * @param value
+	 * @param type
+	 */
+	protected OperColumn privateAddOperColumn(String column, String property, Object value, Class<?> type) {
 		if(this.operColumns == null){
 			this.operColumns = new LinkedHashMap<String, OperColumn>();
 		}
@@ -39,7 +54,6 @@ public abstract class AbstractEntity implements Entity {
 			operColumn.setOperColumnValue(value);
 		}
 		
-		this.isNoAnyCondition = false;
 		return operColumn;
 	}
 	

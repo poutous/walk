@@ -57,7 +57,7 @@ public class Conditions extends AbstractEntity {
 	 */
 	public Conditions addOrderByAsc(String column){
 		Field field = fields.get(column);
-		OperColumn operColumn = addOperColumn(column, field.getName(), null, field.getType());
+		OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
 		operColumn.asOrderByAsc();
 		return this;
 	}
@@ -70,7 +70,7 @@ public class Conditions extends AbstractEntity {
 	 */
 	public Conditions addOrderByDesc(String column){
 		Field field = fields.get(column);
-		OperColumn operColumn = addOperColumn(column, field.getName(), null, field.getType());
+		OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
 		operColumn.asOrderByDesc();
 		return this;
 	}
