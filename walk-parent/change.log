@@ -2,6 +2,7 @@ walk2.1.4
 1、walk-shiro：增加静默登录流程
 2、walk-batis：修复mybatis-config.xml中defaultExecutorType=SIMPLE时，实体类更新无效问题
 3、walk-batis：实体类查询增加noAnyCondition方法，如未调用此方法，则查询、更新、删除必须带条件才可执行，否则抛错
+4、walk-batis：mysql获取序列时内部修改为异步方式，避免事物只读抛错
 walk2.1.3
 1、增加异步导出功能，以避免同步方式导出文件过大时间过长导致的超时问题。
 walk2.1.2
