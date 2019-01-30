@@ -1,11 +1,6 @@
 package org.walkframework.batis.dialect;
 
-import java.util.Random;
-
 import org.walkframework.batis.dao.Dao;
-import org.walkframework.batis.dao.SqlSessionDao;
-import org.walkframework.data.util.DataMap;
-import org.walkframework.data.util.IData;
 
 /**
  * Mysql实现的方言
@@ -14,8 +9,6 @@ import org.walkframework.data.util.IData;
  * 
  */
 public class MySQLDialect implements Dialect {
-	
-	private static final Random random = new Random();
 	
 	/**
 	 * 获取分页sql
@@ -107,17 +100,6 @@ public class MySQLDialect implements Dialect {
 	 * @return
 	 */
 	public String getSequence(Dao dao, String sequence) {
-		IData<String, Object> param = new DataMap<String, Object>();
-		param.put("seq_name", sequence);
-		
-		//1、向序列表中插入数据
-		dao.insert("CommonSQL.selectSequence_mysql", param);
-		
-		//2、清空序列表：为提高性能，不需要每次都清空序列表。在一定范围内取随机数，取到1时就删。
-		if(random.nextInt(((SqlSessionDao)dao).getRandomRange()) == 1){
-			dao.delete("CommonSQL.clearSeqTable", param);
-		}
-		//3、获取序列值
-		return param.getString("id");
+		return new MySQLAsynSequence().getSequenceValue(dao, sequence);
 	}
 }
