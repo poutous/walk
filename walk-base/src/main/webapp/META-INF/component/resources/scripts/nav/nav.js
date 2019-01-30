@@ -83,6 +83,7 @@ function startInitLeftMenu(){
 		if(!$(this).attr("menuId")){
 			$(this).attr("menuId", "menuId_" + (i+1) + $.walk.getRandomParam());
 		}
+		$(this).attr("title", $.trim($(this).text()));
 	});
 	
 	//初始化菜单快捷搜索
