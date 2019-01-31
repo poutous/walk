@@ -13,8 +13,52 @@
 		select * from dual where 1 = 2
 	</update>
 	
+	<!-- 获取序列 长度：默认  (oracle专属)-->
+	<select id="selectSequence" resultType="java.lang.String" useCache="false" flushCache="true">
+		SELECT TO_CHAR(${_parameter}.NEXTVAL) FROM DUAL
+	</select>
+	
+	<!-- 获取数据库当前时间  (oracle专属) -->
+	<select id="selectCurrentTime" resultType="java.lang.String" useCache="false" flushCache="true">
+		select TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') from dual
+	</select>
+	
 	<!-- mysql专用：获取最后一个主键值，用于mysql的insert操作返回自增主键 -->
-	<select id="mysql_getLastInsertId" resultType="string" useCache="false">
+	<select id="mysql_getLastInsertId" resultType="string" useCache="false" flushCache="true">
 		SELECT LAST_INSERT_ID()
+	</select>
+	
+	<!-- 获取序列 长度：默认  (mysql专属) 。某些情况下，项目禁止使用存储过程。
+	<select id="selectSequence_mysql" parameterType="org.walkframework.data.util.DataMap" statementType="CALLABLE" useCache="false" flushCache="true">
+		{CALL NEXTVAL(#{i_seq_name, mode=IN, jdbcType=VARCHAR}, #{o_nextval, mode=OUT, jdbcType=VARCHAR})}
+	</select>
+	-->
+	
+	<!-- 获取序列 长度：默认  (mysql专属)-->
+	<insert id="selectSequence_mysql" parameterType="org.walkframework.data.util.DataMap" useGeneratedKeys="true">
+		<selectKey resultType="string" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO ${seq_name}(ID) VALUES(NULL)
+	</insert>
+	
+	<!-- 获取序列最大值-->
+	<select id="selectSequenceMaxId_mysql" resultType="java.lang.String" useCache="false" flushCache="true">
+		SELECT MAX_ID FROM ${seq_name} LIMIT 0, 1
+	</select>
+	
+	<!-- 清空序列表，防止数据量过大(mysql专属)-->
+	<delete id="clearSeqTable">
+		DELETE FROM ${seq_name}
+	</delete>
+	
+	<!-- 重置序列表自增ID-->
+	<update id="resetSeqTable">
+		TRUNCATE TABLE ${_parameter}
+	</update>
+	
+	<!-- 获取数据库当前时间  (oracle专属) -->
+	<select id="selectDbTime_mysql" resultType="java.lang.String" useCache="false" flushCache="true">
+		SELECT STR_TO_DATE(NOW(),'%Y-%m-%d %H:%i:%s')
 	</select>
 </mapper> 

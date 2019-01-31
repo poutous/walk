@@ -85,7 +85,7 @@ public class OracleDialect implements Dialect {
 	 * @return
 	 */
 	public String getDbTime(Dao dao) {
-		return dao.selectOne("CommonSQL.selectDbTime");
+		return dao.selectOne("EntitySQL.selectDbTime");
 	}
 	
 	/**
@@ -96,6 +96,6 @@ public class OracleDialect implements Dialect {
 	 * @return
 	 */
 	public String getSequence(Dao dao, String sequence) {
-		return dao.selectOne("CommonSQL.selectSequence", sequence);
+		return dao.selectOne("EntitySQL.selectSequence", sequence);
 	}
 }

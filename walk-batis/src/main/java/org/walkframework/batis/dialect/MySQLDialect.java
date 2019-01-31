@@ -83,7 +83,7 @@ public class MySQLDialect implements Dialect {
 	 * @return
 	 */
 	public String getDbTime(Dao dao) {
-		return dao.selectOne("CommonSQL.selectDbTime_mysql");
+		return dao.selectOne("EntitySQL.selectDbTime_mysql");
 	}
 	
 	/**
