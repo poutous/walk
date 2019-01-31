@@ -90,10 +90,11 @@ public class MySQLDialect implements Dialect {
 	 * 获取序列
 	 *
 	 * 创建序列表：可以用统一的序列，但为了避免业务表之间相互影响，原则是针对每张业务表都创建一张序列表，例如某日志表：
-		CREATE TABLE seq_log_id(
-		  ID BIGINT NOT NULL AUTO_INCREMENT,
+		CREATE TABLE SEQ_LOG_ID(
+		  ID BIGINT NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+		  MAX_ID BIGINT(20) DEFAULT 99998888 NOT NULL COMMENT '自增ID最大值，当超过该值后程序控制自增ID重置',
 		  PRIMARY KEY (ID)
-		)AUTO_INCREMENT=10001;
+		)AUTO_INCREMENT=1;
 		
 	 * @param dao
 	 * @param sequence
