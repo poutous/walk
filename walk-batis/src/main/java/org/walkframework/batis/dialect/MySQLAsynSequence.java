@@ -74,17 +74,15 @@ public class MySQLAsynSequence {
 		}
 
 		// 4、如果自增ID达到最大ID，则通过运算获取ID。
-		boolean hasReset = false;
 		long idValue = Long.valueOf(id);
 		long maxIdValue = Long.valueOf(maxId);
 		if (idValue > maxIdValue) {
-			idValue = idValue - ((long) Math.floor(idValue / maxIdValue)) * maxIdValue;
-			hasReset = true;
-			//hasReset = resetSeqTable(dao, sequence);
+			id = String.valueOf(idValue - ((long) Math.floor(idValue / maxIdValue)) * maxIdValue);
+			// hasReset = resetSeqTable(dao, sequence);
 		}
 
 		// 5、为避免序列表数据量过大，清空序列表：为提高性能，不需要每次都清空序列表。在一定范围内取随机数，取到1时就删。
-		if (!hasReset && random.nextInt(((SqlSessionDao) dao).getRandomRange()) == 1) {
+		if (random.nextInt(((SqlSessionDao) dao).getRandomRange()) == 1) {
 			dao.delete("EntitySQL.clearSeqTable", param);
 		}
 		return id;
