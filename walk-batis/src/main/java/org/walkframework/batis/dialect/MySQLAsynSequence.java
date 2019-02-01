@@ -73,10 +73,14 @@ public class MySQLAsynSequence {
 			maxIdCache.put(sequence, maxId);
 		}
 
-		// 4、如果自增ID达到最大ID，则重置自增ID
+		// 4、如果自增ID达到最大ID，则通过运算获取ID。
 		boolean hasReset = false;
-		if (Integer.parseInt(id) >= Integer.parseInt(maxId) - 1) {
-			hasReset = resetSeqTable(dao, sequence);
+		long idValue = Long.valueOf(id);
+		long maxIdValue = Long.valueOf(maxId);
+		if (idValue > maxIdValue) {
+			idValue = idValue - ((long) Math.floor(idValue / maxIdValue)) * maxIdValue;
+			hasReset = true;
+			//hasReset = resetSeqTable(dao, sequence);
 		}
 
 		// 5、为避免序列表数据量过大，清空序列表：为提高性能，不需要每次都清空序列表。在一定范围内取随机数，取到1时就删。
@@ -88,6 +92,8 @@ public class MySQLAsynSequence {
 
 	/**
 	 * 重置序列表自增ID
+	 * 
+	 * 集群环境中有并发问题，废弃
 	 * 
 	 * @param dao
 	 * @param sequence
