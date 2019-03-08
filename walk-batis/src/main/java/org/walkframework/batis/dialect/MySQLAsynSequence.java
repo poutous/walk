@@ -2,10 +2,9 @@ package org.walkframework.batis.dialect;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.ibatis.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.walkframework.batis.cache.CacheManager;
 import org.walkframework.batis.dao.Dao;
 import org.walkframework.batis.dao.SqlSessionDao;
@@ -25,11 +24,11 @@ public class MySQLAsynSequence {
 
 	private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-	private static final Lock lock = new ReentrantLock();
-
 	private static final Random random = new Random();
 
 	private String value;
+	
+	private static final String DEFAULT_MAX_ID = "99998888";
 
 	public String getSequenceValue(final Dao dao, final String sequence) {
 		// 1、获取数据
@@ -69,8 +68,7 @@ public class MySQLAsynSequence {
 		String maxId = maxIdCache.getValue(sequence);
 		if (maxId == null) {
 			maxId = dao.selectOne("EntitySQL.selectSequenceMaxId_mysql", param);
-
-			maxIdCache.put(sequence, maxId);
+			maxIdCache.put(sequence, StringUtils.isEmpty(maxId) ? DEFAULT_MAX_ID : maxId);
 		}
 
 		// 4、如果自增ID达到最大ID，则通过运算获取ID。
@@ -78,7 +76,6 @@ public class MySQLAsynSequence {
 		long maxIdValue = Long.valueOf(maxId);
 		if (idValue > maxIdValue) {
 			id = String.valueOf(idValue - ((long) Math.floor(idValue / maxIdValue)) * maxIdValue);
-			// hasReset = resetSeqTable(dao, sequence);
 		}
 
 		// 5、为避免序列表数据量过大，清空序列表：为提高性能，不需要每次都清空序列表。在一定范围内取随机数，取到1时就删。
@@ -86,22 +83,5 @@ public class MySQLAsynSequence {
 			dao.delete("EntitySQL.clearSeqTable", param);
 		}
 		return id;
-	}
-
-	/**
-	 * 重置序列表自增ID
-	 * 
-	 * 集群环境中有并发问题，废弃
-	 * 
-	 * @param dao
-	 * @param sequence
-	 */
-	private boolean resetSeqTable(final Dao dao, final String sequence) {
-		if (lock.tryLock()) {
-			dao.update("EntitySQL.resetSeqTable", sequence);
-			lock.unlock();
-			return true;
-		}
-		return false;
 	}
 }
