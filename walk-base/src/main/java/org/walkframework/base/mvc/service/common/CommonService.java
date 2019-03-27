@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.walkframework.base.mvc.entity.TdSParam;
@@ -85,22 +86,28 @@ public class CommonService extends AbstractBaseService {
 	@SuppressWarnings("unchecked")
 	public String convertCode2Name(String tableName, String colCode, String colName, String value){
 		String convertName = null;
-		if (tableName != null && !"".equals(tableName) && colCode != null && !"".equals(colCode) && colName != null && !"".equals(colName) && value != null && !"".equals(value)) {
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put("tableName", tableName);
-			param.put("colCode", colCode);
-			param.put("colName", colName);
-			param.put("value", value);
-			
-			Pagination pagination = new Pagination();
-			pagination.setRange(0, 1);
-			pagination.setCurrPage(1);
-			pagination.setNeedCount(false);
-			PageData<Map> pageData = dao().selectList("CommonSQL.selectCodeName", param, pagination);
-			List<Map> lst = pageData.getRows();
-			if (lst != null && lst.size() > 0) {
-				convertName = lst.get(0).get("CODE_NAME") == null ? null : lst.get(0).get("CODE_NAME").toString();
+		try {
+			if (!StringUtils.isEmpty(tableName) && !StringUtils.isEmpty(colCode) && !StringUtils.isEmpty(colName) && !StringUtils.isEmpty(value)) {
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("tableName", tableName);
+				param.put("colCode", colCode);
+				param.put("colName", colName);
+				param.put("value", value);
+				
+				Pagination pagination = new Pagination();
+				pagination.setRange(0, 1);
+				pagination.setCurrPage(1);
+				pagination.setNeedCount(false);
+				PageData<Map> pageData = dao().selectList("CommonSQL.selectCodeName", param, pagination);
+				List<Map> lst = pageData.getRows();
+				if (lst != null && lst.size() > 0) {
+					convertName = lst.get(0).get("CODE_NAME") == null ? null : lst.get(0).get("CODE_NAME").toString();
+				}
 			}
+		} catch (BadSqlGrammarException e) {
+			log.error(e.getCause().getMessage());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 		}
 		return convertName;
 	}
