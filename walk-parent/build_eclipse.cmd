@@ -16,9 +16,10 @@ set p7=walk-shiro
 set p8=walk-fusioncharts
 set p9=walk-base
 set p10=walk-restful
-set p11=walk-console
-set p12=walk-boot
-set p13=walk-boot-plugin
+set p11=walk-activiti
+set p12=walk-console
+set p13=walk-boot
+set p14=walk-boot-plugin
 REM =========工程定义结束=========
 
 :cl
@@ -38,6 +39,7 @@ echo   10、编译%p10%
 echo   11、编译%p11%
 echo   12、编译%p12%
 echo   13、编译%p13%
+echo   14、编译%p14%
 echo   e、退   出
 echo =============================
 set /p choice= 请选择数字编译相应的工程，然后按回车:
@@ -57,6 +59,7 @@ if /i "%choice%"=="10" goto s10
 if /i "%choice%"=="11" goto s11
 if /i "%choice%"=="12" goto s12
 if /i "%choice%"=="13" goto s13
+if /i "%choice%"=="14" goto s14
 if /i "%choice%"=="e" goto EX
 
 echo.
@@ -119,6 +122,10 @@ goto build
 
 :s13
 set project=p%choice%-%p13%:
+goto build
+
+:s14
+set project=p%choice%-%p14%:
 goto build
 
 :EX

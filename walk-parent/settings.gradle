@@ -104,6 +104,16 @@
 	project(":p10-walk-restful").projectDir = new File(settingsDir, "../walk-restful")
 	
 	/**
+	 * 工作流activiti模块
+	 * 
+	 * 框架归属: 技术框架
+	 * 发布方式: jar
+	 * @author shf675
+	 */
+	include ":p11-walk-activiti"
+	project(":p11-walk-activiti").projectDir = new File(settingsDir, "../walk-activiti")
+	
+	/**
 	 * console模块
 	 * 
 	 * 管理控制台

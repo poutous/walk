@@ -1,3 +1,7 @@
+walk2.1.5
+1、增加walk-activiti模块
+2、walk-boot增加jsonp过滤器自动加载
+
 walk2.1.4
 1、walk-shiro：增加静默登录流程
 2、walk-batis：修复mybatis-config.xml中defaultExecutorType=SIMPLE时，实体类更新无效问题
