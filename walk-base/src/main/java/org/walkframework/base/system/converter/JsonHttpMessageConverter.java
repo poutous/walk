@@ -1,8 +1,6 @@
 package org.walkframework.base.system.converter;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,21 +19,17 @@ import org.springframework.util.StringUtils;
 import org.walkframework.base.system.common.Message;
 import org.walkframework.base.system.constant.CommonConstants;
 import org.walkframework.base.tools.utils.ExportUtil;
+import org.walkframework.base.tools.utils.JacksonUtil;
 import org.walkframework.data.bean.PageData;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 
 public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
 	protected final static Logger log = LoggerFactory.getLogger(JsonHttpMessageConverter.class);
 
-	private final static SerializerFeature[] serializerFeatures = new SerializerFeature[] { SerializerFeature.WriteDateUseDateFormat, SerializerFeature.DisableCircularReferenceDetect };
-
-	private final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+//	private final static SerializerFeature[] serializerFeatures = new SerializerFeature[] { SerializerFeature.WriteDateUseDateFormat, SerializerFeature.DisableCircularReferenceDetect };
+//
+//	private final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	@Autowired
 	private HttpServletRequest request;
@@ -71,10 +65,12 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
 			}
 			// 3、其他
 			else {
-				text = JSON.toJSONString(obj, getFeatures());
+//				text = JSON.toJSONString(obj, getFeatures());
+				text = JacksonUtil.toJSONString(obj);
 			}
 		} else {
-			text = JSON.toJSONString(obj, getFeatures());
+//			text = JSON.toJSONString(obj, getFeatures());
+			text = JacksonUtil.toJSONString(obj);
 		}
 
 		// jquery.form提交特殊处理(解决IE弹出*.json文件问题)
@@ -86,10 +82,10 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
 		StreamUtils.copy(text, getCharset(), outputMessage.getBody());
 	}
 
-	@Override
-	public SerializerFeature[] getFeatures() {
-		return serializerFeatures;
-	}
+//	@Override
+//	public SerializerFeature[] getFeatures() {
+//		return serializerFeatures;
+//	}
 
 	/**
 	 * 往http输出流输出字符串文本
@@ -126,12 +122,12 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
 		}
 
 		if (result != null) {
-			SerializeConfig mapping = new SerializeConfig();
-			// 日期转换
-			mapping.put(Date.class, new SimpleDateFormatSerializer(DATE_FORMAT));
-			mapping.put(Timestamp.class, new SimpleDateFormatSerializer(DATE_FORMAT));
-
-			return JSONArray.toJSONString(result, mapping);
+//			SerializeConfig mapping = new SerializeConfig();
+//			// 日期转换
+//			mapping.put(Date.class, new SimpleDateFormatSerializer(DATE_FORMAT));
+//			mapping.put(Timestamp.class, new SimpleDateFormatSerializer(DATE_FORMAT));
+//			return JSONArray.toJSONString(result, mapping);
+			return JacksonUtil.toJSONString(result);
 		} else {
 			return "";
 		}
