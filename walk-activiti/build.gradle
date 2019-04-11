@@ -1,0 +1,82 @@
+//version = "$walk_version"
+version = "${walk_version}.snapshot-1"
+ext {
+	build = "build"
+	classes = "src/main/bin"
+}
+
+//source设置
+sourceSets {
+    main {
+        java.srcDirs = ["src/main/java"]
+        resources.srcDirs = ["src/main/resources"]
+    }
+}
+
+//jar manifest设置
+jar {
+	manifest {
+		attributes "Created-By": sourceCompatibility, "Implementation-Title": "walk-activiti", "Implementation-Version": version
+	}
+}
+
+//上传jar包
+uploadArchives {
+	repositories {
+        mavenDeployer {
+        	//指定项目部署到的中央库地址
+        	repository(url: "$repoHost/$repoReleasePath") {
+                authentication(userName: "$repoUserName", password: "$repoPassword")
+            }
+            //构造项目的Pom文件
+            pom.project {
+                name "walk-activiti"
+                packaging "jar"
+                description "walk-activiti"
+                groupId "org.walkframework"
+            	artifactId "walk-activiti"
+            	licenses {
+                    license {
+                        name "The Apache Software License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution "repo"
+                    }
+                }
+                developers {
+                    developer {
+                    	id "$developerId"
+                        name "$developerName"
+                    }
+                }
+            }
+        }
+    }
+}
+
+//上传源码
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from "src/main/java"
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+configurations {
+   all*.exclude group: 'org.springframework.security'
+}
+
+//依赖管理
+dependencies {
+	//加载maven库依赖。格式：groupId:artifactId:version
+	compile "org.walkframework:walk-base:${walk_version}"
+	
+	//工作流activiti
+	compile "org.activiti:activiti-spring-boot-starter-basic:${activiti_version}"
+	compile "org.activiti:activiti-modeler:${activiti_version}"
+	compile "org.activiti:activiti-diagram-rest:${activiti_version}"
+	
+	compileOnly "javax.servlet:servlet-api:${servlet_api_version}"
+}

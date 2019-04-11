@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ActProcessSQL">
+
+	<!-- 更新业务表流程状态 -->
+	<update id="writeBackBusinessTable" parameterType="org.walkframework.activiti.system.process.WriteBackEntity">
+		UPDATE ${businessTable} 
+		<set>
+			<if test="procDefKey != null and procDefKey != ''">
+				PROC_DEF_KEY = #{procDefKey},
+			</if>
+			<if test="procInstId != null and procInstId != ''">
+				PROC_INST_ID = #{procInstId},
+			</if>
+			<if test="procState != null and procState != ''">
+				PROC_STATE = #{procState},
+			</if>
+			<if test="procTaskDefKey != null and procTaskDefKey != ''">
+				PROC_TASK_DEF_KEY = #{procTaskDefKey},
+			</if>
+		</set>
+		WHERE ${businessIdPrimaryKey} = #{businessId}
+	</update>
+</mapper>
