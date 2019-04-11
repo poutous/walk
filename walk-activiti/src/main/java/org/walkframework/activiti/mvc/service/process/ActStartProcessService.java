@@ -66,7 +66,7 @@ public class ActStartProcessService extends BaseService {
 		String processDefinitionKey = startEntity.getProcDefKey();
 		String businessKey = ProcessConstants.PROCESS_WORKORDERTABLE + ":" + startEntity.getBusinessId();
 		Map<String, Object> variables = getVariables(startEntity);
-		ProcessInstance procIns = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+		final ProcessInstance procIns = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
 		
 		//3、获取流程实例ID
 		final String procInstId = procIns.getProcessInstanceId();
@@ -75,7 +75,7 @@ public class ActStartProcessService extends BaseService {
 		if(log.isInfoEnabled()){
 			log.info(msg);
 		}
-
+		
 		//4、回写业务表
 		actWriteBackService.writeBackBusinessTable(new WriteBackEntity(){{
 			setBusinessId(startEntity.getBusinessId());
@@ -83,6 +83,7 @@ public class ActStartProcessService extends BaseService {
 			setProcInstId(procInstId);
 			setProcState(actProcessConfigService.getCurrTaskNodeConfig(procInstId).getNodeStateValue());
 			setProcTaskDefKey(task.getTaskDefinitionKey());
+			setSubmitor(startEntity.getSubmitor());
 			setOperator(ProcessConstants.SYSTEM_AUTO_STAFF_ID);
 		}});
 		
@@ -106,10 +107,13 @@ public class ActStartProcessService extends BaseService {
 		if(StringUtils.isEmpty(startEntity.getBusinessId())) {
 			new ActivitiException("参数：businessId不能为空！");
 		}
+		if(StringUtils.isEmpty(startEntity.getSubmitor())) {
+			new ActivitiException("参数：submitor不能为空！");
+		}
 		
 		//校验是否已经启动流程了
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(startEntity.getBusinessId());
-		if(StringUtils.isNotEmpty(orderInfo.getProcInstId())){
+		if(orderInfo != null && StringUtils.isNotEmpty(orderInfo.getProcInstId())){
 			new ActivitiException("工单：" + startEntity.getBusinessId() + "已经启动流程了，不能重复启动！ ");
 		}
 	}
@@ -125,8 +129,7 @@ public class ActStartProcessService extends BaseService {
 		variables.put(ProcessConstants.PROCESS_BUSINESSID, startEntity.getBusinessId());
 		
 		//设置工单发起人
-		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(startEntity.getBusinessId());
-		variables.put(ProcessConstants.PROCESS_ASSIGN_SUBMITOR, orderInfo.getSubmitor());
+		variables.put(ProcessConstants.PROCESS_ASSIGN_SUBMITOR, startEntity.getSubmitor());
 		return variables;
 	}
 }

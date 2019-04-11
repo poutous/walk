@@ -1,6 +1,7 @@
 package org.walkframework.activiti.system.process;
 
 
+
 /**
  * 启动流程入参
  * 
@@ -18,6 +19,11 @@ public class StartEntity {
 	 */
 	private String businessId;
 	
+	/**	
+	 * 工单发起人
+	 */	
+	private String submitor;
+	
 	/**
 	 * 构造函数
 	 * 
@@ -28,9 +34,18 @@ public class StartEntity {
 	 * @param businessId
 	 *            业务ID
 	 */
-	public StartEntity(String procDefKey, String businessId) {
+	public StartEntity(String procDefKey, String businessId, String submitor) {
 		this.procDefKey = procDefKey;
 		this.businessId = businessId;
+		this.submitor = submitor;
+	}
+	
+	public String getSubmitor() {
+		return submitor;
+	}
+
+	public void setSubmitor(String submitor) {
+		this.submitor = submitor;
 	}
 
 	public String getProcDefKey() {

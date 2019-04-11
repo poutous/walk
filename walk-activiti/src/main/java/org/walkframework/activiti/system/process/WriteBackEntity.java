@@ -1,6 +1,7 @@
 package org.walkframework.activiti.system.process;
 
 
+
 /**
  * 回写业务表入参
  * @author shf675
@@ -41,6 +42,11 @@ public class WriteBackEntity {
 	 * 流程当前结点	
 	 */	
 	private String procTaskDefKey;
+	
+	/**	
+	 * 工单发起人
+	 */	
+	private String submitor;
 	
 	/**	
 	 * 操作人
@@ -109,5 +115,13 @@ public class WriteBackEntity {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
+	}
+	
+	public String getSubmitor() {
+		return submitor;
+	}
+
+	public void setSubmitor(String submitor) {
+		this.submitor = submitor;
 	}
 }

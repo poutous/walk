@@ -60,24 +60,13 @@ public class ActProcessConfigService extends BaseService {
 	HistoryService historyService;
 	
 	/**
-	 * 根据流程实例获取模型
-	 * 
-	 * @param procInstId
-	 * @return
-	 */
-	public Model getProcessModelDefinition(String procInstId) {
-		String deploymentId = runtimeService.createProcessInstanceQuery().processInstanceId(procInstId).singleResult().getDeploymentId();
-		return repositoryService.createModelQuery().deploymentId(deploymentId).singleResult();
-	}
-	
-	/**
 	 * 根据流程实例获取模型自定义JSON参数
 	 * 
 	 * @param procInstId
 	 * @return
 	 */
-	public JSONObject getCustomJson(String procInstId) {
-		Model modelData = getProcessModelDefinition(procInstId);
+	public JSONObject getCustomJson(String deploymentId) {
+		Model modelData = repositoryService.createModelQuery().deploymentId(deploymentId).singleResult();
 		if(StringUtils.isNotEmpty(modelData.getMetaInfo())){
 			JSONObject metaInfo = JSON.parseObject(modelData.getMetaInfo());
 			return metaInfo.getJSONObject("customJson");
