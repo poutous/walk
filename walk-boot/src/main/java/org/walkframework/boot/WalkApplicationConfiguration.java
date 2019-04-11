@@ -41,6 +41,7 @@ import org.walkframework.boot.config.ContextConfig;
 import org.walkframework.boot.config.ErrorPageProperties;
 import org.walkframework.boot.context.WalkConfigEmbeddedWebApplicationContext;
 import org.walkframework.boot.filter.BootJspFilter;
+import org.walkframework.boot.jsonp.JsonpCallbackFilter;
 import org.walkframework.boot.reader.BootXmlBeanDefinitionReader;
 import org.walkframework.boot.startup.WalkSpringApplication;
 
@@ -212,6 +213,11 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 			} catch (Exception e) {
 				log.warn(e.getMessage(), e);
 			}
+		}
+		// jsonp 过滤器
+		if ("true".equals(environment.getProperty("spring.boot.jsonpfilter.load", "false"))) {
+			FilterRegistration.Dynamic jsonpFilterRegistration = container.addFilter("JSONPFilter", new JsonpCallbackFilter());
+			jsonpFilterRegistration.addMappingForUrlPatterns(null, true, "/*");
 		}
 	}
 
