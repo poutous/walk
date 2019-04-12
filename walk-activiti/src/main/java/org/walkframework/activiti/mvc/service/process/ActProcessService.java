@@ -29,7 +29,7 @@ public interface ActProcessService {
 	public void doComplete(final CompleteEntity completeEntity);
 	
 	/**
-	 * 回退流程
+	 * 回退流程。默认回退到上一节点，也可指定回退到某节点backEntity.setBackTaskDefKey(backTaskDefKey)
 	 * 
 	 * @param backEntity
 	 * @return
