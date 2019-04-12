@@ -50,7 +50,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Short getShort(String name, Short defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Short.parseShort(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Short.parseShort(value);
 	}
 	
 	@Override
@@ -61,7 +64,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Integer getInteger(String name, Integer defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Integer.parseInt(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Integer.parseInt(value);
 	}
 	
 	@Override
@@ -72,7 +78,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Long getLong(String name, Long defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Long.parseLong(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Long.parseLong(value);
 	}
 	
 	@Override
@@ -83,7 +92,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Float getFloat(String name, Float defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Float.parseFloat(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Float.parseFloat(value);
 	}
 	
 	@Override
@@ -94,7 +106,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Double getDouble(String name, Double defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Double.parseDouble(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Double.parseDouble(value);
 	}
 	
 	@Override
@@ -105,7 +120,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public BigDecimal getBigDecimal(String name, BigDecimal defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : new BigDecimal(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return new BigDecimal(value);
 	}
 	
 	@Override
@@ -116,7 +134,10 @@ public class DataMap<K,V> extends HashMap<K,V> implements IData<K,V> {
 	@Override
 	public Boolean getBoolean(String name, Boolean defaultValue) {
 		String value = getString(name, "");
-		return "".equals(value) ? defaultValue : Boolean.valueOf(value);
+		if("".equals(value)){
+			return defaultValue;
+		}
+		return Boolean.valueOf(value);
 	}
 
 	@Override
