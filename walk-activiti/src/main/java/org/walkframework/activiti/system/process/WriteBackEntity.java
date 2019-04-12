@@ -48,6 +48,11 @@ public class WriteBackEntity {
 	 */	
 	private String submitor;
 	
+	/**
+	 * 业务描述。选填
+	 */
+	private String businessDesc;
+	
 	/**	
 	 * 操作人
 	 */	
@@ -123,5 +128,13 @@ public class WriteBackEntity {
 
 	public void setSubmitor(String submitor) {
 		this.submitor = submitor;
+	}
+	
+	public String getBusinessDesc() {
+		return businessDesc;
+	}
+
+	public void setBusinessDesc(String businessDesc) {
+		this.businessDesc = businessDesc;
 	}
 }

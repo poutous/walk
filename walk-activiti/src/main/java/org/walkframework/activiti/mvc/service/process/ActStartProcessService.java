@@ -85,6 +85,7 @@ public class ActStartProcessService extends BaseService {
 			setProcTaskDefKey(task.getTaskDefinitionKey());
 			setSubmitor(startEntity.getSubmitor());
 			setOperator(ProcessConstants.SYSTEM_AUTO_STAFF_ID);
+			setBusinessDesc(startEntity.getBusinessDesc());
 		}});
 		
 		//5、插入流程日志

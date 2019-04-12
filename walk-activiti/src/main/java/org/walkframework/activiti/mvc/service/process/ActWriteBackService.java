@@ -73,6 +73,7 @@ public class ActWriteBackService extends BaseService {
 				setProcTaskDefKey(writeBackEntity.getProcTaskDefKey());
 				setBusinessTable(writeBackEntity.getBusinessTable());
 				setBusinessPrimaryKey(writeBackEntity.getBusinessIdPrimaryKey());
+				setBusinessTable(writeBackEntity.getBusinessDesc());
 				setSubmitor(writeBackEntity.getSubmitor());
 				setSubmitTime(common.getCurrentTime());
 				setCreateTime(common.getCurrentTime());
