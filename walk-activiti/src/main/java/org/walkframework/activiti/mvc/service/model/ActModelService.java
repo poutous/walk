@@ -1,6 +1,7 @@
 package org.walkframework.activiti.mvc.service.model;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import org.walkframework.data.util.InParam;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -75,8 +78,8 @@ public class ActModelService extends BaseService {
 		if (StringUtils.isNotEmpty(inParam.getString("id"))) {
 			modelQuery.modelId(inParam.getString("id"));
 		}
-		if (StringUtils.isNotEmpty(inParam.getString("name"))) {
-			modelQuery.modelName(inParam.getString("name"));
+		if (StringUtils.isNotEmpty(inParam.getString(ModelDataJsonConstants.MODEL_NAME))) {
+			modelQuery.modelName(inParam.getString(ModelDataJsonConstants.MODEL_NAME));
 		}
 		if (StringUtils.isNotEmpty(inParam.getString("key"))) {
 			modelQuery.modelKey(inParam.getString("key"));
@@ -93,7 +96,7 @@ public class ActModelService extends BaseService {
 				m.put("categoryName", ParamTranslateUtil.getTranslateValue(model.getCategory(), "MODEL_CATEGORY"));
 				if(StringUtils.isNotEmpty(model.getMetaInfo())){
 					JSONObject json = JSON.parseObject(model.getMetaInfo());
-					m.put("description", json.getString("description"));
+					m.put(ModelDataJsonConstants.MODEL_DESCRIPTION, json.getString(ModelDataJsonConstants.MODEL_DESCRIPTION));
 					m.put(MODEL_CUSTOM_JSON, json.getString(MODEL_CUSTOM_JSON));
 					
 				}
@@ -116,7 +119,21 @@ public class ActModelService extends BaseService {
 	 * @throws UnsupportedEncodingException
 	 */
 	public Model doCreate(InParam<String, Object> inParam) throws UnsupportedEncodingException {
+		if (StringUtils.isEmpty(inParam.getString("key"))) {
+			throw new ActivitiException("模型标识不能为空！");
+		}
+		if (StringUtils.isEmpty(inParam.getString(ModelDataJsonConstants.MODEL_NAME))) {
+			throw new ActivitiException("模型名称不能为空！");
+		}
+		if (StringUtils.isEmpty(inParam.getString("category"))) {
+			throw new ActivitiException("流程分类不能为空！");
+		}
 
+		long cnt = repositoryService.createModelQuery().modelKey(inParam.getString("key")).count();
+		if(cnt > 0){
+			throw new ActivitiException("流程标识[" + inParam.getString("key") + "]已存在！");
+		}
+		
 		ObjectNode editorNode = objectMapper.createObjectNode();
 		editorNode.put("id", "canvas");
 		editorNode.put("resourceId", "canvas");
@@ -129,16 +146,16 @@ public class ActModelService extends BaseService {
 
 		Model modelData = repositoryService.newModel();
 		modelData.setKey(inParam.getString("key", ""));
-		modelData.setName(inParam.getString("name"));
+		modelData.setName(inParam.getString(ModelDataJsonConstants.MODEL_NAME));
 		modelData.setCategory(inParam.getString("category"));
 		modelData.setVersion(Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(modelData.getKey()).count() + 1)));
 		
 		ObjectNode modelObjectNode = objectMapper.createObjectNode();
 		modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, modelData.getName());
 		modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, modelData.getVersion());
-		modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, inParam.getString("description", ""));
-		if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON, ""))){
-			modelObjectNode.set(MODEL_CUSTOM_JSON, getCustomJson(inParam.getString(MODEL_CUSTOM_JSON, "")));
+		modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, inParam.getString(ModelDataJsonConstants.MODEL_DESCRIPTION, ""));
+		if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON))){
+			modelObjectNode.set(MODEL_CUSTOM_JSON, getCustomJson(inParam.getString(MODEL_CUSTOM_JSON)));
 		}
 		modelData.setMetaInfo(modelObjectNode.toString());
 
@@ -156,6 +173,7 @@ public class ActModelService extends BaseService {
 	public Model doCopy(String modelId) {
 		Model modelData = repositoryService.newModel();
 		Model oldModel = repositoryService.getModel(modelId);
+		
 		modelData.setName(oldModel.getName() + "-复制");
 		modelData.setKey(oldModel.getKey() + "-copy");
 		modelData.setCategory(oldModel.getCategory());
@@ -174,9 +192,8 @@ public class ActModelService extends BaseService {
 	public String doDeploy(String id) throws Exception {
 		String processDefinitionId = "";
 		Model modelData = repositoryService.getModel(id);
-		BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
 		JsonNode editorNode = objectMapper.readTree(repositoryService.getModelEditorSource(modelData.getId()));
-		BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(editorNode);
+		BpmnModel bpmnModel = new BpmnJsonConverter().convertToBpmnModel(editorNode);
 		byte[] bpmnBytes = null;
 		try {
 			bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnModel);
@@ -198,7 +215,7 @@ public class ActModelService extends BaseService {
 			processDefinitionId = processDefinition.getId();
 		}
 		if (list.size() == 0) {
-			common.error("部署失败，没有流程。");
+			new ActivitiException("部署失败，没有流程。");
 		}
 		
 		//保存部署ID
@@ -211,25 +228,52 @@ public class ActModelService extends BaseService {
 	 * 修改模型
 	 * 
 	 * @param inParam
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
-	public void doModify(InParam<String, Object> inParam) {
+	public void doModify(InParam<String, Object> inParam){
+		if (StringUtils.isEmpty(inParam.getString("key"))) {
+			throw new ActivitiException("模型标识不能为空！");
+		}
+		if (StringUtils.isEmpty(inParam.getString(ModelDataJsonConstants.MODEL_NAME))) {
+			throw new ActivitiException("模型名称不能为空！");
+		}
+		if (StringUtils.isEmpty(inParam.getString("category"))) {
+			throw new ActivitiException("流程分类不能为空！");
+		}
 		Model modelData = repositoryService.getModel(inParam.getString("id"));
-		if (StringUtils.isNotEmpty(inParam.getString("name"))) {
-			modelData.setName(inParam.getString("name"));
+		if(modelData == null) {
+			throw new ActivitiException("模型ID不存在[" + inParam.getString("id") + "]！");
 		}
-		if (StringUtils.isNotEmpty(inParam.getString("category"))) {
-			modelData.setCategory(inParam.getString("category"));
-		}
-		if (StringUtils.isNotEmpty(inParam.getString("description"))) {
-			String metaInfo = modelData.getMetaInfo();
-			if(StringUtils.isNotEmpty(metaInfo)){
-				JSONObject json = JSON.parseObject(metaInfo);
-				json.put("description", inParam.getString("description"));
-				if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON, ""))){
-					json.put(MODEL_CUSTOM_JSON, getCustomJson(inParam.getString(MODEL_CUSTOM_JSON, "")));
-				}
-				modelData.setMetaInfo(json.toJSONString());
+		
+		if(!inParam.getString("key").equals(modelData.getKey())){
+			long cnt = repositoryService.createModelQuery().modelKey(inParam.getString("key")).count();
+			if(cnt > 0){
+				throw new ActivitiException("流程标识[" + inParam.getString("key") + "]已存在！");
 			}
+		}
+		
+		modelData.setKey(inParam.getString("key"));
+		modelData.setName(inParam.getString(ModelDataJsonConstants.MODEL_NAME));
+		modelData.setCategory(inParam.getString("category"));
+		
+		try {
+			ObjectNode metaInfo = objectMapper.createObjectNode();
+			String metaInfoStr = modelData.getMetaInfo();
+			if(StringUtils.isNotEmpty(metaInfoStr)){
+				metaInfo = objectMapper.readValue(metaInfoStr, ObjectNode.class);
+			}
+			ObjectNode customJson = null;
+			if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON))){
+				customJson = getCustomJson(inParam.getString(MODEL_CUSTOM_JSON));
+			}
+			metaInfo.set(MODEL_CUSTOM_JSON, customJson);
+			
+			metaInfo.put(ModelDataJsonConstants.MODEL_DESCRIPTION, inParam.getString("description", ""));
+			modelData.setMetaInfo(metaInfo.toString());
+		} catch (Exception e) {
+			throw new ActivitiException(e.getMessage(), e);
 		}
 		repositoryService.saveModel(modelData);
 	}

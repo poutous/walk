@@ -40,7 +40,11 @@ function iframeResizeInterval(frame){
 
 //设置frame高度
 function setFrameHeight(frame){
-	$(frame).height(getFrameContentHeight(frame));
+	var height = $(frame).height();
+	var newHeight = getFrameContentHeight(frame);
+	if(height != newHeight){
+		$(frame).height(newHeight);
+	}
 }
 
 
@@ -51,7 +55,10 @@ function getFrameContentHeight(frame){
 	if(childrens.length > 1){
 		var totalHeight = 0;
 		childrens.each(function(){
-			totalHeight += $(this).height();
+			var $this = $(this);
+			if(!$this.hasClass("datetimepicker")){
+				totalHeight += $this.height();
+			}
 		});
 		return totalHeight;
 	} else {

@@ -14,6 +14,7 @@ import org.walkframework.activiti.mvc.service.process.ActWorkOrderService;
 import org.walkframework.activiti.system.constant.ProcessConstants;
 import org.walkframework.activiti.system.process.NodeConfigEntity;
 import org.walkframework.base.mvc.controller.base.BaseController;
+import org.walkframework.base.tools.spring.SpringPropertyHolder;
 
 /**
  * 流程管理Controller
@@ -41,7 +42,8 @@ public class ActProcessController extends BaseController {
 	 */
 	@RequestMapping(value = "deal/{orderId}")
 	public ModelAndView deal(@PathVariable String orderId) {
-		ModelAndView mv = new ModelAndView("act/process/ProcessFrame");
+		String page = SpringPropertyHolder.getContextProperty("custom.activiti.process.page", "act/process/ProcessFrame");
+		ModelAndView mv = new ModelAndView(page);
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(orderId);
 		if(orderInfo == null){
 			new ActivitiException("工单[" + orderId + "]不存在！");

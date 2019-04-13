@@ -63,8 +63,9 @@
 						<th data-options="field:'key',width:150">模型标识</th>
 						<th data-options="field:'name',width:200">模型名称</th>
 						<th data-options="field:'categoryName'">流程分类</th>
-						<th data-options="field:'version'">版本号</th>
 						<th data-options="field:'description',tip:true,width:300">模型描述</th>
+						<th data-options="field:'version'">版本号</th>
+						<th data-options="field:'deploymentId'">部署ID</th>
 						<th data-options="field:'createTime',width:150">创建时间</th>
 						<th data-options="field:'lastUpdateTime',width:150">最后更新时间</th>
 					</tr>
@@ -143,7 +144,6 @@ function operRecord(val, row) {
 //显示模型新建窗口
 function showModelPopWindow(){
 	$('#newModelForm').get(0).reset();
-	$('#newModelForm').find("#key").removeAttr("readonly").removeAttr("disabled");
 	
 	$("#popWindow").window({
 		title : '新建模型',
@@ -199,7 +199,7 @@ function modify(row){
 	
 	var form = $('#newModelForm');
 	form.find("#id").val(row.id);
-	form.find("#key").val(row.key).attr("readonly", "readonly").attr("disabled", "disabled");
+	form.find("#key").val(row.key);
 	form.find("#name").val(row.name);
 	form.find("#category").val(row.category);
 	form.find("#description").val(row.description);

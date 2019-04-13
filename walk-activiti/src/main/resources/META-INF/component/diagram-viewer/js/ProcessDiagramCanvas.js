@@ -29,35 +29,61 @@ var MARKER_WIDTH = 12;
 var ANNOTATION_TEXT_PADDING = 7;
 
 // Colors
-var TASK_COLOR = Color.OldLace; // original: Color.get(255, 255, 204);
-var TASK_STROKE_COLOR = Color.black; /*Color.SlateGrey; */
-//var EXPANDED_SUBPROCESS_ATTRS = Color.black; /*Color.SlateGrey; */
-var BOUNDARY_EVENT_COLOR = Color.white;
-var CONDITIONAL_INDICATOR_COLOR = Color.get(255, 255, 255);
-var HIGHLIGHT_COLOR = Color.Firebrick1;
-//var SEQUENCEFLOW_COLOR = Color.DimGrey;
-var SEQUENCEFLOW_COLOR = Color.black;
+//var TASK_COLOR = Color.OldLace; // original: Color.get(255, 255, 204);
+//var TASK_STROKE_COLOR = Color.black; /*Color.SlateGrey; */
+////var EXPANDED_SUBPROCESS_ATTRS = Color.black; /*Color.SlateGrey; */
+//var BOUNDARY_EVENT_COLOR = Color.white;
+//var CONDITIONAL_INDICATOR_COLOR = Color.get(255, 255, 255);
+//var HIGHLIGHT_COLOR = Color.Firebrick1;
+////var SEQUENCEFLOW_COLOR = Color.DimGrey;
+//var SEQUENCEFLOW_COLOR = Color.black;
+//
+//var CATCHING_EVENT_COLOR = Color.black; /* Color.SlateGrey; */
+//var START_EVENT_COLOR = Color.get(251,251,251);
+//var START_EVENT_STROKE_COLOR = Color.black; /* Color.SlateGrey; */
+//var END_EVENT_COLOR = Color.get(251,251,251);
+////var END_EVENT_STROKE_COLOR = Color.black;
+//var NONE_END_EVENT_COLOR = Color.Firebrick4;
+//var NONE_END_EVENT_STROKE_COLOR = Color.Firebrick4;
+//var ERROR_END_EVENT_COLOR = Color.Firebrick;
+//var ERROR_END_EVENT_STROKE_COLOR = Color.Firebrick;
+////var LABEL_COLOR = Color.get(112, 146, 190);
+//var LABEL_COLOR = Color.get(72, 106, 150);
 
-var CATCHING_EVENT_COLOR = Color.black; /* Color.SlateGrey; */
-var START_EVENT_COLOR = Color.get(251,251,251);
-var START_EVENT_STROKE_COLOR = Color.black; /* Color.SlateGrey; */
-var END_EVENT_COLOR = Color.get(251,251,251);
-//var END_EVENT_STROKE_COLOR = Color.black;
-var NONE_END_EVENT_COLOR = Color.Firebrick4;
-var NONE_END_EVENT_STROKE_COLOR = Color.Firebrick4;
-var ERROR_END_EVENT_COLOR = Color.Firebrick;
-var ERROR_END_EVENT_STROKE_COLOR = Color.Firebrick;
-//var LABEL_COLOR = Color.get(112, 146, 190);
-var LABEL_COLOR = Color.get(72, 106, 150);
+
+var TASK_COLOR = Color.get(255,255,255); // 节点颜色;
+var TASK_FONT_COLOR = Color.get(18,150,219); // 节点文字颜色
+var TASK_STROKE_COLOR = Color.get(18,150,219); //节点边框颜色
+var BOUNDARY_EVENT_COLOR = Color.white;//未知
+var CONDITIONAL_INDICATOR_COLOR = Color.get(255, 255, 255);//未知
+var HIGHLIGHT_COLOR = Color.get(26,250,41);//高亮
+var SEQUENCEFLOW_COLOR = Color.get(18,150,219);//网关线条颜色
+var SEQUENCEFLOW_PAINT_COLOR = Color.get(18,150,219);//网关内容颜色
+var SEQUENCEFLOW_STROKE_COLOR = Color.get(18,150,219);//网关边框颜色
+var SEQUENCEFLOW_FILL_COLOR = Color.white;//网关内容颜色
+var LABEL_COLOR = Color.get(18,150,219);//网关文字颜色
+
+var CATCHING_EVENT_COLOR = Color.black; //未知
+var START_EVENT_COLOR = Color.get(251,251,251);//开始节点颜色
+var START_EVENT_STROKE_COLOR = Color.get(18,150,219); //开始节点边框
+var END_EVENT_COLOR = Color.get(251,251,251);//未知
+var END_EVENT_STROKE_COLOR = Color.black;//未知
+
+var NONE_END_EVENT_COLOR = Color.get(18,150,219);//结束节点边框
+var NONE_END_EVENT_STROKE_COLOR = Color.get(18,150,219);//结束节点边框
+var ERROR_END_EVENT_COLOR = Color.Firebrick;//未知
+var ERROR_END_EVENT_STROKE_COLOR = Color.Firebrick;//未知
+
 
 // Fonts
-var NORMAL_FONT = {font: "10px Arial", opacity: 1, fill: Color.black};
-var LABEL_FONT = {font: "11px Arial", "font-style":"italic", opacity: 1, "fill": LABEL_COLOR};
-var LABEL_FONT_SMOOTH = {font: "10px Arial", "font-style":"italic", opacity: 1, "fill": LABEL_COLOR, stroke: LABEL_COLOR, "stroke-width":.4};
-var TASK_FONT = {font: "11px Arial", opacity: 1, fill: Color.black};
-var TASK_FONT_SMOOTH = {font: "11px Arial", opacity: 1, fill: Color.black, stroke: LABEL_COLOR, "stroke-width":.4};
-var POOL_LANE_FONT = {font: "11px Arial", opacity: 1, fill: Color.black};
-var EXPANDED_SUBPROCESS_FONT = {font: "11px Arial", opacity: 1, fill: Color.black};
+var FONT_SIZE = "15px Arial";//文字大小
+var NORMAL_FONT = {font: FONT_SIZE, opacity: 1, fill: Color.black};
+var LABEL_FONT = {font: FONT_SIZE, "font-style":"italic", opacity: 1, "fill": LABEL_COLOR};
+var LABEL_FONT_SMOOTH = {font: FONT_SIZE, "font-style":"italic", opacity: 1, "fill": LABEL_COLOR, stroke: LABEL_COLOR, "stroke-width":.4};
+var TASK_FONT = {font: FONT_SIZE, opacity: 1, fill: TASK_FONT_COLOR};
+var TASK_FONT_SMOOTH = {font: FONT_SIZE, opacity: 1, fill: Color.black, stroke: LABEL_COLOR, "stroke-width":.4};
+var POOL_LANE_FONT = {font: FONT_SIZE, opacity: 1, fill: Color.black};
+var EXPANDED_SUBPROCESS_FONT = {font: FONT_SIZE, opacity: 1, fill: Color.black};
 
 // Strokes
 var NORMAL_STROKE = 1;
@@ -78,7 +104,7 @@ var EXPANDED_SUBPROCESS_CORNER_ROUND = 10;
 // icons
 var ICON_SIZE = 16;
 var ICON_PADDING = 4;
-var USERTASK_IMAGE = 		"images/deployer/user.png";
+var USERTASK_IMAGE = 		"images/deployer/user_new.png";
 var SCRIPTTASK_IMAGE = 		"images/deployer/script.png";
 var SERVICETASK_IMAGE = 	"images/deployer/service.png";
 var RECEIVETASK_IMAGE = 	"images/deployer/receive.png";
@@ -166,7 +192,7 @@ ProcessDiagramCanvas.prototype = {
 		this.g.clear();
 	
 		//this.setPaint(Color.DimGrey);
-		this.setPaint(Color.black);
+		this.setPaint(SEQUENCEFLOW_PAINT_COLOR);
 		//this.setPaint(Color.white);
 		this.setStroke(NORMAL_STROKE);
 		
@@ -1697,8 +1723,8 @@ ProcessDiagramCanvas.prototype = {
 		this.drawShaddow(rhombus);
 		
 		rhombus.attr("stroke-width", this.strokeWidth);
-		rhombus.attr("stroke", Color.SlateGrey);
-		rhombus.attr({fill: Color.white});
+		rhombus.attr("stroke", SEQUENCEFLOW_STROKE_COLOR);
+		rhombus.attr({fill: SEQUENCEFLOW_FILL_COLOR});
 		
 		this.setContextToElement(rhombus);
 		
