@@ -52,7 +52,7 @@ public class ActWorkOrderService extends BaseService {
 	 */
 	public String insertWorkOrder(ActUdWorkorder orderInfo) {
 		if(StringUtils.isNotEmpty(orderInfo.getOrderId())){
-			new ActivitiException("orderId不允许设置值，orderId将在调用此方法后返回！");
+			throw new ActivitiException("orderId不允许设置值，orderId将在调用此方法后返回！");
 		}
 		String orderId = dao.getSequenceL16(ProcessConstants.SEQ_ORDER_ID);
 		orderInfo.setOrderId(orderId);

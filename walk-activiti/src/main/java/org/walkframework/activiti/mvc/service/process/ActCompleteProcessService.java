@@ -65,7 +65,7 @@ public class ActCompleteProcessService extends BaseService {
 		//2、获取当前任务
 		final Task currTask = taskService.createTaskQuery().processInstanceId(completeEntity.getProcInstId()).singleResult();
 		if(currTask == null){
-			new ActivitiException("流程实例[" + completeEntity.getProcInstId() + "]不存在或流程已经结束！");
+			throw new ActivitiException("流程实例[" + completeEntity.getProcInstId() + "]不存在或流程已经结束！");
 		}
 		//获取当前任务业务表信息
 		Map<String, Object> currTaskVars = taskService.getVariables(currTask.getId());
@@ -97,7 +97,6 @@ public class ActCompleteProcessService extends BaseService {
 				}
 			}
 			
-			
 			//回写业务表
 			actWriteBackService.writeBackBusinessTable(new WriteBackEntity(){{
 				setBusinessId(businessId);
@@ -117,6 +116,7 @@ public class ActCompleteProcessService extends BaseService {
 			
 			//插入下一任务流程日志
 			actProcessLogService.doInsertProcessLog(new ProcessLog(){{
+				setOrderId(businessId);
 				setProcInstId(completeEntity.getProcInstId());
 				setRemark(StringUtils.isNotEmpty(completeEntity.getCompleteRemark()) ? completeEntity.getCompleteRemark() : "进入" + nextTask.getName() + "任务节点");
 			}});
@@ -149,10 +149,10 @@ public class ActCompleteProcessService extends BaseService {
 	 */
 	private void preCheck(CompleteEntity completeEntity){
 		if(StringUtils.isEmpty(completeEntity.getProcInstId())) {
-			new ActivitiException("参数：procInstId不能为空！");
+			throw new ActivitiException("参数：procInstId不能为空！");
 		}
 		if(StringUtils.isEmpty(completeEntity.getCompleteUserId())) {
-			new ActivitiException("参数：userId不能为空！");
+			throw new ActivitiException("参数：userId不能为空！");
 		}
 	}
 	
@@ -172,7 +172,7 @@ public class ActCompleteProcessService extends BaseService {
 		//设置工单发起人
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderByProcInstId(completeEntity.getProcInstId());
 		if(orderInfo == null){
-			new ActivitiException("不存在的流程实例：" + completeEntity.getProcInstId());
+			throw new ActivitiException("不存在的流程实例：" + completeEntity.getProcInstId());
 		}
 		variables.put(ProcessConstants.PROCESS_ASSIGN_SUBMITOR, orderInfo.getSubmitor());
 		return variables;

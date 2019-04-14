@@ -74,6 +74,7 @@ public class ActProcessLogService extends BaseService {
 		
 		String logId = dao.getSequenceL20(ProcessConstants.SEQ_LOG_ID);
 		actUdProcessLog.setLogId(logId);
+		actUdProcessLog.setOrderId(processLog.getOrderId());
 		actUdProcessLog.setCreateTime(common.getCurrentTime());
 		actUdProcessLog.setCreateStaffId(createStaffId);
 		actUdProcessLog.setProcDefName(processDefinition.getName());

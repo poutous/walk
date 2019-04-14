@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.walkframework.activiti.mvc.entity.ActUdWorkorder;
 import org.walkframework.activiti.system.constant.ProcessConstants;
+import org.walkframework.activiti.system.process.NodeConfigEntity;
 import org.walkframework.activiti.system.process.ProcessLog;
 import org.walkframework.activiti.system.process.StartEntity;
 import org.walkframework.activiti.system.process.WriteBackEntity;
@@ -77,11 +78,14 @@ public class ActStartProcessService extends BaseService {
 		}
 		
 		//4、回写业务表
+		final NodeConfigEntity config = actProcessConfigService.getCurrTaskNodeConfig(procInstId);
 		actWriteBackService.writeBackBusinessTable(new WriteBackEntity(){{
 			setBusinessId(startEntity.getBusinessId());
+			setBusinessTable(config.getBusinessTable());
+			setBusinessIdPrimaryKey(config.getBusinessIdPrimaryKey());
 			setProcDefKey(startEntity.getProcDefKey());
 			setProcInstId(procInstId);
-			setProcState(actProcessConfigService.getCurrTaskNodeConfig(procInstId).getNodeStateValue());
+			setProcState(config.getNodeStateValue());
 			setProcTaskDefKey(task.getTaskDefinitionKey());
 			setSubmitor(startEntity.getSubmitor());
 			setOperator(ProcessConstants.SYSTEM_AUTO_STAFF_ID);
@@ -90,6 +94,7 @@ public class ActStartProcessService extends BaseService {
 		
 		//5、插入流程日志
 		actProcessLogService.doInsertProcessLog(new ProcessLog(){{
+			setOrderId(startEntity.getBusinessId());
 			setProcInstId(procInstId);
 			setRemark(msg);
 		}});
@@ -103,19 +108,19 @@ public class ActStartProcessService extends BaseService {
 	 */
 	private void preCheck(final StartEntity startEntity){
 		if(StringUtils.isEmpty(startEntity.getProcDefKey())) {
-			new ActivitiException("参数：procDefKey不能为空！");
+			throw new ActivitiException("参数：procDefKey不能为空！");
 		}
 		if(StringUtils.isEmpty(startEntity.getBusinessId())) {
-			new ActivitiException("参数：businessId不能为空！");
+			throw new ActivitiException("参数：businessId不能为空！");
 		}
 		if(StringUtils.isEmpty(startEntity.getSubmitor())) {
-			new ActivitiException("参数：submitor不能为空！");
+			throw new ActivitiException("参数：submitor不能为空！");
 		}
 		
 		//校验是否已经启动流程了
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(startEntity.getBusinessId());
 		if(orderInfo != null && StringUtils.isNotEmpty(orderInfo.getProcInstId())){
-			new ActivitiException("工单：" + startEntity.getBusinessId() + "已经启动流程了，不能重复启动！ ");
+			throw new ActivitiException("工单：" + startEntity.getBusinessId() + "已经启动流程了，不能重复启动！ ");
 		}
 	}
 	

@@ -14,6 +14,8 @@ public interface ProcessConstants {
 	String SYSTEM_AUTO_STAFF_ID = "systemauto";  //系统自动工号
 	
 	String PROCESS_BUSINESSID = "businessId";//业务表ID
+	String PROCESS_BUSINESSTABLE_NAME = "businessTable";//业务表名称
+	String PROCESS_BUSINESS_PRIMARYKEY_NAME = "businessIdPrimaryKey";//业务表主键名称
 	String PROCESS_WORKORDERTABLE = "ACT_UD_WORKORDER";//工作流工单表
 	
 	/**

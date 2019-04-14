@@ -17,7 +17,6 @@ import org.walkframework.base.mvc.dao.BaseSqlSessionDao;
 import org.walkframework.base.mvc.service.base.BaseService;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 /**
  * 回写业务表服务
@@ -57,14 +56,7 @@ public class ActWriteBackService extends BaseService {
 		}});
 		int row = 0;
 		if(actUdWorkorder == null){
-			
-			//从模型中获取业务表及主键名称
-			String deploymentId = runtimeService.createProcessInstanceQuery().processInstanceId(writeBackEntity.getProcInstId()).singleResult().getDeploymentId();
-			JSONObject customJson = actProcessConfigService.getCustomJson(deploymentId);
-			writeBackEntity.setBusinessTable(customJson.getString("businessTable"));
-			writeBackEntity.setBusinessIdPrimaryKey(customJson.getString("businessIdPrimaryKey"));
-			
-			//插入工作流工单表
+			//插入工作流工单表。启动工作流时做插入操作
 			row = dao.insert(new ActUdWorkorder(){{
 				setOrderId(writeBackEntity.getBusinessId());
 				setProcInstId(writeBackEntity.getProcInstId());

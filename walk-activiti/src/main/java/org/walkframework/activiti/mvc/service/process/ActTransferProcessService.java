@@ -47,7 +47,7 @@ public class ActTransferProcessService extends BaseService {
 		// 2、获取当前任务
 		final Task currTask = taskService.createTaskQuery().processInstanceId(transferEntity.getProcInstId()).singleResult();
 		if (currTask == null) {
-			new ActivitiException("流程实例[" + transferEntity.getProcInstId() + "]不存在或流程已经结束！");
+			throw new ActivitiException("流程实例[" + transferEntity.getProcInstId() + "]不存在或流程已经结束！");
 		}
 
 		// 3、从处理候选人当中删除自己
@@ -89,15 +89,15 @@ public class ActTransferProcessService extends BaseService {
 	 */
 	private void preCheck(TransferEntity transferEntity) {
 		if (StringUtils.isEmpty(transferEntity.getProcInstId())) {
-			new ActivitiException("参数：procInstId不能为空！");
+			throw new ActivitiException("参数：procInstId不能为空！");
 		}
 		if (StringUtils.isEmpty(transferEntity.getCurrUserId())) {
-			new ActivitiException("参数：currUserId不能为空！");
+			throw new ActivitiException("参数：currUserId不能为空！");
 		}
 		boolean userIdsEmpty = transferEntity.getTransferUserIds() == null || transferEntity.getTransferUserIds().length == 0;
 		boolean groupsEmpty = transferEntity.getTransferGroups() == null || transferEntity.getTransferGroups().length == 0;
 		if (userIdsEmpty && groupsEmpty) {
-			new ActivitiException("参数：transferUserIds和transferGroups不能都为空！");
+			throw new ActivitiException("参数：transferUserIds和transferGroups不能都为空！");
 		}
 	}
 }

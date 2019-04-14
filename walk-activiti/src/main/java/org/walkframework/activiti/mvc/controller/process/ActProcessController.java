@@ -46,13 +46,13 @@ public class ActProcessController extends BaseController {
 		ModelAndView mv = new ModelAndView(page);
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(orderId);
 		if(orderInfo == null){
-			new ActivitiException("工单[" + orderId + "]不存在！");
+			throw new ActivitiException("工单[" + orderId + "]不存在！");
 		}
 		if(StringUtils.isEmpty(orderInfo.getProcInstId())){
-			new ActivitiException("工单[" + orderId + "]未启动流程，不能处理！");
+			throw new ActivitiException("工单[" + orderId + "]未启动流程，不能处理！");
 		}
 		if(ProcessConstants.END_NODE_STATE.equals(orderInfo.getProcState())){
-			new ActivitiException("工单[" + orderId + "]已结束流程，不能处理！");
+			throw new ActivitiException("工单[" + orderId + "]已结束流程，不能处理！");
 		}
 		
 		NodeConfigEntity nodeInfo = actProcessConfigService.getCurrTaskNodeConfig(orderInfo.getProcInstId());

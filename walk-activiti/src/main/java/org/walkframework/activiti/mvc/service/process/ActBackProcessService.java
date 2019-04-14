@@ -85,7 +85,7 @@ public class ActBackProcessService extends BaseService {
 		//2、获取当前任务
 		final Task currTask = taskService.createTaskQuery().processInstanceId(backEntity.getProcInstId()).singleResult();
 		if(currTask == null){
-			new ActivitiException("获取当前任务失败，可能原因为流程已结束，流程实例：" + backEntity.getProcInstId());
+			throw new ActivitiException("获取当前任务失败，可能原因为流程已结束，流程实例：" + backEntity.getProcInstId());
 		}
 		
 		//3、获取回退目标任务节点
@@ -95,7 +95,7 @@ public class ActBackProcessService extends BaseService {
 			backTaskDefKey = findPrevTaskDefinitionKey(backEntity.getProcInstId());
 		}
 		if(StringUtils.isEmpty(backTaskDefKey)){
-			new ActivitiException("未获取到回退目标任务节点，流程实例：" + backEntity.getProcInstId());
+			throw new ActivitiException("未获取到回退目标任务节点，流程实例：" + backEntity.getProcInstId());
 		}
 		
 		//4、流程回退到目标任务节点
@@ -127,6 +127,7 @@ public class ActBackProcessService extends BaseService {
 		
 		//8、插入下一任务流程日志
 		actProcessLogService.doInsertProcessLog(new ProcessLog(){{
+			setOrderId(businessId);
 			setProcInstId(backEntity.getProcInstId());
 			setRemark(StringUtils.isNotEmpty(backEntity.getBackRemark()) ? backEntity.getBackRemark() : backTask.getName());
 		}});
@@ -140,10 +141,10 @@ public class ActBackProcessService extends BaseService {
 	 */
 	private void preCheck(BackEntity backEntity){
 		if(StringUtils.isEmpty(backEntity.getProcInstId())) {
-			new ActivitiException("参数：procInstId不能为空！");
+			throw new ActivitiException("参数：procInstId不能为空！");
 		}
 		if(StringUtils.isEmpty(backEntity.getBackUserId())) {
-			new ActivitiException("参数：backUserId不能为空！");
+			throw new ActivitiException("参数：backUserId不能为空！");
 		}
 	}
 	

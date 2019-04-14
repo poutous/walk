@@ -106,13 +106,7 @@
 				<tr>
 					<td class="字段">模型描述: </td>
 					<td align="center">
-						<input id="description" name="description" type="text" class="w260"/>
-					</td>
-				</tr>
-				<tr>
-					<td class="字段">自定义JSON参数: </td>
-					<td align="center">
-						<textarea id="customJson" name="customJson" type="text" class="w260" style="height:80px"></textarea>
+						<textarea id="description" name="description" type="text" class="w260" style="height:80px"></textarea>
 					</td>
 				</tr>
 			</table>
@@ -203,7 +197,6 @@ function modify(row){
 	form.find("#name").val(row.name);
 	form.find("#category").val(row.category);
 	form.find("#description").val(row.description);
-	form.find("#customJson").val(row.customJson);
 	
 	$("#sureBtn").unbind("click").bind("click", function(){
 		$.walk.confirm("确认修改吗？", function(ok){

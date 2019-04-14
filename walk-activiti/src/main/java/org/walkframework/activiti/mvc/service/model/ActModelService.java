@@ -49,8 +49,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Service("actModelService")
 public class ActModelService extends BaseService {
 	
-	private static final String MODEL_CUSTOM_JSON = "customJson";
-
 	@Autowired
 	RuntimeService runtimeService;
 
@@ -97,7 +95,6 @@ public class ActModelService extends BaseService {
 				if(StringUtils.isNotEmpty(model.getMetaInfo())){
 					JSONObject json = JSON.parseObject(model.getMetaInfo());
 					m.put(ModelDataJsonConstants.MODEL_DESCRIPTION, json.getString(ModelDataJsonConstants.MODEL_DESCRIPTION));
-					m.put(MODEL_CUSTOM_JSON, json.getString(MODEL_CUSTOM_JSON));
 					
 				}
 				retList.add(m);
@@ -139,6 +136,9 @@ public class ActModelService extends BaseService {
 		editorNode.put("resourceId", "canvas");
 		ObjectNode properties = objectMapper.createObjectNode();
 		properties.put("process_author", "walk");
+		properties.put("process_id", inParam.getString("key"));
+		properties.put("name", inParam.getString(ModelDataJsonConstants.MODEL_NAME));
+		properties.put("documentation", inParam.getString(ModelDataJsonConstants.MODEL_DESCRIPTION));
 		editorNode.set("properties", properties);
 		ObjectNode stencilset = objectMapper.createObjectNode();
 		stencilset.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
@@ -154,9 +154,6 @@ public class ActModelService extends BaseService {
 		modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, modelData.getName());
 		modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, modelData.getVersion());
 		modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, inParam.getString(ModelDataJsonConstants.MODEL_DESCRIPTION, ""));
-		if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON))){
-			modelObjectNode.set(MODEL_CUSTOM_JSON, getCustomJson(inParam.getString(MODEL_CUSTOM_JSON)));
-		}
 		modelData.setMetaInfo(modelObjectNode.toString());
 
 		repositoryService.saveModel(modelData);
@@ -215,7 +212,7 @@ public class ActModelService extends BaseService {
 			processDefinitionId = processDefinition.getId();
 		}
 		if (list.size() == 0) {
-			new ActivitiException("部署失败，没有流程。");
+			throw new ActivitiException("部署失败，没有流程。");
 		}
 		
 		//保存部署ID
@@ -264,12 +261,6 @@ public class ActModelService extends BaseService {
 			if(StringUtils.isNotEmpty(metaInfoStr)){
 				metaInfo = objectMapper.readValue(metaInfoStr, ObjectNode.class);
 			}
-			ObjectNode customJson = null;
-			if(StringUtils.isNotEmpty(inParam.getString(MODEL_CUSTOM_JSON))){
-				customJson = getCustomJson(inParam.getString(MODEL_CUSTOM_JSON));
-			}
-			metaInfo.set(MODEL_CUSTOM_JSON, customJson);
-			
 			metaInfo.put(ModelDataJsonConstants.MODEL_DESCRIPTION, inParam.getString("description", ""));
 			modelData.setMetaInfo(metaInfo.toString());
 		} catch (Exception e) {
@@ -331,23 +322,5 @@ public class ActModelService extends BaseService {
 		}
 
 		return processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator().generateDiagram(model, "png", currentActs, new ArrayList<String>(), fontName, fontName, fontName, null, 1.0);
-	}
-	
-	/**
-	 * 获取自定义json参数
-	 * 
-	 * @param customJson
-	 * @return
-	 */
-	private ObjectNode getCustomJson(String customJson){
-		ObjectNode node = null;
-		if(StringUtils.isNotEmpty(customJson)){
-			try {
-				node = objectMapper.readValue(customJson, ObjectNode.class);
-			} catch (Exception e) {
-				throw new ActivitiException(MODEL_CUSTOM_JSON + "需配置成json格式！");
-			}
-		}
-		return node;
 	}
 }
