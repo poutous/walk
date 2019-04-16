@@ -30,10 +30,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.walkframework.base.system.exception.MultipleTranslatorException;
-import org.walkframework.base.system.translate.StaticTranslator;
+import org.walkframework.base.system.translate.SqlTranslator;
+import org.walkframework.base.system.translate.EntityTranslator;
 import org.walkframework.base.system.translate.TableTranslator;
 import org.walkframework.base.system.translate.Translators;
 import org.walkframework.base.tools.utils.PathClassLoader;
+import org.walkframework.data.translate.SqlTranslate;
+import org.walkframework.data.translate.EntityTranslate;
 import org.walkframework.data.translate.StaticTranslate;
 import org.walkframework.data.translate.TableTranslate;
 import org.walkframework.data.translate.Translate;
@@ -92,8 +95,10 @@ public class TranslatorEnhancer implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// 添加默认
-		translatorsInstance.putTranslator(StaticTranslate.class.getName(), new StaticTranslator());
+		translatorsInstance.putTranslator(StaticTranslate.class.getName(), new EntityTranslator());
 		translatorsInstance.putTranslator(TableTranslate.class.getName(), new TableTranslator());
+		translatorsInstance.putTranslator(EntityTranslate.class.getName(), new EntityTranslator());
+		translatorsInstance.putTranslator(SqlTranslate.class.getName(), new SqlTranslator());
 		// Translate特殊，初始化一个空处理器
 		translatorsInstance.putTranslator(Translate.class.getName(), Translators.EMPTY_TRANSLATOR);
 

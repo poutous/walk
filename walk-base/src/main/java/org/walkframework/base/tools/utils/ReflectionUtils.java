@@ -58,13 +58,18 @@ public class ReflectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object invoke(Object target, String methodName, Object[] params, Class<?>[] paramsClass) throws Exception {
+	public static Object invoke(Object target, String methodName, Object[] params, Class<?>[] paramsClass){
 		if ((target == null) || (methodName == null) || ("".equals(methodName))) {
 			return null;
 		}
 		Method method = getDeclaredMethod(target, methodName, paramsClass);
 		method.setAccessible(true);
-		Object object = method.invoke(target, params);
+		Object object = null;
+		try {
+			object = method.invoke(target, params);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		return object;
 	}
 	
@@ -125,5 +130,18 @@ public class ReflectionUtils {
 		return str;
 	}
 
+	/**
+	 * 获取实例
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static Object newInstance(Class<?> clazz){
+		try {
+			return clazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 }

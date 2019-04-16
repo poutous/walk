@@ -11,6 +11,9 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
+import org.apache.ibatis.scripting.xmltags.StaticTextSqlNode;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -21,6 +24,7 @@ import org.walkframework.batis.bean.Batch;
 import org.walkframework.batis.bean.BatchEachHandler;
 import org.walkframework.batis.bean.CacheBoundSql;
 import org.walkframework.batis.bean.EntityBoundSql;
+import org.walkframework.batis.bean.WrapParameter;
 import org.walkframework.batis.constants.EntitySQL;
 import org.walkframework.batis.dialect.Dialect;
 import org.walkframework.batis.exception.EmptyBatchListException;
@@ -385,7 +389,7 @@ public class SqlSessionDao extends AbstractDao {
 			BoundSqlHolder.clear();
 		}
 	}
-
+	
 	/** *****************************************分割线************************************************************************** */
 	/**
 	 * 分页查询
@@ -486,7 +490,7 @@ public class SqlSessionDao extends AbstractDao {
 	}
 
 	/**
-	 * 分页查询
+	 * list查询
 	 * 
 	 * @param <E>
 	 * @param statementId
@@ -501,7 +505,15 @@ public class SqlSessionDao extends AbstractDao {
 			MappedStatement ms = this.sqlSession.getConfiguration().getMappedStatement(statementId);
 			// 修改原始resultMaps
 			if (EntitySQL.SELECT.equals(statementId) && param != null) {
-				ResultMapUtil.resolveResultMapByEntity(ms, EntityHelper.getEntityClazz((Entity) param));
+				Class<? extends BaseEntity> entityType = null;
+				if(param instanceof WrapParameter){
+					WrapParameter wp = (WrapParameter)param;
+					entityType = wp.getEntityType();
+					param = wp.getParameterObject();
+				} else {
+					entityType = EntityHelper.getEntityClazz((Entity) param);
+				}
+				ResultMapUtil.resolveResultMapByEntity(ms, entityType);
 			} else {
 				ResultMapUtil.resolveResultMap(ms);
 			}
@@ -512,6 +524,33 @@ public class SqlSessionDao extends AbstractDao {
 			ResultMapHolder.clear();
 		}
 		return list == null ? Collections.EMPTY_LIST : list;
+	}
+	
+	/**
+	 * 通过sql查询
+	 * 
+	 * protected：限制业务侧直接使用sql方式进行查询
+	 * 
+	 * @param <E>
+	 * @param sql
+	 * @param wrapParameter
+	 * @param pagination
+	 * @param cacheSeconds
+	 * @return
+	 */
+	protected <E> PageData<E> selectListBySql(String sql, WrapParameter wrapParameter, Pagination pagination, Integer cacheSeconds) {
+		Configuration configuration = getSqlSession().getConfiguration();
+		DynamicSqlSource sqlSource = new DynamicSqlSource(getSqlSession().getConfiguration(), new StaticTextSqlNode(sql.toString()));
+		BoundSql boundSql = sqlSource.getBoundSql(wrapParameter.getParameterObject());
+		
+		String statementId = EntitySQL.SELECT;
+		MappedStatement ms = configuration.getMappedStatement(statementId);
+		BoundSql originalBoundSql = ms.getBoundSql(wrapParameter.getParameterObject());
+		MetaObject originalBoundMeta = SystemMetaObject.forObject(originalBoundSql);
+		originalBoundMeta.setValue("sql", boundSql.getSql());
+		originalBoundMeta.setValue("parameterMappings", boundSql.getParameterMappings());
+		
+		return this.selectList(statementId, originalBoundSql, wrapParameter, pagination, cacheSeconds);
 	}
 
 	/**
@@ -642,7 +681,7 @@ public class SqlSessionDao extends AbstractDao {
 		}
 		return rows;
 	}
-
+	
 	/**
 	 * 获取BoundSql
 	 * 
@@ -651,6 +690,9 @@ public class SqlSessionDao extends AbstractDao {
 	 * @return
 	 */
 	private BoundSql getBoundSql(MappedStatement ms, Object parameterObject) {
+		if(parameterObject != null && parameterObject instanceof WrapParameter){
+			parameterObject = ((WrapParameter)parameterObject).getParameterObject();
+		}
 		return ms.getBoundSql(wrapCollection(parameterObject));
 	}
 
