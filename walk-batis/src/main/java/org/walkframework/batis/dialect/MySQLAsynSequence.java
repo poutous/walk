@@ -32,7 +32,7 @@ public class MySQLAsynSequence {
 
 	public String getSequenceValue(final Dao dao, final String sequence) {
 		// 1、获取数据
-		new Thread() {
+		new Thread() { 
 			@Override
 			public void run() {
 				// 获取序列并设置结果
