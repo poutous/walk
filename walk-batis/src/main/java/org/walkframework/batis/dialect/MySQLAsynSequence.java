@@ -69,6 +69,7 @@ public class MySQLAsynSequence {
 		if (maxId == null) {
 			maxId = dao.selectOne("EntitySQL.selectSequenceMaxId_mysql", param);
 			maxIdCache.put(sequence, StringUtils.isEmpty(maxId) ? DEFAULT_MAX_ID : maxId);
+			maxId = maxIdCache.getValue(sequence);
 		}
 
 		// 4、如果自增ID达到最大ID，则通过运算获取ID。
