@@ -32,7 +32,7 @@ public class MySQLAsynSequence {
 
 	public String getSequenceValue(final Dao dao, final String sequence) {
 		// 1、获取数据
-		new Thread() { 
+		new Thread() {
 			@Override
 			public void run() {
 				// 获取序列并设置结果
@@ -68,8 +68,8 @@ public class MySQLAsynSequence {
 		String maxId = maxIdCache.getValue(sequence);
 		if (maxId == null) {
 			maxId = dao.selectOne("EntitySQL.selectSequenceMaxId_mysql", param);
-			maxIdCache.put(sequence, StringUtils.isEmpty(maxId) ? DEFAULT_MAX_ID : maxId);
-			maxId = maxIdCache.getValue(sequence);
+			maxId = StringUtils.isEmpty(maxId) ? DEFAULT_MAX_ID : maxId;
+			maxIdCache.put(sequence, maxId);
 		}
 
 		// 4、如果自增ID达到最大ID，则通过运算获取ID。
