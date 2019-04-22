@@ -5,6 +5,7 @@
         <div class="arrow down"></div>
     </div>
     <div class="menuList">
+        <div class="menu" onclick="window.open('https://www.kancloud.cn/shf675/walk')">WALK文档</div>
         <div class="menu" onclick="redirectToPage('component/demo/button.html', this);">按钮</div>
         <div class="menu" onclick="redirectToPage('component/demo/icon.html', this);">图标</div>
         <div class="menu" onclick="redirectToPage('component/demo/tab.html', this);">标签</div>

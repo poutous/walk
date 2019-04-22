@@ -18,7 +18,7 @@
    				<span>部门：${SecurityUtils.getSubject().principal.departName}</span>
    				<span>员工：${SecurityUtils.getSubject().principal.staffName}</span>
    				<span class="pointer"><img src="${request.contextPath}/component/resources/images/nav/notice.png"/>公告</span>
-   				<span class="pointer">帮助文档</span>
+   				<span class="pointer" onclick="window.open('https://www.kancloud.cn/shf675/walk')">帮助文档</span>
    				<span class="pointer blue" id="logout">[系统退出]</span>
    			</div>
    		</div>
