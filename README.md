@@ -1,4 +1,4 @@
-文档地址：https://www.kancloud.cn/shf675/walk/664715
+文档地址：https://www.kancloud.cn/shf675/walk
 
 **walk简介**
 * walk基于spring等开源框架及组件进行二次封装的轻量级web开发框架，使用简便，快速开发，同时兼具高安全性、高稳定性、高扩展性。
@@ -15,6 +15,7 @@
 * 消息(轻量) redis
 * 数据源 dbcp/druid/hikaricp
 * 模板视图 jsp
+* 工作流 activiti
 
 **前端**
 * jquery
@@ -29,6 +30,7 @@
 * 基于mybatis的持久层封装
 * 基于swagger的接口开发
 * 基于CAS的单点登录
+* 基于activiti的工作流封装
 * 支持spring boot方式启动，支持以jar方式启动
 * 多数据源跨事物解决方案
 * 其他：静态参数加载、静态参数翻译器、数据导入导出、表单校验等
@@ -41,6 +43,7 @@
 * walk-shiro：基于shiro二次封装，提供用户认证、访问授权(支持动态授权)、分布式会话等功能
 * walk-base：一系列的封装汇总，包括前端框架、分布式任务、静态参数加载器、静态参数翻译器、数据导入导出、表单校验等
 * walk-restful：基于swagger实现的接口开发框架，规范接口开发，同时提供代码生成工具及API生成工具
+* walk-activiti：基于开源工作流activiti的封装
 * walk-console：提供缓存、静态参数、会话、消息队列的管理界面
 * walk-boot：支持spring boot方式启动，同时也支持直接以单独jar包方式运行
 
@@ -57,8 +60,17 @@ runtime "org.walkframework:walk-base:${walk_version}:walk-webapp@jar"
 compile "org.walkframework:walk-boot:${walk_version}"
 runtime "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcat_version}"
 
+//如果使用activiti
+compile "org.walkframework:walk-activiti:${walk_version}"
+
 //如果使用walk管理控制台
 runtime "org.walkframework:walk-console:${walk_version}"
+
+//其他
+runtime "javax.servlet:jstl:${jstl_version}"
+//runtime "com.oracle:ojdbc6:${ojdbc_version}"
+runtime "mysql:mysql-connector-java:${mysql_connector_java_version}"
+compile "junit:junit:${junit_version}"
 ~~~
 web示例工程下载：[后续开放](#)
 
