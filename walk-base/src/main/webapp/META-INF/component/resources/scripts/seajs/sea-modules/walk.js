@@ -159,6 +159,43 @@ $.walk = {
 	},
 	
 	/**
+	 * 获取uuid
+	 * len长度，可不传，默认20
+	 * radix基数，可不传，默认30
+	 * 
+	 * $.walk.uuid()
+	 * */
+	uuid: function (len, radix) {
+		len = len ? len : 20;
+		radix = radix ? radix : 30;
+		
+	    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+	    var uuid = [], i;
+	    radix = radix || chars.length;
+	    if (len) {
+	      // Compact form
+	      for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
+	    } else {
+	      // rfc4122, version 4 form
+	      var r;
+	 
+	      // rfc4122 requires these characters
+	      uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+	      uuid[14] = '4';
+	 
+	      // Fill in random data.  At i==19 set the high bits of clock sequence as
+	      // per rfc4122, sec. 4.1.5
+	      for (i = 0; i < 36; i++) {
+	        if (!uuid[i]) {
+	          r = 0 | Math.random()*16;
+	          uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+	        }
+	      }
+	    }
+	    return uuid.join('');
+	},
+	
+	/**
 	 * 获取请求URL
 	 * 调用示例：$.walk.getRequestURL($.walk.ctx + '/example', "queryList", "roleId=1&roleCode=2");
 	 * @param baseUrl： 页面访问路径，例如$.walk.ctx + '/example'
@@ -305,6 +342,26 @@ $.walk = {
 		} else if(grid.hasClass("easyui-treegrid")){
 			grid.treegrid(opts);
 		}
+	},
+	
+	/**
+	 * 绑定还未生成的元素事件并返回生成元素的ID
+	 * 
+	 * $.walk.live("click", function(ele){
+	 * 		//...
+	 * });
+	 * $.walk.live("click", function(ele){
+	 * 		//...
+	 * }, "div");
+	 */
+	live: function (event, callback, scope) {
+		scope = scope ? scope : "body";
+		var id = this.uuid();
+		var selector = "#" + id;
+		$(scope).delegate(selector, event, function(){
+			callback($(selector));
+		});
+		return id;
 	},
 	
 	//验证表单(form)

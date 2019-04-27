@@ -11,12 +11,12 @@
 }
 .panel-title {
 	background:url('images/blank.gif') no-repeat;
-	height:35px;
-	line-height:33px;
+	height:22px;
+	line-height:20px;
 	color:#777;
 	text-indent:5PX;
 	padding: 5px 5px 0px 5px;
-	font-size: 16px;
+	font-size: 15px;
 }
 .panel-header-noborder {
 	border-width:0;
