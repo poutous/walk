@@ -62,6 +62,10 @@ public abstract class EntityHelper {
 		return ((AbstractEntity)entity).operColumns();
 	}
 	
+	public static boolean isNoAnyCondition(Entity entity) {
+		return ((AbstractEntity)entity).isNoAnyCondition();
+	}
+	
 	/** 
 	 * 获取目标对象所有以@Column标注的字段，自上而下，即子类如果也定义了与父类相同的字段则以子类为准。
 	 * 

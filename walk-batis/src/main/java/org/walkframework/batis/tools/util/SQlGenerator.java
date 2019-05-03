@@ -199,9 +199,10 @@ public class SQlGenerator {
 			throw new EmptyEntityException();
 		}
 		
+		boolean isNoAnyCondition = EntityHelper.isNoAnyCondition(entity);
 		operColumns = EntityHelper.operColumns(entity);
 		if (operColumns == null || operColumns.keySet().size() == 0) {
-			if(assertCondition){
+			if(assertCondition && !isNoAnyCondition){
 				throw new EmptyEntityException();
 			}
 		}
@@ -215,7 +216,7 @@ public class SQlGenerator {
 			}
 		}
 		
-		if (assertCondition && !hasCondition) {
+		if (!isNoAnyCondition && assertCondition && !hasCondition) {
 			throw new ConditionEmptyException();
 		}
 		return new OperColumnBean(operColumns, hasCondition);

@@ -17,6 +17,8 @@ public abstract class AbstractEntity implements Entity {
 	//存储本次操作的列
 	private Map<String, OperColumn> operColumns;
 	
+	private boolean isNoAnyCondition;
+	
 	/**
 	 * 记录操作的列
 	 * 每次调用Setter方法的时候自动调用
@@ -28,6 +30,7 @@ public abstract class AbstractEntity implements Entity {
 	 */
 	protected OperColumn addOperColumn(String column, String property, Object value, Class<?> type) {
 		OperColumn operColumn = privateAddOperColumn(column, property, value, type);
+		this.isNoAnyCondition = false;
 		return operColumn;
 	}
 	
@@ -62,5 +65,17 @@ public abstract class AbstractEntity implements Entity {
 	 */
 	Map<String, OperColumn> operColumns() {
 		return operColumns;
+	}
+	
+	boolean isNoAnyCondition() {
+		return isNoAnyCondition;
+	}
+	
+	/**
+	 * 不设置任何条件
+	 */
+	public Entity noAnyCondition() {
+		this.isNoAnyCondition = true;
+		return this;
 	}
 }
