@@ -423,4 +423,38 @@
 		    <type>java.lang.String</type>
 		</attribute>
 	</tag>
+	<tag>
+        <description>ajaxfileupload附件上传标签</description>
+        <name>ajaxfileupload</name>
+        <tag-class>org.walkframework.base.system.tag.AjaxFileUploadTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>组件ID</description>
+            <name>id</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>限制上传类型列表，多个以竖线分隔 </description>
+            <name>types</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>是否允许上传多个true|false </description>
+            <name>multiple</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <description>文件ID列表，可以是字符串，多个以逗号分隔 。可以是List，泛型String</description>
+            <name>fileIds</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Object</type>
+        </attribute>
+    </tag>
 </taglib>
