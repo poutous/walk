@@ -1,8 +1,13 @@
+walk2.1.6  
+1、walk-batis Conditions方式优化  
+2、增加ajaxfileupload组件，ajax方式上传文件  
+
 walk2.1.5  
 1、增加walk-activiti模块  
 2、walk-base增加实体类翻译器(@EntityTranslate)、sql翻译器(@SqlTranslate)  
 3、walk-batis增加selectListBySql方法，但仅限框架内部使用  
 4、walk-boot增加jsonp过滤器自动加载  
+4、walk.js增加 uuid、live函数
 
 walk2.1.4  
 1、walk-shiro：增加静默登录流程  

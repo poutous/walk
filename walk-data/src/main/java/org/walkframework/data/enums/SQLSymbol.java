@@ -21,8 +21,7 @@ public enum SQLSymbol {
 	IN(" IN "),
 	NOT_IN(" NOT IN "),
 	BETWEEN(" BETWEEN "),
-	NOT_BETWEEN(" NOT BETWEEN ")
-	;
+	NOT_BETWEEN(" NOT BETWEEN ");
 	
 	public String value;
 	

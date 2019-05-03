@@ -27,9 +27,9 @@ public class AppKeyService extends AbstractBaseService implements IAppKeyService
 	public String getAppKey(final String appId, String encode) {
 		if("true".equals(encode)){
 			TdMAppCfg cfg = dao().selectOne(new Conditions(TdMAppCfg.class){{
-				addCondition(TdMAppCfg.APP_ID).andEqual(appId);
-				addCondition(TdMAppCfg.START_DATE).andLessEqual(common.getCurrentTime());
-				addCondition(TdMAppCfg.END_DATE).andGreaterEqual(common.getCurrentTime());
+				andEqual(TdMAppCfg.APP_ID, appId);
+				andLessEqual(TdMAppCfg.START_DATE, common.getCurrentTime());
+				andGreaterEqual(TdMAppCfg.END_DATE, common.getCurrentTime());
 			}}, getCacheSeconds());
 			if (cfg == null || StringUtils.isEmpty(cfg.getAppKey())) {
 				String errMsg = "appId[" + appId + "] is not configured or ineffective or expired!";

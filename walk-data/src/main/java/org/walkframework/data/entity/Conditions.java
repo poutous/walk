@@ -8,8 +8,6 @@ import org.walkframework.data.annotation.Table;
 import org.walkframework.data.exception.EntityClassIsNullException;
 import org.walkframework.data.exception.NoColumnException;
 
-import com.alibaba.fastjson.JSON;
-
 
 /**
  * 动态拼条件
@@ -21,9 +19,15 @@ public class Conditions extends AbstractEntity {
 	
 	private static final long serialVersionUID = 1L;
 	
+	private static final String SEP = "__";
+	
 	private Class<? extends BaseEntity> entityClazz;
 	
 	private Map<String, Field> fields;
+	
+	private Map<String, Object> parameters;
+	
+	private StringBuilder sql = new StringBuilder();
 	
 	public Conditions(Class<? extends BaseEntity> entityClazz){
 		if(entityClazz == null){
@@ -31,22 +35,112 @@ public class Conditions extends AbstractEntity {
 		}
 		this.entityClazz = entityClazz;
 		fields = EntityHelper.getAllColumnFields(entityClazz);
+		parameters = new HashMap<String, Object>();
+		sql = new StringBuilder();
+		
+		//sql初始化
+		sql.append("SELECT *");
+		sql.append(" FROM " + EntityHelper.findEntity(entityClazz).getAnnotation(Table.class).name());
+		sql.append(" WHERE 1 = 1");
+
+	}
+	
+	public Conditions andEqual(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andEqual(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+	
+	public Conditions andNotEqual(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andNotEqual(value);
+		addParameterAndSQL(condition);
+		return this;
 	}
 
-	/**
-	 * 添加条件
-	 * 
-	 * @param column
-	 * @return
-	 */
-	public Condition addCondition(String column){
-		Field field = fields.get(column);
-		if(field == null){
-			throw new NoColumnException(entityClazz.getAnnotation(Table.class).name(), column);
-		}
-		OperColumn operColumn = addOperColumn(column, field.getName(), null, field.getType());
-		operColumn.asCondition();
-		return operColumn.getCondition();
+	public Conditions andLike(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andLike(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andNotLike(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andNotLike(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andGreater(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andGreater(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andGreaterEqual(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andGreaterEqual(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andLess(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andLess(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andLessEqual(String column, Object value) {
+		Condition condition = addCondition(column);
+		condition.andLessEqual(value);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andIsNull(String column) {
+		Condition condition = addCondition(column);
+		condition.andIsNull();
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andIsNotNull(String column) {
+		Condition condition = addCondition(column);
+		condition.andIsNotNull();
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andIn(String column, Object... values) {
+		Condition condition = addCondition(column);
+		condition.andIn(values);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andNotIn(String column, Object... values) {
+		Condition condition = addCondition(column);
+		condition.andNotIn(values);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andBetween(String column, Object value1, Object value2) {
+		Condition condition = addCondition(column);
+		condition.andBetween(value1, value2);
+		addParameterAndSQL(condition);
+		return this;
+	}
+
+	public Conditions andNotBetween(String column, Object value1, Object value2) {
+		Condition condition = addCondition(column);
+		condition.andNotBetween(value1, value2);
+		addParameterAndSQL(condition);
+		return this;
 	}
 	
 	/**
@@ -55,10 +149,14 @@ public class Conditions extends AbstractEntity {
 	 * @param column
 	 * @return
 	 */
-	public Conditions addOrderByAsc(String column){
-		Field field = fields.get(column);
-		OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
-		operColumn.asOrderByAsc();
+	public Conditions orderByAsc(String... columns){
+		if(columns != null && columns.length > 0){
+			for (String column : columns) {
+				Field field = fields.get(column);
+				OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
+				operColumn.asOrderByAsc();
+			}
+		}
 		return this;
 	}
 	
@@ -68,11 +166,66 @@ public class Conditions extends AbstractEntity {
 	 * @param column
 	 * @return
 	 */
-	public Conditions addOrderByDesc(String column){
-		Field field = fields.get(column);
-		OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
-		operColumn.asOrderByDesc();
+	public Conditions orderByDesc(String... columns){
+		if(columns != null && columns.length > 0){
+			for (String column : columns) {
+				Field field = fields.get(column);
+				OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
+				operColumn.asOrderByDesc();
+			}
+		}
 		return this;
+	}
+	
+	/**
+	 * 添加条件
+	 * 
+	 * @param column
+	 * @return
+	 */
+	private Condition addCondition(String column){
+		Field field = fields.get(column);
+		if(field == null){
+			throw new NoColumnException(entityClazz.getAnnotation(Table.class).name(), column);
+		}
+		return new Condition(column);
+	}
+	
+	/**
+	 * 添加参数并且组装sql
+	 * 
+	 * @param condition
+	 */
+	private void addParameterAndSQL(Condition condition) {
+		Object[] values = (Object[])condition.getValues();
+		if(values == null || values.length == 0){
+			if(!condition.getSymbol().name().matches("IS_NULL|NOT_NULL")) {
+				return;
+			}
+		}
+		String parameterKey = condition.getColumn() + SEP + condition.getSymbol().name();
+		if(condition.getSymbol().name().matches("IN|NOT_IN")){
+			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value + "(");
+			for (int i = 0; i < values.length; i++) {
+				String key = parameterKey + SEP + i;
+				parameters.put(key, values[i]);
+				sql.append("#{").append(key).append("},");
+			}
+			sql.deleteCharAt(sql.length() - 1);
+			sql.append(")");
+		} else if(condition.getSymbol().name().matches("BETWEEN|NOT_BETWEEN")){
+			String key0 = parameterKey + SEP + 0;
+			String key1 = parameterKey + SEP + 1;
+			parameters.put(key0, values[0]);
+			parameters.put(key1, values[1]);
+			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value);
+			sql.append("#{").append(key0).append("} AND ").append("#{").append(key1).append("}");
+		} else if(condition.getSymbol().name().matches("IS_NULL|NOT_NULL")){
+			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value);
+		} else {
+			parameters.put(parameterKey, values[0]);
+			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value).append("#{").append(parameterKey).append("}");
+		}
 	}
 	
 	/**
@@ -84,12 +237,11 @@ public class Conditions extends AbstractEntity {
 		return entityClazz;
 	}
 	
-	@Override
-	public String toString() {
-		Map<String, Object> kv = new HashMap<String, Object>();
-		for (String column : operColumns().keySet()) {
-			kv.put(column, operColumns().get(column).getCondition().getValues());
-		}
-		return JSON.toJSONString(kv, serializerFeatures);
+	Map<String, Object> getParameters() {
+		return parameters;
+	}
+	
+	String getSql() {
+		return sql.toString();
 	}
 }

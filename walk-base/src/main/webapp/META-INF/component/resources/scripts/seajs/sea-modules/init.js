@@ -169,6 +169,11 @@ $.walk.init = function(){
 		});
 	};
 	
+	//jQuery.ajaxfileupload ajax方式上传文件组件
+	if($(".ajaxfileupload").size() > 0){
+		addInit('$ajaxfileupload');
+	};
+	
 	//日期控件初始化
 	if($(".Wdate").size() > 0){
 		addInit('Wdate', function(){

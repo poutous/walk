@@ -8,11 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.walkframework.base.tools.utils.ReflectionUtils;
 import org.walkframework.batis.bean.WrapParameter;
-import org.walkframework.batis.tools.util.EntityUtil;
 import org.walkframework.data.annotation.Table;
 import org.walkframework.data.bean.PageData;
 import org.walkframework.data.bean.Pagination;
 import org.walkframework.data.entity.BaseEntity;
+import org.walkframework.data.entity.EntityHelper;
 import org.walkframework.data.translate.EntityTranslate;
 
 /**
@@ -75,7 +75,7 @@ public class EntityTranslator extends AbstractTranslator {
 	private List<? extends BaseEntity> selectList(String conditions, Object sourceObject, Class<? extends BaseEntity> entityType, Integer cacheSeconds){
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT *");
-		sql.append(" FROM " + EntityUtil.findEntity(entityType).getAnnotation(Table.class).name());
+		sql.append(" FROM " + EntityHelper.findEntity(entityType).getAnnotation(Table.class).name());
 		sql.append(" WHERE 1 = 1");
 		sql.append(" AND ").append(conditions);
 		WrapParameter wrapParameter = new WrapParameter(sourceObject, entityType);

@@ -3,6 +3,7 @@ package org.walkframework.batis.dao;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -38,6 +39,7 @@ import org.walkframework.batis.tools.util.SQlGenerator;
 import org.walkframework.data.bean.PageData;
 import org.walkframework.data.bean.Pagination;
 import org.walkframework.data.entity.BaseEntity;
+import org.walkframework.data.entity.Conditions;
 import org.walkframework.data.entity.Entity;
 import org.walkframework.data.entity.EntityHelper;
 import org.walkframework.data.util.DatasetList;
@@ -90,7 +92,7 @@ public class SqlSessionDao extends AbstractDao {
 		this.dialect = (Dialect) Class.forName(dialect).newInstance();
 		this.exportPageSize = exportPageSize;
 		this.randomRange = randomRange;
-		this.sqlGeneration = new SQlGenerator(this.dialect);
+		this.sqlGeneration = new SQlGenerator();
 		
 	}
 
@@ -145,6 +147,11 @@ public class SqlSessionDao extends AbstractDao {
 
 	@Override
 	public <E> PageData<E> selectList(Entity entity, Pagination pagination, Integer cacheSeconds) {
+		if(entity instanceof Conditions){
+			Conditions conditions = (Conditions)entity;
+			return this.selectListBySql(EntityHelper.getConditionsSql(conditions), new WrapParameter(EntityHelper.getConditionsParameters(conditions), EntityHelper.getEntityClazz(entity)), pagination, cacheSeconds);
+		}
+		
 		String statementId = EntitySQL.SELECT;
 		MappedStatement ms = this.sqlSession.getConfiguration().getMappedStatement(statementId);
 		BoundSql originalBoundSql = getBoundSql(ms, entity);
@@ -211,6 +218,10 @@ public class SqlSessionDao extends AbstractDao {
 
 	@Override
 	public Long selectCount(Entity entity, Integer cacheSeconds) {
+		if(entity instanceof Conditions){
+			Conditions conditions = (Conditions)entity;
+			return this.selectCountBySql(EntityHelper.getConditionsSql(conditions), EntityHelper.getConditionsParameters(conditions), cacheSeconds);
+		}
 		String statementId = EntitySQL.SELECT;
 		MappedStatement ms = this.sqlSession.getConfiguration().getMappedStatement(statementId);
 		BoundSql originalBoundSql = getBoundSql(ms, entity);
@@ -539,20 +550,36 @@ public class SqlSessionDao extends AbstractDao {
 	 * @return
 	 */
 	protected <E> PageData<E> selectListBySql(String sql, WrapParameter wrapParameter, Pagination pagination, Integer cacheSeconds) {
-		Configuration configuration = getSqlSession().getConfiguration();
-		DynamicSqlSource sqlSource = new DynamicSqlSource(getSqlSession().getConfiguration(), new StaticTextSqlNode(sql.toString()));
-		BoundSql boundSql = sqlSource.getBoundSql(wrapParameter.getParameterObject());
-		
-		String statementId = EntitySQL.SELECT;
-		MappedStatement ms = configuration.getMappedStatement(statementId);
-		BoundSql originalBoundSql = ms.getBoundSql(wrapParameter.getParameterObject());
-		MetaObject originalBoundMeta = SystemMetaObject.forObject(originalBoundSql);
-		originalBoundMeta.setValue("sql", boundSql.getSql());
-		originalBoundMeta.setValue("parameterMappings", boundSql.getParameterMappings());
-		
-		return this.selectList(statementId, originalBoundSql, wrapParameter, pagination, cacheSeconds);
+		BoundSql originalBoundSql = handleSql(sql, wrapParameter);
+		return this.selectList(EntitySQL.SELECT, originalBoundSql, wrapParameter, pagination, cacheSeconds);
 	}
-
+	
+	/**
+	 * 通过sql获取总数
+	 * 
+	 * protected：限制业务侧直接使用sql方式进行查询
+	 * 
+	 * @param <E>
+	 * @param sql
+	 * @param param
+	 * @return
+	 */
+	protected Long selectCountBySql(String sql, Object param, Integer cacheSeconds) {
+		Long count = 0L;
+		try {
+			sql = this.dialect.getCountSql(sql);
+			BoundSql originalBoundSql = handleSql(sql, param);
+			
+			BoundSqlHolder.set(new CacheBoundSql(originalBoundSql, cacheSeconds));
+			
+			List<Map<String, Object>> list = this.sqlSession.selectList(EntitySQL.SELECT, param, RowBounds.DEFAULT);
+			count = Long.valueOf(list.get(0).get("CNT") + "");
+		} finally {
+			BoundSqlHolder.clear();
+		}
+		return count == null ? 0 : count;
+	}
+	
 	/**
 	 * 获取总数
 	 * 
@@ -716,6 +743,30 @@ public class SqlSessionDao extends AbstractDao {
 			return map;
 		}
 		return object;
+	}
+	
+	/**
+	 * 处理sql
+	 * 
+	 * @param sql
+	 * @param param
+	 * @return
+	 */
+	private BoundSql handleSql(String sql, Object param){
+		if(param instanceof WrapParameter){
+			param = ((WrapParameter)param).getParameterObject();
+		}
+		Configuration configuration = getSqlSession().getConfiguration();
+		DynamicSqlSource sqlSource = new DynamicSqlSource(getSqlSession().getConfiguration(), new StaticTextSqlNode(sql.toString()));
+		BoundSql boundSql = sqlSource.getBoundSql(param);
+		
+		String statementId = EntitySQL.SELECT;
+		MappedStatement ms = configuration.getMappedStatement(statementId);
+		BoundSql originalBoundSql = ms.getBoundSql(param);
+		MetaObject originalBoundMeta = SystemMetaObject.forObject(originalBoundSql);
+		originalBoundMeta.setValue("sql", boundSql.getSql());
+		originalBoundMeta.setValue("parameterMappings", boundSql.getParameterMappings());
+		return originalBoundSql;
 	}
 
 	public int getRandomRange() {

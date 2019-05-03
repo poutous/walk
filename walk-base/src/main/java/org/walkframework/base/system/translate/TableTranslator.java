@@ -24,7 +24,11 @@ public class TableTranslator extends AbstractTranslator {
 			MetaObject targetMeta = SystemMetaObject.forObject(sourceObject);
 			Object sourceValue = targetMeta.getValue(sourceField);
 			if (!StringUtils.isEmpty(sourceValue)) {
-				return (T) ParamTranslateUtil.getTranslateValue(getStringValue(sourceValue), translationPath);
+				Object value = ParamTranslateUtil.getTranslateValue(getStringValue(sourceValue), translationPath);
+				if(StringUtils.isEmpty(value)){
+					value = sourceValue;
+				}
+				return (T) value;
 			}
 		}
 		return null;

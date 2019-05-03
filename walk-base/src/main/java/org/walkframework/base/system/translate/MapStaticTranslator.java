@@ -26,6 +26,11 @@ public class MapStaticTranslator extends AbstractTranslator {
 	@Override
 	public <T> T translate(Object sourceObject) {
 		Map<?, ?> mapObject = (Map<?, ?>)sourceObject;
-		return (T) ParamTranslateUtil.convertStatic(this.typeId, getStringValue(mapObject.get(this.by)));
+		Object sourceValue = mapObject.get(this.by);
+		Object value = ParamTranslateUtil.convertStatic(this.typeId, getStringValue(sourceValue));
+		if(StringUtils.isEmpty(value)){
+			value = sourceValue;
+		}
+		return (T) value;
 	}
 }

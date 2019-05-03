@@ -29,9 +29,6 @@ seajs.config({
 		//jQuery.form 表单插件，可做ajax提交
 		'$form': 'jquery/form/1.3.2/form',
 		
-		//jQuery.fileinput 单文件上传组件
-		'$fileinput': 'jquery/fileinput/1.0.0/fileinput',
-		
 		//jQuery.beautify 美化checkboxes, radios
 		'$beautify': 'jquery/beautify/1.0.0/beautify',
 		
@@ -62,23 +59,17 @@ seajs.config({
 		//jQuery.scrolltop 返回顶部组件
 		'$scrolltop': 'jquery/scrolltop/1.0.0/scrolltop',
 		
-		//jQuery.dataTables 表格插件
-		'$datatables': 'jquery/datatables/1.9.4/datatables',
-		
-		//jQuery.treetable 表格树插件
-		'$treetable': 'jquery/treetable/3.1.0/treetable',
-		
-		//jQuery.tablesorter 表格排序插件
-		'$tablesorter': 'jquery/tablesorter/2.13.3/tablesorter',
-		
-		//jQuery.resizableColumns 调整表格列宽度
-		'$resizecolumn': 'jquery/resizecolumn/1.0.0/resizecolumn',
-		
 		//jQuery.zTree 树插件
 		'$zTree': 'jquery/ztree/3.5.17/ztree',
 		
 		//jQuery.syntaxhighlighter 代码高亮显示。 http://balupton.github.io/jquery-syntaxhighlighter/demo/
 		'$syntaxhighlighter': 'jquery/syntaxhighlighter/1.0.0/syntaxhighlighter',
+		
+		//jQuery.fileinput 单文件上传组件
+		'$fileinput': 'jquery/fileinput/1.0.0/fileinput',
+		
+		//jQuery.ajaxfileupload ajax方式上传文件组件
+		'$ajaxfileupload': 'jquery/ajaxfileupload/1.0.0/ajaxfileupload',
 		
 		/********2、其他插件开始*********************************************/
 		//IE下支持的某些属性也可在Firefox/Chrome等浏览器支持
@@ -96,12 +87,6 @@ seajs.config({
 
 	// 路径配置：当目录比较深，或需要跨目录调用模块时，可以使用 paths 来简化书写
 	paths: {
-//		//Arale：http://aralejs.org
-//		'arale': 'arale/',
-//		
-//		//Alice：http://aliceui.org
-//		'alice': 'alice/',
-//		
 //		//业界精选组件：https://spmjs.org/gallery
 //		'gallery': 'gallery/'
 	},

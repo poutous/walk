@@ -10,7 +10,8 @@ import com.alibaba.fastjson.JSON;
  *
  */
 public abstract class BaseEntity extends AbstractEntity {
-	
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private boolean _IMPORT_RESULT = true;
 	

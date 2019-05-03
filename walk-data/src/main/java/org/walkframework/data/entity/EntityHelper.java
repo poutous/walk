@@ -12,6 +12,8 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.walkframework.data.annotation.Column;
+import org.walkframework.data.annotation.Table;
+import org.walkframework.data.exception.NotEntityException;
 
 /**
  * @author shf675
@@ -29,13 +31,35 @@ public abstract class EntityHelper {
 		}
 		return ((BaseEntity) entity).getClass();
 	}
+	
+	/**
+	 * 查找实体类
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static Class<?> findEntity(Class<?> clazz){
+		if(clazz.getAnnotation(Table.class) != null){
+			return clazz;
+		} else {
+			Class<?> superClazz = clazz.getSuperclass();
+			if(Object.class.equals(superClazz)){
+				throw new NotEntityException(clazz);
+			}
+			return findEntity(superClazz);
+		}
+	}
+	
+	public static String getConditionsSql(Conditions conditions) {
+		return conditions.getSql();
+	}
+	
+	public static Object getConditionsParameters(Conditions conditions) {
+		return conditions.getParameters();
+	}
 
 	public static Map<String, OperColumn> operColumns(Entity entity) {
 		return ((AbstractEntity)entity).operColumns();
-	}
-	
-	public static boolean isNoAnyCondition(Entity entity) {
-		return ((AbstractEntity)entity).isNoAnyCondition();
 	}
 	
 	/** 

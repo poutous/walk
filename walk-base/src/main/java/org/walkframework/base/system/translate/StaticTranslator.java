@@ -17,19 +17,23 @@ public class StaticTranslator extends AbstractTranslator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T translate(Object sourceObject, String translatedField) {
-			StaticTranslate translate = getTranslateAnnotation(sourceObject, translatedField, StaticTranslate.class);
-			if (translate != null) {
-				String sourceField = StringUtils.trimWhitespace(translate.by());
-				String typeId = StringUtils.trimWhitespace(translate.typeId());
-				MetaObject targetMeta = SystemMetaObject.forObject(sourceObject);
-				Object sourceValue = targetMeta.getValue(sourceField);
-				if (!StringUtils.isEmpty(sourceValue)) {
-					return (T) ParamTranslateUtil.convertStatic(typeId, getStringValue(sourceValue));
+		StaticTranslate translate = getTranslateAnnotation(sourceObject, translatedField, StaticTranslate.class);
+		if (translate != null) {
+			String sourceField = StringUtils.trimWhitespace(translate.by());
+			String typeId = StringUtils.trimWhitespace(translate.typeId());
+			MetaObject targetMeta = SystemMetaObject.forObject(sourceObject);
+			Object sourceValue = targetMeta.getValue(sourceField);
+			if (!StringUtils.isEmpty(sourceValue)) {
+				Object value = ParamTranslateUtil.convertStatic(typeId, getStringValue(sourceValue));
+				if(StringUtils.isEmpty(value)){
+					value = sourceValue;
 				}
+				return (T) value;
 			}
+		}
 		return null;
 	}
-	
+
 	@Override
 	public <T> T translate(Object sourceObject) {
 		return null;

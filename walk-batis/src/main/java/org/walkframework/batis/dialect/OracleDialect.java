@@ -36,7 +36,7 @@ public class OracleDialect implements Dialect {
 	 */
 	@Override
 	public String getCountSql(String sql) {
-		return new StringBuilder().append("SELECT COUNT(1) CNT FROM (").append(sql).append(")").toString();
+		return new StringBuilder().append("SELECT COUNT(1) AS CNT FROM (").append(sql).append(")").toString();
 	}
 
 	/**

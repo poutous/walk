@@ -9,6 +9,10 @@ public abstract class OperColumnHelper {
 	public static String getOperColumnProperty(OperColumn operColumn) {
 		return operColumn.getOperColumnProperty();
 	}
+	
+	public static String getOperColumn(OperColumn operColumn) {
+		return operColumn.getOperColumn();
+	}
 
 	public static Class<?> getOperColumnType(OperColumn operColumn) {
 		return operColumn.getOperColumnType();
@@ -16,10 +20,6 @@ public abstract class OperColumnHelper {
 
 	public static Object getOperColumnValue(OperColumn operColumn) {
 		return operColumn.getOperColumnValue();
-	}
-
-	public static Condition getCondition(OperColumn operColumn) {
-		return operColumn.getCondition();
 	}
 
 	public static void cancelCondition(OperColumn operColumn) {

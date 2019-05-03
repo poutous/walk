@@ -2,7 +2,7 @@ package org.walkframework.base.system.translate;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 import org.walkframework.base.tools.utils.ParamTranslateUtil;
 
 /**
@@ -19,7 +19,7 @@ public class MapTableTranslator extends AbstractTranslator {
 	
 
 	public MapTableTranslator(String by, String path) {
-		this.by = StringUtils.trim(by);
+		this.by = by == null ? null : by.trim();
 		this.path = path.replaceAll("\\s*", "");
 	}
 
@@ -27,6 +27,11 @@ public class MapTableTranslator extends AbstractTranslator {
 	@Override
 	public <T> T translate(Object sourceObject) {
 		Map<?, ?> mapObject = (Map<?, ?>)sourceObject;
-		return (T) ParamTranslateUtil.getTranslateValue(getStringValue(mapObject.get(this.by)), this.path);
+		Object sourceValue = mapObject.get(this.by);
+		Object value = ParamTranslateUtil.getTranslateValue(getStringValue(sourceValue), this.path);
+		if(StringUtils.isEmpty(value)){
+			value = sourceValue;
+		}
+		return (T) value;
 	}
 }

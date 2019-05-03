@@ -1,20 +1,15 @@
 package org.walkframework.batis.tools.util;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.session.Configuration;
 import org.walkframework.batis.bean.EntityBoundSql;
 import org.walkframework.batis.bean.OperColumnBean;
-import org.walkframework.batis.dialect.Dialect;
 import org.walkframework.batis.exception.NoUpdateColumnException;
 import org.walkframework.data.annotation.Table;
-import org.walkframework.data.entity.Condition;
 import org.walkframework.data.entity.Conditions;
 import org.walkframework.data.entity.Entity;
 import org.walkframework.data.entity.EntityHelper;
@@ -22,7 +17,6 @@ import org.walkframework.data.entity.OperColumn;
 import org.walkframework.data.entity.OperColumnHelper;
 import org.walkframework.data.enums.SQLSymbol;
 import org.walkframework.data.exception.ConditionEmptyException;
-import org.walkframework.data.exception.ConditionValueIsNullException;
 import org.walkframework.data.exception.EmptyEntityException;
 
 /**
@@ -33,12 +27,6 @@ public class SQlGenerator {
 
 	public final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
-	private Dialect dialect;
-
-	public SQlGenerator(Dialect dialect) {
-		this.dialect = dialect;
-	}
-
 	/**
 	 * generate insert sql
 	 * 
@@ -47,7 +35,6 @@ public class SQlGenerator {
 	 * @param valuestr
 	 * @return String
 	 */
-	@SuppressWarnings("unchecked")
 	public EntityBoundSql generateInsertSql(Configuration configuration, Entity entity) {
 		Map<String, OperColumn> operColumns = getOperColumns(entity, false).getOperColumns();
 		List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
@@ -82,7 +69,6 @@ public class SQlGenerator {
 	 * @param keystr
 	 * @return String
 	 */
-	@SuppressWarnings("unchecked")
 	public EntityBoundSql generateUpdateSql(Configuration configuration, Entity entity) {
 		Map<String, OperColumn> operColumns = getOperColumns(entity, true).getOperColumns();
 		List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
@@ -213,10 +199,9 @@ public class SQlGenerator {
 			throw new EmptyEntityException();
 		}
 		
-		boolean isNoAnyCondition = EntityHelper.isNoAnyCondition(entity);
 		operColumns = EntityHelper.operColumns(entity);
 		if (operColumns == null || operColumns.keySet().size() == 0) {
-			if(assertCondition && !isNoAnyCondition){
+			if(assertCondition){
 				throw new EmptyEntityException();
 			}
 		}
@@ -230,7 +215,7 @@ public class SQlGenerator {
 			}
 		}
 		
-		if (!isNoAnyCondition && assertCondition && !hasCondition) {
+		if (assertCondition && !hasCondition) {
 			throw new ConditionEmptyException();
 		}
 		return new OperColumnBean(operColumns, hasCondition);
@@ -243,10 +228,7 @@ public class SQlGenerator {
 	 * @return
 	 */
 	public String getTableName(Entity entity) {
-		if (Conditions.class.isAssignableFrom(entity.getClass())) {
-			return EntityUtil.findEntity(EntityHelper.getEntityClazz((Conditions) entity)).getAnnotation(Table.class).name();
-		}
-		return EntityUtil.findEntity(entity.getClass()).getAnnotation(Table.class).name();
+		return EntityHelper.findEntity(entity.getClass()).getAnnotation(Table.class).name();
 	}
 
 	/**
@@ -260,97 +242,15 @@ public class SQlGenerator {
 	 * @param fields
 	 */
 	private void conditionHandler(StringBuilder sql, OperColumn operColumn, Configuration configuration, List<ParameterMapping> parameterMappings) {
-		Condition condition = OperColumnHelper.getCondition(operColumn);
-		sql.append(" AND ").append(condition.getColumn());
-		// 检查条件值是否为null
-		String symbol = condition.getSymbol();
-		if (SQLSymbol.IS_NULL.value.equals(symbol) || SQLSymbol.NOT_NULL.value.equals(symbol)) {
-			sql.append(symbol);
+		sql.append(" AND ").append(OperColumnHelper.getOperColumn(operColumn));
+		if (OperColumnHelper.getOperColumnValue(operColumn) == null) {
+			// 预处理模式如果值为null，表示IS NULL
+			sql.append(SQLSymbol.IS_NULL.value);
 		} else {
-			if (condition.isPre()) {
-				if (OperColumnHelper.getOperColumnValue(operColumn) == null) {
-					// 预处理模式如果值为null，表示IS NULL
-					sql.append(SQLSymbol.IS_NULL.value);
-				} else {
-					sql.append(symbol).append("?");
-
-					// 添加参数映射
-					ParameterUtil.addParameterMapping(configuration, parameterMappings, OperColumnHelper.getOperColumnProperty(operColumn), OperColumnHelper.getOperColumnType(operColumn));
-				}
-			} else {
-				if (SQLSymbol.IN.value.equals(symbol) || SQLSymbol.NOT_IN.value.equals(symbol)) {
-					sql.append(symbol).append("(").append(inValueHandler(condition.getColumn(), condition.getValues())).append(")");
-				} else if (SQLSymbol.BETWEEN.value.equals(symbol) || SQLSymbol.NOT_BETWEEN.value.equals(symbol)) {
-					String[] retValues = betweenValueHandler(condition.getColumn(), condition.getValues());
-					sql.append(symbol).append(retValues[0]).append(" AND ").append(retValues[1]);
-				} else {
-					Object[] conValues = condition.getValues();
-					if (conValues == null || conValues.length == 0) {
-						throw new ConditionValueIsNullException(condition.getColumn());
-					}
-					sql.append(symbol).append(valueHandler(condition.getColumn(), condition.getValues()[0]));
-				}
-			}
+			sql.append(SQLSymbol.EQUAL.value).append("?");
+			
+			// 添加参数映射
+			ParameterUtil.addParameterMapping(configuration, parameterMappings, OperColumnHelper.getOperColumnProperty(operColumn), OperColumnHelper.getOperColumnType(operColumn));
 		}
-	}
-
-	/**
-	 * between语句value处理
-	 * 
-	 * @param condition
-	 * @param values
-	 * @return
-	 */
-	private String[] betweenValueHandler(String condition, Object[] values) {
-		if (values == null || values.length != 2) {
-			throw new ConditionValueIsNullException(condition);
-		}
-		String[] retValues = new String[2];
-		for (int i = 0; i < values.length; i++) {
-			retValues[i] = valueHandler(condition, values[i]);
-		}
-		return retValues;
-	}
-
-	/**
-	 * in语句value处理
-	 * 
-	 * @param condition
-	 * @param values
-	 * @return
-	 */
-	private String inValueHandler(String condition, Object[] values) {
-		if (values == null || values.length == 0) {
-			throw new ConditionValueIsNullException(condition);
-		}
-		StringBuilder inValues = new StringBuilder();
-		for (int i = 0; i < values.length; i++) {
-			inValues.append(valueHandler(condition, values[i])).append(",");
-		}
-		if (inValues.length() > 1) {
-			inValues.deleteCharAt(inValues.length() - 1);
-		}
-		return inValues.toString();
-	}
-
-	/**
-	 * value处理
-	 * 
-	 * @param condition
-	 * @param value
-	 * @return
-	 */
-	private String valueHandler(String condition, Object value) {
-		String retValue = "";
-		if (value == null) {
-			throw new ConditionValueIsNullException(condition);
-		}
-
-		if (value instanceof Date) {
-			retValue = this.dialect.getToDate(new SimpleDateFormat(DEFAULT_PATTERN, Locale.getDefault()).format(value));
-		} else {
-			retValue = "'" + value.toString() + "'";
-		}
-		return retValue;
 	}
 }

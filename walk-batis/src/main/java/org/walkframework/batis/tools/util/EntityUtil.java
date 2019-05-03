@@ -33,30 +33,12 @@ public abstract class EntityUtil {
 	protected static final Logger log = LoggerFactory.getLogger(EntityUtil.class);
 	
 	/**
-	 * 查找实体类
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public static Class<?> findEntity(Class<?> clazz){
-		if(clazz.getAnnotation(Table.class) != null){
-			return clazz;
-		} else {
-			Class<?> superClazz = clazz.getSuperclass();
-			if(Object.class.equals(superClazz)){
-				throw new NotEntityException(clazz);
-			}
-			return findEntity(superClazz);
-		}
-	}
-	
-	/**
 	 * 判断是否存在某字段
 	 * 
 	 * @param condition
 	 */
 	public static void assertExistField(Object object, String field){
-		Class<?> entityClazz = findEntity(object.getClass());
+		Class<?> entityClazz = EntityHelper.findEntity(object.getClass());
 		try {
 			entityClazz.getDeclaredField(field);
 		} catch (NoSuchFieldException e) {

@@ -23,6 +23,7 @@ import org.walkframework.base.tools.utils.IPUtil;
 import org.walkframework.base.tools.utils.ParamTranslateUtil;
 import org.walkframework.base.tools.utils.TimeTicketUtil;
 import org.walkframework.batis.dialect.OracleDialect;
+import org.walkframework.data.entity.Conditions;
 import org.walkframework.data.util.DataMap;
 import org.walkframework.data.util.IData;
 
@@ -184,5 +185,20 @@ public class FileService extends AbstractBaseService {
 		TdMFile file = new TdMFile();
 		file.setFileId(fileId).asCondition();
 		return dao().selectOne(file);
+	}
+	
+	/**
+	 * 获取文件列表信息
+	 * 
+	 * @param fileIds
+	 * @return
+	 */
+	public List<TdMFile> queryFileList(Object[] fileIds) {
+		if(fileIds == null || fileIds.length == 0){
+			common.error("fileIds为空！");
+		}
+		Conditions conditions = new Conditions(TdMFile.class);
+		conditions.andIn(TdMFile.FILE_ID, fileIds);
+		return dao().selectList(conditions);
 	}
 }

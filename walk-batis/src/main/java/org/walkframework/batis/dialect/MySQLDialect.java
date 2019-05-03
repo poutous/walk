@@ -36,7 +36,7 @@ public class MySQLDialect implements Dialect {
 	 */
 	@Override
 	public String getCountSql(String sql) {
-		return "SELECT COUNT(1) FROM (" + sql + ") AS CNT";
+		return "SELECT COUNT(1) AS CNT FROM (" + sql + ") AS CNT";
 	}
 
 	/**

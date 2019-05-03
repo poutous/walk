@@ -17,8 +17,6 @@ public class OperColumn implements Serializable {
 	private String sort;
 	private boolean isCondition;
 	
-	private Condition condition;
-
 	public OperColumn(String operColumn, String operColumnProperty, Object operColumnValue, Class<?> operColumnType) {
 		this.operColumn = operColumn;
 		this.operColumnProperty = operColumnProperty;
@@ -71,21 +69,11 @@ public class OperColumn implements Serializable {
 		return isCondition;
 	}
 	
-	Condition getCondition() {
-		if(condition == null){
-			condition = new Condition(this.operColumn);
-		}
-		return condition;
-	}
-
 	String getSort() {
 		return sort;
 	}
 
 	Object getOperColumnValue() {
-		if(operColumnValue == null && !getCondition().isPre() && getCondition().getValues() != null && getCondition().getValues().length > 0){
-			return getCondition().getValues()[0];
-		}
 		return operColumnValue;
 	}
 
