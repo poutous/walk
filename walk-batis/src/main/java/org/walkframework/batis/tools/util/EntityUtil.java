@@ -23,7 +23,6 @@ import org.walkframework.data.entity.OperColumn;
 import org.walkframework.data.entity.OperColumnHelper;
 import org.walkframework.data.exception.EmptyEntityException;
 import org.walkframework.data.exception.NoColumnException;
-import org.walkframework.data.exception.NotEntityException;
 
 /**
  * @author shf675
