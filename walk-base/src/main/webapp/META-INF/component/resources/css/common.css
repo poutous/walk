@@ -38,38 +38,31 @@ ul.w-header-dropdown li a{display:block;position:relative;float:none;clear:both;
 ul.w-header-dropdown li a:hover{background-color:#3875d7;color:#fff;}
 
 /*表单元素*/
-form.w-form{}
-form.w-form input[type="text"],form.w-form input[type="number"],form.w-form input[type="password"],form.w-form select,form.w-form textarea{background-color:#fcfcfc;border:1px solid #d1d1d1;padding: 5px 0px 5px 3px;/*outline:0;width:100%;*/margin:0;color:#444;font-size:1em;-webkit-border-radius:2px;-o-border-radius:2px;-moz-border-radius:2px;border-radius:2px;-webkit-box-sizing:border-box;-o-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;-webkit-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-moz-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-o-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-webkit-transition:background 150ms linear;-moz-transition:background 150ms linear;-ms-transition:background 150ms linear;-o-transition:background 150ms linear;transition:background 150ms linear;}
-form.w-form input[type="text"]:focus,form.w-form input[type="number"]:focus,form.w-form input[type="password"]:focus,form.w-form select:focus,form.w-form textarea:focus{border-color:#bbc1c9;background-color:#fff}
-form.w-form input[type="text"].error,form.w-form input[type="number"].error,form.w-form input[type="password"].error,form.w-form select.error,form.w-form textarea.error{border-color:#e48c85}
-form.w-form input[type="text"]:disabled,form.w-form input[type="number"]:disabled,form.w-form input[type="password"]:disabled,form.w-form select:disabled,form.w-form textarea:disabled{background:#f0f0f0}
-form.w-form textarea{height:10em;margin:2px 0;resize:none}
-form.w-form input{padding: 5px 0px;_border:1px solid #5f9ea0;}
-form.w-form select{height: 29px; *font-family:Trebuchet MS; *font-size: 16px;}
-form.w-form .w-form-row .ui-slider{margin-top:12px;margin-bottom:24px}
-form.w-form .w-form-row .ui-progressbar{margin-top:7px;margin-bottom:24px}
-form.w-form .w-form-row .chzn-container-multi .chzn-choices .search-field input{-webkit-border-radius:0;-moz-border-radius:0;-o-border-radius:0;border-radius:0;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;-o-box-sizing:content-box;box-sizing:content-box;}
-label.error{color: #FF5243;}
-.w-button-row:after,form.w-form .w-form-row:after,form.w-form:after,form.w-form-item:after,.w-form ul.w-form-list:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}
-.w-button-row, .w-form-row, .w-form, .w-form-item, .w-form ul.w-form-list{height:1%}
+.w-form{}
+.w-form input[type="text"],.w-form input[type="number"],.w-form input[type="password"],.w-form select,.w-form textarea{background-color:#fcfcfc;border:1px solid #d1d1d1;padding: 5px 0px 5px 3px;/*outline:0;width:100%;*/margin:0;color:#444;font-size:1em;-webkit-border-radius:2px;-o-border-radius:2px;-moz-border-radius:2px;border-radius:2px;-webkit-box-sizing:border-box;-o-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;-webkit-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-moz-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-o-box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);box-shadow:0 1px 0 rgba(255,255,255,1),inset 0 1px 1px rgba(0,0,0,0.04);-webkit-transition:background 150ms linear;-moz-transition:background 150ms linear;-ms-transition:background 150ms linear;-o-transition:background 150ms linear;transition:background 150ms linear;}
+.w-form input[type="text"]:focus,.w-form input[type="number"]:focus,.w-form input[type="password"]:focus,.w-form select:focus,.w-form textarea:focus{border-color:#bbc1c9;background-color:#fff}
+.w-form input[type="text"].error,.w-form input[type="number"].error,.w-form input[type="password"].error,.w-form select.error,.w-form textarea.error{border-color:#e48c85}
+.w-form input[type="text"]:disabled,.w-form input[type="number"]:disabled,.w-form input[type="password"]:disabled,.w-form select:disabled,.w-form textarea:disabled{background:#f0f0f0}
+.w-form textarea{height:10em;margin:2px 0;resize:none}
+.w-form input{padding: 5px 0px;_border:1px solid #5f9ea0;}
+.w-form select{height: 29px; *font-family:Trebuchet MS; *font-size: 16px;}
+.w-form .w-form-row .ui-slider{margin-top:12px;margin-bottom:24px}
+.w-form .w-form-row .ui-progressbar{margin-top:7px;margin-bottom:24px}
+.w-form .w-form-row .chzn-container-multi .chzn-choices .search-field input{-webkit-border-radius:0;-moz-border-radius:0;-o-border-radius:0;border-radius:0;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;-o-box-sizing:content-box;box-sizing:content-box;}
 .w-form .w-form-row{padding:23px 16px;display:block;border-bottom:1px solid #d3d3d3}
 .w-form .w-form-row:last-child{border-bottom:0}
-.w-button-row{margin:0;padding:16px;text-align:right;-webkit-border-radius:0 0 4px 4px;-o-border-radius:0 0 4px 4px;-moz-border-radius:0 0 4px 4px;border-radius:0 0 4px 4px;-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,1);}
-.w-button-row.left{text-align: left;}
-.w-button-row.center{text-align: center;}
-.w-button-row.right{text-align: right;}
-form.w-form .w-form-col-1-8 label,form.w-form .w-form-col-2-8 label,form.w-form .w-form-col-3-8 label,form.w-form .w-form-col-4-8 label,form.w-form .w-form-col-5-8 label,form.w-form .w-form-col-6-8 label,form.w-form .w-form-col-7-8 label,form.w-form .w-form-col-8-8 label{white-space:nowrap;width:100%;overflow:hidden;text-overflow:ellipsis}
-form.w-form .w-form-col-1-8,form.w-form .w-form-col-2-8,form.w-form .w-form-col-3-8,form.w-form .w-form-col-4-8,form.w-form .w-form-col-5-8,form.w-form .w-form-col-6-8,form.w-form .w-form-col-7-8,form.w-form .w-form-col-8-8{float:left;padding:0 1%;box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;-webkit-box-sizing:border-box;-khtml-box-sizing:border-box}
-form.w-form .w-form-col-1-8.alpha,form.w-form .w-form-col-2-8.alpha,form.w-form .w-form-col-3-8.alpha,form.w-form .w-form-col-4-8.alpha,form.w-form .w-form-col-5-8.alpha,form.w-form .w-form-col-6-8.alpha,form.w-form .w-form-col-7-8.alpha,form.w-form .w-form-col-8-8.alpha{padding-left:0;clear:left}
-form.w-form .w-form-col-1-8.omega,form.w-form .w-form-col-2-8.omega,form.w-form .w-form-col-3-8.omega,form.w-form .w-form-col-4-8.omega,form.w-form .w-form-col-5-8.omega,form.w-form .w-form-col-6-8.omega,form.w-form .w-form-col-7-8.omega,form.w-form .w-form-col-8-8.omega{padding-right:0;clear:right}
-form.w-form .w-form-col-1-8{width:12.5%}
-form.w-form .w-form-col-2-8{width:25%}
-form.w-form .w-form-col-3-8{width:37.5%}
-form.w-form .w-form-col-4-8{width:50%}
-form.w-form .w-form-col-5-8{width:62.5%}
-form.w-form .w-form-col-6-8{width:75%}
-form.w-form .w-form-col-7-8{width:87.5%}
-form.w-form .w-form-col-8-8{width:100%}
+.w-form .w-form-col-1-8 label,.w-form .w-form-col-2-8 label,.w-form .w-form-col-3-8 label,.w-form .w-form-col-4-8 label,.w-form .w-form-col-5-8 label,.w-form .w-form-col-6-8 label,.w-form .w-form-col-7-8 label,.w-form .w-form-col-8-8 label{white-space:nowrap;width:100%;overflow:hidden;text-overflow:ellipsis}
+.w-form .w-form-col-1-8,.w-form .w-form-col-2-8,.w-form .w-form-col-3-8,.w-form .w-form-col-4-8,.w-form .w-form-col-5-8,.w-form .w-form-col-6-8,.w-form .w-form-col-7-8,.w-form .w-form-col-8-8{float:left;padding:0 1%;box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;-webkit-box-sizing:border-box;-khtml-box-sizing:border-box}
+.w-form .w-form-col-1-8.alpha,.w-form .w-form-col-2-8.alpha,.w-form .w-form-col-3-8.alpha,.w-form .w-form-col-4-8.alpha,.w-form .w-form-col-5-8.alpha,.w-form .w-form-col-6-8.alpha,.w-form .w-form-col-7-8.alpha,.w-form .w-form-col-8-8.alpha{padding-left:0;clear:left}
+.w-form .w-form-col-1-8.omega,.w-form .w-form-col-2-8.omega,.w-form .w-form-col-3-8.omega,.w-form .w-form-col-4-8.omega,.w-form .w-form-col-5-8.omega,.w-form .w-form-col-6-8.omega,.w-form .w-form-col-7-8.omega,.w-form .w-form-col-8-8.omega{padding-right:0;clear:right}
+.w-form .w-form-col-1-8{width:12.5%}
+.w-form .w-form-col-2-8{width:25%}
+.w-form .w-form-col-3-8{width:37.5%}
+.w-form .w-form-col-4-8{width:50%}
+.w-form .w-form-col-5-8{width:62.5%}
+.w-form .w-form-col-6-8{width:75%}
+.w-form .w-form-col-7-8{width:87.5%}
+.w-form .w-form-col-8-8{width:100%}
 .w-form ul.w-form-list{display:block;width:100%!important}
 .w-form ul.w-form-list.inline{margin-bottom:0}
 .w-form ul.w-form-list,.w-form ul.w-form-list li{margin:0;line-height:normal;list-style:none}
@@ -80,6 +73,7 @@ form.w-form .w-form-col-8-8{width:100%}
 .w-form ul.w-form-list li input,.w-form ul.w-form-list li label{float:none!important;padding:0;margin:0 2px 0 0;width:auto!important;display:inline!important;vertical-align:middle!important}
 .w-form label{cursor:pointer;display:block}
 .w-form label .required{color:#f00}
+.w-form label.error{color: #FF5243;}
 .w-form fieldset{margin-bottom:0;border-top:0px solid #d3d3d3}
 .w-form fieldset legend{padding:4px 6px;margin:0 10px;background-color:#fafafa;border:1px solid #d3d3d3}
 .w-form .w-form-item .errorMessage,.w-form .w-form-item label.error{display:block;color:#d44d24;font-size:11px;width:100%!important;margin-top:1px;padding:0!important}
@@ -97,6 +91,12 @@ form.w-form .w-form-col-8-8{width:100%}
 .w-form .w-form-block .w-form-row label,.w-form .w-form-row.w-form-block label{float:none;width:auto;display:block;padding:0 0 6px 0}
 .w-form .w-form-block .w-form-row .w-form-item,.w-form .w-form-row.w-form-block .w-form-item{margin:0;display:block}
 
+.w-button-row:after,.w-form .w-form-row:after,.w-form:after,.w-form-item:after,.w-form ul.w-form-list:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}
+.w-button-row, .w-form-row, .w-form, .w-form-item, .w-form ul.w-form-list{height:1%}
+.w-button-row{margin:0;padding:16px;text-align:right;-webkit-border-radius:0 0 4px 4px;-o-border-radius:0 0 4px 4px;-moz-border-radius:0 0 4px 4px;border-radius:0 0 4px 4px;-webkit-box-shadow:inset 0 1px 0 rgba(255,255,255,1);}
+.w-button-row.left{text-align: left;}
+.w-button-row.center{text-align: center;}
+.w-button-row.right{text-align: right;}
 /* 表格样式 样式1*/
 .w-table{width:100%;margin:0;clear:both; background:#eee url("../images/bg/bkbg.jpg") repeat-x left top; border-top: none;}
 .w-table tr td,.w-table tr th{vertical-align:middle;}
