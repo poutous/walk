@@ -1,6 +1,7 @@
 package org.walkframework.activiti.mvc.controller.process;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.activiti.engine.ActivitiException;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +42,7 @@ public class ActProcessController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "deal/{orderId}")
-	public ModelAndView deal(@PathVariable String orderId) {
+	public ModelAndView deal(@PathVariable String orderId, HttpServletRequest request) {
 		String page = SpringPropertyHolder.getContextProperty("custom.activiti.process.page", "act/process/ProcessFrame");
 		ModelAndView mv = new ModelAndView(page);
 		ActUdWorkorder orderInfo = actWorkOrderService.queryWorkOrderById(orderId);
@@ -65,6 +66,15 @@ public class ActProcessController extends BaseController {
 		}
 		mv.addObject("nodeInfo", nodeInfo);
 		mv.addObject("orderInfo", orderInfo);
+		
+		//缩放
+		String zoom = request.getParameter("zoom");
+		if(StringUtils.isNotEmpty(zoom)){
+			mv.addObject("zoom", zoom);
+		}
+		//高度
+		String height = request.getParameter("height");
+		mv.addObject("height", StringUtils.isEmpty(height) ? "170" : height);
 		return mv;
 	}
 }

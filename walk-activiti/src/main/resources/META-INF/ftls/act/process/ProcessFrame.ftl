@@ -9,7 +9,7 @@
 	<div>
 		<!-- 流程图 -->
 		<div style="border-bottom: 1px solid #dcdee2;">
-			<iframe id="imageIframe" width="100%" height="190" src="${request.contextPath}/component/diagram-viewer/index.html?processDefinitionId=${nodeInfo.procDefId}&processInstanceId=${orderInfo.procInstId}" frameborder="0" scrolling="no" onload="imageDeal(this)"></iframe>
+			<iframe id="imageIframe" width="100%" height="${height}" src="${request.contextPath}/component/diagram-viewer/index.html?processDefinitionId=${nodeInfo.procDefId}&processInstanceId=${orderInfo.procInstId}" frameborder="0" scrolling="no" onload="imageDeal(this)"></iframe>
 		</div>
 		
 		<!-- 流程节点页面 -->
@@ -25,9 +25,11 @@ $(function(){
 
 //设置流程图尺寸
 function imageDeal(frame){
-	var body = $(frame.contentWindow.document.body);
-	body.css("zoom", "0.65");
-	body.css("background", "#ffffff");
+	var zoom = "${zoom}";
+	if(zoom){
+		var body = $(frame.contentWindow.document.body);
+		body.css("zoom", zoom);
+	}
 }
 
 //iframe自适应高度
