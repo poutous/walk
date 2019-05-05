@@ -28,6 +28,8 @@ public class Conditions extends AbstractEntity {
 	private Map<String, Object> parameters;
 	
 	private StringBuilder sql = new StringBuilder();
+	private StringBuilder orderAscSql = new StringBuilder();
+	private StringBuilder orderDescSql = new StringBuilder();
 	
 	public Conditions(Class<? extends BaseEntity> entityClazz){
 		if(entityClazz == null){
@@ -152,9 +154,7 @@ public class Conditions extends AbstractEntity {
 	public Conditions orderByAsc(String... columns){
 		if(columns != null && columns.length > 0){
 			for (String column : columns) {
-				Field field = fields.get(column);
-				OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
-				operColumn.asOrderByAsc();
+				orderAscSql.append(column).append(",");
 			}
 		}
 		return this;
@@ -169,9 +169,7 @@ public class Conditions extends AbstractEntity {
 	public Conditions orderByDesc(String... columns){
 		if(columns != null && columns.length > 0){
 			for (String column : columns) {
-				Field field = fields.get(column);
-				OperColumn operColumn = privateAddOperColumn(column, field.getName(), null, field.getType());
-				operColumn.asOrderByDesc();
+				orderDescSql.append(column).append(",");
 			}
 		}
 		return this;
@@ -226,6 +224,23 @@ public class Conditions extends AbstractEntity {
 			parameters.put(parameterKey, values[0]);
 			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value).append("#{").append(parameterKey).append("}");
 		}
+		
+		if(orderAscSql.length() > 0 || orderDescSql.length() > 0){
+			sql.append(" ORDER BY ");
+		}
+		
+		if(orderAscSql.length() > 0){
+			orderAscSql.deleteCharAt(orderAscSql.length() - 1).append(" ASC ");
+			if(orderDescSql.length() > 0){
+				orderAscSql.append(",");
+			}
+			sql.append(orderAscSql);
+		}
+		if(orderDescSql.length() > 0){
+			orderDescSql.deleteCharAt(orderDescSql.length() - 1).append(" DESC");
+			sql.append(orderDescSql);
+		}
+		
 	}
 	
 	/**
