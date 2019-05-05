@@ -224,23 +224,6 @@ public class Conditions extends AbstractEntity {
 			parameters.put(parameterKey, values[0]);
 			sql.append(" AND ").append(condition.getColumn()).append(condition.getSymbol().value).append("#{").append(parameterKey).append("}");
 		}
-		
-		if(orderAscSql.length() > 0 || orderDescSql.length() > 0){
-			sql.append(" ORDER BY ");
-		}
-		
-		if(orderAscSql.length() > 0){
-			orderAscSql.deleteCharAt(orderAscSql.length() - 1).append(" ASC ");
-			if(orderDescSql.length() > 0){
-				orderAscSql.append(",");
-			}
-			sql.append(orderAscSql);
-		}
-		if(orderDescSql.length() > 0){
-			orderDescSql.deleteCharAt(orderDescSql.length() - 1).append(" DESC");
-			sql.append(orderDescSql);
-		}
-		
 	}
 	
 	/**
@@ -256,7 +239,15 @@ public class Conditions extends AbstractEntity {
 		return parameters;
 	}
 	
-	String getSql() {
-		return sql.toString();
+	StringBuilder getSql() {
+		return sql;
+	}
+	
+	StringBuilder getOrderAscSql() {
+		return orderAscSql;
+	}
+
+	StringBuilder getOrderDescSql() {
+		return orderDescSql;
 	}
 }

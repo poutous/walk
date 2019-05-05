@@ -50,8 +50,32 @@ public abstract class EntityHelper {
 		}
 	}
 	
+	/**
+	 * 获取Conditions方式sql
+	 * 
+	 * @param conditions
+	 * @return
+	 */
 	public static String getConditionsSql(Conditions conditions) {
-		return conditions.getSql();
+		StringBuilder sql = conditions.getSql();
+		StringBuilder orderAscSql = conditions.getOrderAscSql();
+		StringBuilder orderDescSql = conditions.getOrderDescSql();
+		
+		if(orderAscSql.length() > 0 || orderDescSql.length() > 0){
+			sql.append(" ORDER BY ");
+		}
+		if(orderAscSql.length() > 0){
+			orderAscSql.deleteCharAt(orderAscSql.length() - 1).append(" ASC ");
+			if(orderDescSql.length() > 0){
+				orderAscSql.append(",");
+			}
+			sql.append(orderAscSql);
+		}
+		if(orderDescSql.length() > 0){
+			orderDescSql.deleteCharAt(orderDescSql.length() - 1).append(" DESC");
+			sql.append(orderDescSql);
+		}
+		return sql.toString();
 	}
 	
 	public static Object getConditionsParameters(Conditions conditions) {
