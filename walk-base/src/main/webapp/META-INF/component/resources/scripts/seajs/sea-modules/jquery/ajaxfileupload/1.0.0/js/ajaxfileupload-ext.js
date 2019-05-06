@@ -104,6 +104,13 @@ $.extend($.walk, {
 			$.walk.alert('未选择上传文件', 'error');
 			return false;
 		}
+		var limit = $(fileElement).attr("limit");
+		var existFiles = $(fileElement).parents(".ajaxfileupload").find(".files-list").find(".file-item").size();
+		if((files.length + existFiles) > limit){
+			$.walk.alert('超过最多上传文件个数限制[' + limit + ']', 'error');
+			return false;
+		}
+		
 		var types = $(fileElement).parent(".files-btn").find(".fileType").find(".types").text().trim();
 		if(!types){
 			//未设置文件上传类型限制则直接校验通过

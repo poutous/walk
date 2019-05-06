@@ -443,8 +443,15 @@
             <type>java.lang.String</type>
         </attribute>
         <attribute>
-            <description>是否允许上传多个true|false </description>
-            <name>multiple</name>
+            <description>限制上传个数 </description>
+            <name>limit</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Integer</type>
+        </attribute>
+        <attribute>
+            <description>是否只读 </description>
+            <name>readonly</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.Boolean</type>

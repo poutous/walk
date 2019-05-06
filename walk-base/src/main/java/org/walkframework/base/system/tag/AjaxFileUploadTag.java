@@ -26,9 +26,12 @@ public class AjaxFileUploadTag extends BaseTag {
 
 	/** 限制上传类型列表，多个以竖线分隔 */
 	private String types;
+	
+	/** 限制上传个数 */
+	private Integer limit = 1;
 
 	/** 是否允许上传多个 */
-	private boolean multiple;
+	private boolean readonly;
 
 	/** 文件ID列表，可以是字符串，多个以逗号分隔 。可以是List<String> */
 	private Object fileIds;
@@ -46,13 +49,15 @@ public class AjaxFileUploadTag extends BaseTag {
 	public String generateHtml() {
 		StringBuilder html = new StringBuilder();
 		html.append("<div class=\"ajaxfileupload\">");
-		html.append("	<div class=\"files-btn\">");
-		html.append("		<label for=\"" + getId() + "\">选择文件</label>");
-		if (!StringUtils.isEmpty(getTypes())) {
-			html.append("		<span class=\"fileType\">(文件类型：<span class=\"types\">" + getTypes() + "</span>)</span>");
+		if(!isReadonly()){
+			html.append("	<div class=\"files-btn\">");
+			html.append("		<label for=\"" + getId() + "\">选择文件</label>");
+			if (!StringUtils.isEmpty(getTypes())) {
+				html.append("		<span class=\"fileType\">(文件类型：<span class=\"types\">" + getTypes() + "</span>)</span>");
+			}
+			html.append("		<input type=\"file\" id=\"" + getId() + "\" limit=\"" + getLimit() + "\" " + (getLimit() > 1 ? "multiple=\"multiple\"" : "") + " onchange=\"$.walk.ajaxFileUpload(this);\"/>");
+			html.append("	</div>");
 		}
-		html.append("		<input type=\"file\" id=\"" + getId() + "\" " + (isMultiple() ? "multiple=\"multiple\"" : "") + " onchange=\"$.walk.ajaxFileUpload(this);\"/>");
-		html.append("	</div>");
 		html.append(generateFilesHtml());
 		html.append("</div>");
 		return html.toString();
@@ -75,7 +80,9 @@ public class AjaxFileUploadTag extends BaseTag {
 			files.append("			<a class=\"fileSize\" href=\"javascript:void(0)\">" + Math.floor(file.getFileSize().intValue() / 1024) + "KB</a>");
 			files.append("		</span>");
 			files.append("		<img class=\"download\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/download.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDownload('" + file.getFileId() + "')\"/>");
-			files.append("		<img class=\"delete\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/delete.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDelete(this)\"/>");
+			if(!isReadonly()){
+				files.append("		<img class=\"delete\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/delete.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDelete(this)\"/>");
+			}
 			files.append("	</div>");
 		}
 		files.append("</div>");
@@ -121,6 +128,14 @@ public class AjaxFileUploadTag extends BaseTag {
 	public void setTypes(String types) {
 		this.types = types;
 	}
+	
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
 
 	public Object getFileIds() {
 		return fileIds;
@@ -130,11 +145,11 @@ public class AjaxFileUploadTag extends BaseTag {
 		this.fileIds = fileIds;
 	}
 
-	public boolean isMultiple() {
-		return multiple;
+	public boolean isReadonly() {
+		return readonly;
 	}
 
-	public void setMultiple(boolean multiple) {
-		this.multiple = multiple;
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 }
