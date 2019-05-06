@@ -450,7 +450,7 @@ public class SqlSessionDao extends AbstractDao {
 
 			// 判断是否为导出
 			if (pagination.isBatch()) {
-				DatasetList<E> list = export(statementId, param, this.exportPageSize);
+				DatasetList<E> list = export(statementId, originalBoundSql, param, this.exportPageSize);
 				pageData.setRows(list);
 				pageData.setTotal(list.count());
 				return pageData;

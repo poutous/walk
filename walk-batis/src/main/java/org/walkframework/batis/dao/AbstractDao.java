@@ -6,13 +6,13 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.ibatis.mapping.BoundSql;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.walkframework.batis.exception.ExportException;
 import org.walkframework.data.bean.PageData;
 import org.walkframework.data.bean.Pagination;
 import org.walkframework.data.util.DatasetList;
-import org.walkframework.data.util.IDataset;
 
 /**
  * dao工具抽象类
@@ -36,7 +36,7 @@ public abstract class AbstractDao implements Dao {
 	 * @param param
 	 * @return
 	 */
-	protected <E> DatasetList<E> export(String statementId, Object param, int exportPageSize){
+	protected <E> DatasetList<E> export(String statementId, BoundSql originalBoundSql, Object param, int exportPageSize){
 		DatasetList<E> dataset = new DatasetList<E>();
 		dataset.setSerializable(true);
 		dataset.setBatchSerializable(true);
@@ -54,7 +54,9 @@ public abstract class AbstractDao implements Dao {
 			Pagination pagination = new Pagination();
 			pagination.setNeedCount(false);
 			pagination.setRange(i * exportPageSize, exportPageSize);
-			PageData<E> pageData = selectList(statementId, param, pagination);
+//			PageData<E> pageData = selectList(statementId, param, pagination);
+			PageData<E> pageData = selectList(statementId, originalBoundSql, param, pagination, null);
+			
 			List<E> subset = pageData.getRows();
 			if (subset.size() > 0) {
 				total += subset.size();
@@ -81,4 +83,6 @@ public abstract class AbstractDao implements Dao {
 		dataset.setCount(total);
 		return dataset;
 	}
+	
+	protected abstract <E> PageData<E> selectList(String statementId, BoundSql originalBoundSql, Object param, Pagination pagination, Integer cacheSeconds);
 }
