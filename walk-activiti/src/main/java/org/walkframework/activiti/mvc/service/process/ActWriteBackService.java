@@ -1,14 +1,8 @@
 package org.walkframework.activiti.mvc.service.process;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.task.IdentityLink;
-import org.activiti.engine.task.Task;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.walkframework.activiti.mvc.entity.ActUdWorkorder;
@@ -30,6 +24,9 @@ public class ActWriteBackService extends BaseService {
 	@Resource(name = "sqlSessionDao")
 	private BaseSqlSessionDao dao;
 	
+	@Resource(name = "actCommonService")
+	ActCommonService actCommonService;
+	
 	@Resource(name = "actProcessConfigService")
 	ActProcessConfigService actProcessConfigService;
 	
@@ -48,7 +45,7 @@ public class ActWriteBackService extends BaseService {
 	@SuppressWarnings({ "serial"})
 	public void writeBackBusinessTable(final WriteBackEntity writeBackEntity) {
 		//获取当前节点候选人
-		final String[] taskCandidates = getTaskCandidates(writeBackEntity.getProcInstId());
+		final String[] taskCandidates = actCommonService.getTaskCandidates(writeBackEntity.getProcInstId());
 		
 		//查询流程表
 		final ActUdWorkorder actUdWorkorder = dao.selectOne(new ActUdWorkorder(){{
@@ -114,38 +111,5 @@ public class ActWriteBackService extends BaseService {
 	 */
 	public void updateActUdWorkorder(ActUdWorkorder actUdWorkorder) {
 		dao.update(actUdWorkorder);
-	}
-	
-	/**
-	 * 获取当前任务候选人列表、候选组列表
-	 * 
-	 * @param taskId
-	 * @return
-	 */
-	private String[] getTaskCandidates(String procInstId) {
-		Task currTask = taskService.createTaskQuery().processInstanceId(procInstId).singleResult();
-		if(currTask == null){
-			return null;
-		}
-		List<IdentityLink> identityLinkList = taskService.getIdentityLinksForTask(currTask.getId());
-		StringBuilder candidateUsers = new StringBuilder();
-		StringBuilder candidateGroups = new StringBuilder();
-		if(CollectionUtils.isNotEmpty(identityLinkList)){
-			for (IdentityLink identityLink : identityLinkList) {
-				if(StringUtils.isNotEmpty(identityLink.getUserId()) && !"null".equals(identityLink.getUserId())){
-					candidateUsers.append(identityLink.getUserId()).append(",");
-				}
-				if(StringUtils.isNotEmpty(identityLink.getGroupId()) && !"null".equals(identityLink.getGroupId())){
-					candidateGroups.append(identityLink.getGroupId()).append(",");
-				}
-			}
-			if(candidateUsers.length() > 0){
-				candidateUsers.deleteCharAt(candidateUsers.length() - 1);
-			}
-			if(candidateGroups.length() > 0){
-				candidateGroups.deleteCharAt(candidateGroups.length() - 1);
-			}
-		}
-		return new String[]{candidateUsers.length() > 0 ? candidateUsers.toString() : "" , candidateGroups.length() > 0 ? candidateGroups.toString() : ""};
 	}
 }

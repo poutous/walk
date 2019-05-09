@@ -31,6 +31,9 @@ public class ActProcessLogService extends BaseService {
 	@Resource(name = "sqlSessionDao")
 	private BaseSqlSessionDao dao;
 	
+	@Resource(name = "actCommonService")
+	ActCommonService actCommonService;
+	
 	@Resource(name = "actProcessConfigService")
 	ActProcessConfigService actProcessConfigService;
 	
@@ -59,6 +62,9 @@ public class ActProcessLogService extends BaseService {
 	 * @param processLog
 	 */
 	public String doInsertProcessLog(ProcessLog processLog) {
+		//获取当前节点候选人
+		final String[] taskCandidates = actCommonService.getTaskCandidates(processLog.getProcInstId());
+		
 		Task task = taskService.createTaskQuery().processInstanceId(processLog.getProcInstId()).singleResult();
 		ProcessDefinition processDefinition = repositoryService.getProcessDefinition(task.getProcessDefinitionId());
 		ActUdProcessLog actUdProcessLog = new ActUdProcessLog();
@@ -85,6 +91,10 @@ public class ActProcessLogService extends BaseService {
 		actUdProcessLog.setBeginState(procState);
 		actUdProcessLog.setBeginTaskDefKey(task.getTaskDefinitionKey());
 		actUdProcessLog.setBeginTaskDefName(task.getName());
+		if(taskCandidates != null){
+			actUdProcessLog.setCandidateUsers(taskCandidates[0]);
+			actUdProcessLog.setCandidateGroups(taskCandidates[1]);
+		}
 		
 		dao.insert(actUdProcessLog);
 		if(log.isInfoEnabled()){

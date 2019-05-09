@@ -1,4 +1,4 @@
-version = "${walk_version}"
+version = "${walk_version}.snapshot-1"
 ext {
 	build = "build"
 	classes = "src/main/bin"
