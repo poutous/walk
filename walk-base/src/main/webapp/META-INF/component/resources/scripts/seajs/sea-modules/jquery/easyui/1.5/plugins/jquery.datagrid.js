@@ -2431,7 +2431,12 @@ mergeRowsByfields:function(jq, options){
 		//开始合并各列
 		if(ColArray != null && ColArray.length > 0){
 			for(var i=0; i<ColArray.length; i++){
-				_mergeRowsByField(tTable, index, offset, ColArray[i]);
+				tTable.datagrid("_mergeRowsByField", {
+					tTable: tTable,
+					index: index,
+					offset: offset, 
+					field: ColArray[i]
+				});
 			}
 		}
 	});
@@ -2457,9 +2462,13 @@ mergeRowsByTreefields:function(jq, fields){
 			if(rowspanArray != null && rowspanArray.length > 0){
 				var rowspanArray2 = [];
 				for(var i=0; i <rowspanArray.length; i++){
-					rowspanArray2 = rowspanArray2.concat(
-						_mergeRowsByField(tTable, rowspanArray[i].index, rowspanArray[i].rowspan, ColArray[j])
-					);
+					var rowspanArrayByField = tTable.datagrid("_mergeRowsByField", {
+						tTable: tTable, 
+						index: rowspanArray[i].index, 
+						offset: rowspanArray[i].rowspan, 
+						field: ColArray[j]
+					});
+					rowspanArray2 = rowspanArray2.concat(rowspanArrayByField);
 				}
 				rowspanArray = rowspanArray2;
 			}else{
@@ -2467,6 +2476,48 @@ mergeRowsByTreefields:function(jq, fields){
 			}
 		}
 	});
+},
+//合并列中相同数据且相连的行。index序列，limit向下遍历行数，field需要合并的列名
+_mergeRowsByField: function (jq, options){
+	var tTable = options.tTable;
+	var index = options.index;
+	var limit = options.limit;
+	var field = options.field;
+	
+	var curText, rowspan, rowOffset;
+	var rowspanArray = new Array();//返回合并单元格的序列结果 {index:起始行,rowspan:合并行}
+	var tTable = $(tTable);
+	var maxIndex = tTable.datagrid("getRows").length > index+limit ? index+limit : tTable.datagrid("getRows").length;//获取最大的条数
+	
+	function _A(_a, _b){
+		if(_b > 1){
+			//rowspan超过一行
+			tTable.datagrid('mergeCells', {
+				index : _a, field : field, rowspan : _b, colspan : null
+			});
+			rowspanArray.push({index:rowOffset, rowspan:rowspan});
+		}
+	}
+	for(var i=index;i<maxIndex; i++){
+		var text = tTable.datagrid("getRows")[i][field];
+		text = text == null ? '' : text;
+		if(text == curText){
+			rowspan++;
+		}else{
+			//合并单元给
+			_A(rowOffset, rowspan);
+			
+			// 数据初始化
+			rowspan = 1;
+			rowOffset = i;
+			curText = text;
+		}
+		if(i == maxIndex-1){
+			//合并单元给
+			_A(rowOffset, rowspan);
+		}
+	}
+	return rowspanArray;
 },
 //End:合并单元格
 sort:function(jq,_205){
