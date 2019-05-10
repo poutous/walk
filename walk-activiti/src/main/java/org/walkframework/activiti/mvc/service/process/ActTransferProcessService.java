@@ -69,19 +69,23 @@ public class ActTransferProcessService extends BaseService {
 		}
 
 		// 5、记录转办日志
+		final String transferUserIds = StringUtils.join(transferEntity.getTransferUserIds(), ",");
+		final String transferGroups = StringUtils.join(transferEntity.getTransferGroups(), ",");
 		final String transferRemark = StringUtils.isNotEmpty(transferEntity.getTransferRemark()) ? transferEntity.getTransferRemark() : defaultRemark;
-		actProcessLogService.doUpdateProcessLogRemark(transferEntity.getProcInstId(), transferRemark);
+		actProcessLogService.doUpdateProcessLogInfo(transferEntity.getProcInstId(), transferUserIds, transferGroups, transferRemark);
 		
 		
 		//6、修改工作流工单表
 		actWriteBackService.updateActUdWorkorder(new ActUdWorkorder(){{
 			setProcInstId(transferEntity.getProcInstId()).asCondition();
+			setCurrCandidateUsers(transferUserIds);
+			setCurrCandidateGroups(transferGroups);
 			setUpdateStaffId(transferEntity.getCurrUserId());
 			setUpdateTime(common.getCurrentTime());
 			setRemark(transferRemark);
 		}});
 	}
-
+	
 	/**
 	 * 转办参数校验
 	 * 

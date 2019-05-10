@@ -155,10 +155,12 @@ public class ActProcessLogService extends BaseService {
 	 * @param processLog
 	 */
 	@SuppressWarnings("serial")
-	public int doUpdateProcessLogRemark(final String procInstId, final String remark) {
+	public int doUpdateProcessLogInfo(final String procInstId, final String candidateUsers, final String candidateGroups, final String remark) {
 		return dao.update(new ActUdProcessLog(){{
 			setProcInstId(procInstId).asCondition();
 			setEndState(null).asCondition();
+			setCandidateUsers(candidateUsers);
+			setCandidateGroups(candidateGroups);
 			setRemark(remark);
 		}});
 	}
