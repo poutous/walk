@@ -13,7 +13,7 @@ $skinList:[
 	{name:"blueFresh",charset:"gb2312"}
 ],
 $wdate:true,
-$crossFrame:true,
+$crossFrame:false,
 $preLoad:false,
 doubleCalendar:false,
 enableKeyboard:true,

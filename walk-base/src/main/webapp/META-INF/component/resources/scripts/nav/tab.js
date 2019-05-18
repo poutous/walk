@@ -87,11 +87,15 @@ function addTab(subId, subtitle, url, icon){
 				content:ifm
 			}
 		});
-		ifm.attr("src", url);
+//		ifm.attr("src", url);
+		ifm.get(0).src = url;
 		
 		//加载效果...
 		var loadingTarget = $("#nav-mid-right");
 		$.walk.showLoading(loadingTarget, null, "47%");
+		setTimeout(function(){
+			$.walk.hideLoading(loadingTarget);
+		}, 5000);
 		ifm.bind('load', function(){
 			$.walk.hideLoading(loadingTarget);
 		});
@@ -211,7 +215,8 @@ function updateTab(url) {
 	var currTab = $('#tabs').tabs('getSelected');
 	var ifmId = IFM + currTab.panel('options').id;
 	if(url) {
-		$("#"+ifmId).attr("src", url);
+//		$("#"+ifmId).attr("src", url);
+		$("#"+ifmId).get(0).src = url;
 	} else {
 		$("#"+ifmId).get(0).contentWindow.location.reload();
 	}
