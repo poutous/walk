@@ -10,7 +10,6 @@ import org.walkframework.batis.bean.EntityBoundSql;
 import org.walkframework.batis.bean.OperColumnBean;
 import org.walkframework.batis.exception.NoUpdateColumnException;
 import org.walkframework.data.annotation.Table;
-import org.walkframework.data.entity.Conditions;
 import org.walkframework.data.entity.Entity;
 import org.walkframework.data.entity.EntityHelper;
 import org.walkframework.data.entity.OperColumn;
