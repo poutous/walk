@@ -58,10 +58,15 @@ public class SqlSessionDao extends AbstractDao {
 	private int exportPageSize;
 	
 	/**
+	 * 批量操作分批处理数量
+	 */
+	private int batchSize = DEFAULT_BATCH_SIZE;
+
+	/**
 	 * 随机数范围。mysql使用
 	 */
 	private int randomRange = DEFAULT_RANDOM_RANGE;
-	
+
 	private SQlGenerator sqlGeneration;
 
 	/**
@@ -93,7 +98,7 @@ public class SqlSessionDao extends AbstractDao {
 		this.exportPageSize = exportPageSize;
 		this.randomRange = randomRange;
 		this.sqlGeneration = new SQlGenerator();
-		
+
 	}
 
 	@Override
@@ -147,11 +152,11 @@ public class SqlSessionDao extends AbstractDao {
 
 	@Override
 	public <E> PageData<E> selectList(Entity entity, Pagination pagination, Integer cacheSeconds) {
-		if(entity instanceof Conditions){
-			Conditions conditions = (Conditions)entity;
+		if (entity instanceof Conditions) {
+			Conditions conditions = (Conditions) entity;
 			return this.selectListBySql(EntityHelper.getConditionsSql(conditions), new WrapParameter(EntityHelper.getConditionsParameters(conditions), EntityHelper.getEntityClazz(entity)), pagination, cacheSeconds);
 		}
-		
+
 		String statementId = EntitySQL.SELECT;
 		MappedStatement ms = this.sqlSession.getConfiguration().getMappedStatement(statementId);
 		BoundSql originalBoundSql = getBoundSql(ms, entity);
@@ -218,8 +223,8 @@ public class SqlSessionDao extends AbstractDao {
 
 	@Override
 	public Long selectCount(Entity entity, Integer cacheSeconds) {
-		if(entity instanceof Conditions){
-			Conditions conditions = (Conditions)entity;
+		if (entity instanceof Conditions) {
+			Conditions conditions = (Conditions) entity;
 			return this.selectCountBySql(EntityHelper.getConditionsSql(conditions), EntityHelper.getConditionsParameters(conditions), cacheSeconds);
 		}
 		String statementId = EntitySQL.SELECT;
@@ -245,10 +250,10 @@ public class SqlSessionDao extends AbstractDao {
 	@Override
 	public int insert(BaseEntity entity) {
 		int rows = updateEntity(SqlCommandType.INSERT, entity);
-		
-		//处理mysql的自增字段
+
+		// 处理mysql的自增字段
 		EntityUtil.handleAutoIncrement(entity, this);
-		
+
 		return rows;
 	}
 
@@ -256,7 +261,7 @@ public class SqlSessionDao extends AbstractDao {
 	public void insertBatch(List<? extends BaseEntity> list) {
 		insertBatch(list, null);
 	}
-	
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void insertBatch(List<? extends BaseEntity> list, BatchEachHandler batchEachHandler) {
@@ -282,7 +287,7 @@ public class SqlSessionDao extends AbstractDao {
 	public void updateBatch(List<? extends BaseEntity> list, String... conditionColumns) {
 		updateBatch(list, null, conditionColumns);
 	}
-	
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void updateBatch(List<? extends BaseEntity> list, BatchEachHandler batchEachHandler, String... conditionColumns) {
@@ -308,7 +313,7 @@ public class SqlSessionDao extends AbstractDao {
 	public void deleteBatch(List<? extends BaseEntity> list, String... conditionColumns) {
 		deleteBatch(list, null, conditionColumns);
 	}
-	
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void deleteBatch(List<? extends BaseEntity> list, BatchEachHandler batchEachHandler, String... conditionColumns) {
@@ -325,8 +330,8 @@ public class SqlSessionDao extends AbstractDao {
 	}
 
 	/**
-	 * 根据语句批量更新
-	 * mybatis在执行批量更新时xml中只能用update节点，为了避免开发人员不知道这种情况造成的疑惑，在这修改成使用DaoCommonMapper.update
+	 * 根据语句批量更新 mybatis在执行批量更新时xml中只能用update节点，为了避免开发人员不知道这种情况造成的疑惑，
+	 * 在这修改成使用DaoCommonMapper.update
 	 * mybatis的defaultExecutorType设置为非BATCH模式进行的批量更新
 	 * WalkbatisPlugin拦截器进行拦截，针对这种批量更新做特殊处理 java.sql的批量更新模式无法返回影响行数，所以直接以void处理
 	 * 
@@ -338,10 +343,10 @@ public class SqlSessionDao extends AbstractDao {
 	public void executeBatch(String statementId, List<?> list) {
 		executeBatch(statementId, list, null);
 	}
-	
+
 	/**
-	 * 根据语句批量更新
-	 * mybatis在执行批量更新时xml中只能用update节点，为了避免开发人员不知道这种情况造成的疑惑，在这修改成使用DaoCommonMapper.update
+	 * 根据语句批量更新 mybatis在执行批量更新时xml中只能用update节点，为了避免开发人员不知道这种情况造成的疑惑，
+	 * 在这修改成使用DaoCommonMapper.update
 	 * mybatis的defaultExecutorType设置为非BATCH模式进行的批量更新
 	 * WalkbatisPlugin拦截器进行拦截，针对这种批量更新做特殊处理 java.sql的批量更新模式无法返回影响行数，所以直接以void处理
 	 * 
@@ -351,8 +356,47 @@ public class SqlSessionDao extends AbstractDao {
 	 * @return
 	 */
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public void executeBatch(String statementId, List<?> list, BatchEachHandler batchEachHandler) {
+		if (list == null || list.size() == 0) {
+			throw new EmptyBatchListException();
+		}
+		// 限制条数
+		int batchSize = getBatchSize();
+		Integer size = list.size();
+		if (batchSize < size) {
+			// 分批数
+			int part = size / batchSize;
+			int end = 0;
+			for (int i = 0; i < part; i++) {
+
+				end = i * batchSize + batchSize;
+				List<?> listPage = list.subList(i * batchSize, end);
+				executeBatchPrivate(statementId, listPage, batchEachHandler);
+			}
+			// 最后剩下的数据
+			if (end < size) {
+				List<?> listPage = list.subList(end, size);
+				executeBatchPrivate(statementId, listPage, batchEachHandler);
+			}
+		} else {
+			executeBatchPrivate(statementId, list, batchEachHandler);
+		}
+	}
+	
+	/**
+	 * 根据语句批量更新 mybatis在执行批量更新时xml中只能用update节点，为了避免开发人员不知道这种情况造成的疑惑，
+	 * 在这修改成使用DaoCommonMapper.update
+	 * mybatis的defaultExecutorType设置为非BATCH模式进行的批量更新
+	 * WalkbatisPlugin拦截器进行拦截，针对这种批量更新做特殊处理 java.sql的批量更新模式无法返回影响行数，所以直接以void处理
+	 * 
+	 * @param statementId
+	 * @param list
+	 * @param batchEachHandler
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void executeBatchPrivate(String statementId, List<?> list, BatchEachHandler batchEachHandler) {
 		if (list == null || list.size() == 0) {
 			throw new EmptyBatchListException();
 		}
@@ -361,12 +405,12 @@ public class SqlSessionDao extends AbstractDao {
 				// 置入线程
 				BatchHolder.setBatch(new Batch(list.size()));
 			}
-
+			
 			String updateStatementId = EntitySQL.UPDATE;
 			for (Object object : list) {
 				
-				//用户自定义处理循环内容
-				if(batchEachHandler != null){
+				// 用户自定义处理循环内容
+				if (batchEachHandler != null) {
 					batchEachHandler.onEach(object);
 				}
 				
@@ -374,34 +418,37 @@ public class SqlSessionDao extends AbstractDao {
 				BoundSql originalBoundSql = getBoundSql(originalMs, object);
 				MappedStatement updateMs = this.sqlSession.getConfiguration().getMappedStatement(updateStatementId);
 				BoundSql updateBoundSql = getBoundSql(updateMs, object);
-
+				
 				// 修改sql和parameterMappings
 				MetaObject boundSqlMeta = SystemMetaObject.forObject(updateBoundSql);
 				boundSqlMeta.setValue("sql", originalBoundSql.getSql());
 				boundSqlMeta.setValue("parameterMappings", originalBoundSql.getParameterMappings());
-
+				
 				// 将boundSql置入线程
 				BoundSqlHolder.set(new CacheBoundSql(updateBoundSql, null));
-
+				
 				this.update(updateStatementId, object);
-
+				
 				// 执行完将boundSql从线程中移除
 				BoundSqlHolder.clear();
 			}
-
+			
 		} finally {
 			// 清理线程
 			if (!ExecutorType.BATCH.equals(this.sqlSession.getConfiguration().getDefaultExecutorType())) {
 				// 从线程中移除
 				BatchHolder.clear();
 			}
-
+			
 			// boundSql从线程中移除
 			BoundSqlHolder.clear();
 		}
 	}
-	
-	/** *****************************************分割线************************************************************************** */
+
+	/**
+	 * *****************************************分割线*****************************
+	 * *********************************************
+	 */
 	/**
 	 * 分页查询
 	 * 
@@ -422,9 +469,9 @@ public class SqlSessionDao extends AbstractDao {
 
 			// 执行count SQL
 			Long count = 0L;
-			
-			//调用存储过程有可能使用select方法调用
-			if(originalBoundSql.getSql() != null && !originalBoundSql.getSql().startsWith("{")){
+
+			// 调用存储过程有可能使用select方法调用
+			if (originalBoundSql.getSql() != null && !originalBoundSql.getSql().startsWith("{")) {
 				// 分页对象分析。从配置读取maxLimitResultset配置，避免因sql写法有误或条件设置不合理导致查询出大量结果集造成的内存溢出。
 				Properties properties = this.sqlSession.getConfiguration().getVariables();
 				String maxLimitResultset = properties == null ? "" : properties.getProperty("maxLimitResultset", "");
@@ -517,8 +564,8 @@ public class SqlSessionDao extends AbstractDao {
 			// 修改原始resultMaps
 			if (EntitySQL.SELECT.equals(statementId) && param != null) {
 				Class<? extends BaseEntity> entityType = null;
-				if(param instanceof WrapParameter){
-					WrapParameter wp = (WrapParameter)param;
+				if (param instanceof WrapParameter) {
+					WrapParameter wp = (WrapParameter) param;
 					entityType = wp.getEntityType();
 					param = wp.getParameterObject();
 				} else {
@@ -536,7 +583,7 @@ public class SqlSessionDao extends AbstractDao {
 		}
 		return list == null ? Collections.EMPTY_LIST : list;
 	}
-	
+
 	/**
 	 * 通过sql查询
 	 * 
@@ -553,7 +600,7 @@ public class SqlSessionDao extends AbstractDao {
 		BoundSql originalBoundSql = handleSql(sql, wrapParameter);
 		return this.selectList(EntitySQL.SELECT, originalBoundSql, wrapParameter, pagination, cacheSeconds);
 	}
-	
+
 	/**
 	 * 通过sql获取总数
 	 * 
@@ -569,9 +616,9 @@ public class SqlSessionDao extends AbstractDao {
 		try {
 			sql = this.dialect.getCountSql(sql);
 			BoundSql originalBoundSql = handleSql(sql, param);
-			
+
 			BoundSqlHolder.set(new CacheBoundSql(originalBoundSql, cacheSeconds));
-			
+
 			List<Map<String, Object>> list = this.sqlSession.selectList(EntitySQL.SELECT, param, RowBounds.DEFAULT);
 			count = Long.valueOf(list.get(0).get("CNT") + "");
 		} finally {
@@ -579,7 +626,7 @@ public class SqlSessionDao extends AbstractDao {
 		}
 		return count == null ? 0 : count;
 	}
-	
+
 	/**
 	 * 获取总数
 	 * 
@@ -624,7 +671,44 @@ public class SqlSessionDao extends AbstractDao {
 
 		return count == null ? 0 : count;
 	}
-	
+
+	/**
+	 * 批量更新 mybatis的defaultExecutorType设置为非BATCH模式进行的批量更新
+	 * WalkbatisPlugin拦截器进行拦截，针对这种批量更新做特殊处理 java.sql的批量更新模式无法返回影响行数，所以直接以void处理
+	 * 
+	 * @param sqlCommandType
+	 * @param list
+	 * @param batchEachHandler
+	 * @param conditionColumns
+	 */
+	@SuppressWarnings("rawtypes")
+	protected void executeBatch(SqlCommandType sqlCommandType, List<? extends BaseEntity> list, BatchEachHandler batchEachHandler, String... conditionColumns) {
+		if (list == null || list.size() == 0) {
+			throw new EmptyBatchListException();
+		}
+		// 限制条数
+		int batchSize = getBatchSize();
+		Integer size = list.size();
+		if (batchSize < size) {
+			// 分批数
+			int part = size / batchSize;
+			int end = 0;
+			for (int i = 0; i < part; i++) {
+
+				end = i * batchSize + batchSize;
+				List<? extends BaseEntity> listPage = list.subList(i * batchSize, end);
+				executeBatchPrivate(sqlCommandType, listPage, batchEachHandler, conditionColumns);
+			}
+			// 最后剩下的数据
+			if (end < size) {
+				List<? extends BaseEntity> listPage = list.subList(end, size);
+				executeBatchPrivate(sqlCommandType, listPage, batchEachHandler, conditionColumns);
+			}
+		} else {
+			executeBatchPrivate(sqlCommandType, list, batchEachHandler, conditionColumns);
+		}
+	}
+
 	/**
 	 * 批量更新 mybatis的defaultExecutorType设置为非BATCH模式进行的批量更新
 	 * WalkbatisPlugin拦截器进行拦截，针对这种批量更新做特殊处理 java.sql的批量更新模式无法返回影响行数，所以直接以void处理
@@ -635,30 +719,27 @@ public class SqlSessionDao extends AbstractDao {
 	 * @param conditionColumns
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected void executeBatch(SqlCommandType sqlCommandType, List<? extends BaseEntity> list, BatchEachHandler batchEachHandler, String... conditionColumns) {
-		if (list == null || list.size() == 0) {
-			throw new EmptyBatchListException();
-		}
+	private void executeBatchPrivate(SqlCommandType sqlCommandType, List<? extends BaseEntity> list, BatchEachHandler batchEachHandler, String... conditionColumns) {
 		try {
 			if (!ExecutorType.BATCH.equals(this.sqlSession.getConfiguration().getDefaultExecutorType())) {
 				// 置入线程
 				BatchHolder.setBatch(new Batch(list.size()));
 			}
-			
+
 			for (BaseEntity entity : list) {
-				
-				//用户自定义处理循环内容
-				if(batchEachHandler != null){
+
+				// 用户自定义处理循环内容
+				if (batchEachHandler != null) {
 					batchEachHandler.onEach(entity);
 				}
-				
+
 				// 处理操作列
 				EntityUtil.handleOperColumn(entity, conditionColumns);
-				
+
 				// updateEntity
 				updateEntity(sqlCommandType, entity);
 			}
-			
+
 		} finally {
 			if (!ExecutorType.BATCH.equals(this.sqlSession.getConfiguration().getDefaultExecutorType())) {
 				// 从线程中移除
@@ -708,7 +789,7 @@ public class SqlSessionDao extends AbstractDao {
 		}
 		return rows;
 	}
-	
+
 	/**
 	 * 获取BoundSql
 	 * 
@@ -717,8 +798,8 @@ public class SqlSessionDao extends AbstractDao {
 	 * @return
 	 */
 	private BoundSql getBoundSql(MappedStatement ms, Object parameterObject) {
-		if(parameterObject != null && parameterObject instanceof WrapParameter){
-			parameterObject = ((WrapParameter)parameterObject).getParameterObject();
+		if (parameterObject != null && parameterObject instanceof WrapParameter) {
+			parameterObject = ((WrapParameter) parameterObject).getParameterObject();
 		}
 		return ms.getBoundSql(wrapCollection(parameterObject));
 	}
@@ -744,7 +825,7 @@ public class SqlSessionDao extends AbstractDao {
 		}
 		return object;
 	}
-	
+
 	/**
 	 * 处理sql
 	 * 
@@ -752,14 +833,14 @@ public class SqlSessionDao extends AbstractDao {
 	 * @param param
 	 * @return
 	 */
-	private BoundSql handleSql(String sql, Object param){
-		if(param instanceof WrapParameter){
-			param = ((WrapParameter)param).getParameterObject();
+	private BoundSql handleSql(String sql, Object param) {
+		if (param instanceof WrapParameter) {
+			param = ((WrapParameter) param).getParameterObject();
 		}
 		Configuration configuration = getSqlSession().getConfiguration();
 		DynamicSqlSource sqlSource = new DynamicSqlSource(getSqlSession().getConfiguration(), new StaticTextSqlNode(sql.toString()));
 		BoundSql boundSql = sqlSource.getBoundSql(param);
-		
+
 		String statementId = EntitySQL.SELECT;
 		MappedStatement ms = configuration.getMappedStatement(statementId);
 		BoundSql originalBoundSql = ms.getBoundSql(param);
@@ -771,5 +852,13 @@ public class SqlSessionDao extends AbstractDao {
 
 	public int getRandomRange() {
 		return randomRange;
+	}
+	
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 }

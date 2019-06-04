@@ -25,6 +25,8 @@ public abstract class AbstractDao implements Dao {
 	
 	protected final static int DEFAULT_EXPORT_PAGE_SIZE = 2000;
 	
+	protected final static int DEFAULT_BATCH_SIZE = 100;
+	
 	protected final static int DEFAULT_RANDOM_RANGE = 1000;
 	
 	protected final static String SERIALIZABLE_PATH = "export/temp/batis/serializable";
