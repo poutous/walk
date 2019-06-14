@@ -2291,6 +2291,7 @@ exportData:function(jq, opts){
 									var myUrl = $("#pageContext").attr("contextName") + "/common/exportLog/toPage?exportId=" + exportId;
 									try {
 										$.walk.openTab("我的导出", myUrl);
+										$.walk.getTopWindow().$.walk.closeDialog();
 									} catch (e){
 										window.location.href = myUrl;
 									}
