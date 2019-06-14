@@ -470,8 +470,10 @@ return;
 }
 //Start:节点展开式加入默认参数__actionType=expand add by shf675
 if(_86.onBeforeExpand){
-var url = _86.url;
-_86.url = url + (url.indexOf('?') == -1 ? '?':'&') + "__actionType=expand";
+if(!_86.queryParams){
+	_86.queryParams = {};
+}
+_86.queryParams["__actionType"] = "expand";
 }
 //End:add by shf675
 if(_86.onBeforeExpand.call(_84,row)==false){
@@ -500,15 +502,6 @@ _88(cc);
 }
 function _88(cc){
 row.state="open";
-//Start:节点展开后替换__actionType=expand为空 add by shf675
-if(_86.onExpand){
-	var url = _86.url;
-	if(url.indexOf('__actionType=expand') != -1){
-		url = url.replace('?__actionType=expand','').replace('&__actionType=expand','');
-	}
-	_86.url = url;
-}
-//End:add by shf675
 if(_86.animate){
 cc.slideDown("normal",function(){
 $(_84).treegrid("autoSizeColumn");
