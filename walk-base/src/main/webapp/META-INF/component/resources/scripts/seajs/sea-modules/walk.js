@@ -625,7 +625,7 @@ $.walk = {
 			scrolling = urlOrDialogJson.scrolling;
 			onloadSuccess = urlOrDialogJson.onloadSuccess;
 		}
-		url = url.startsWith(this.ctx) ? url : (this.ctx + "/" + url);
+		url = url.startsWith("/") ? url : (this.ctx + "/" + url);
 		$.walk.getTopWindow().$.walk._openUrlDialog(url, title, width, height, top, scrolling, onloadSuccess, this.getPageId());
 	},
 	
