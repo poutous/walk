@@ -28,8 +28,9 @@ public class Conditions extends AbstractEntity {
 	private Map<String, Object> parameters;
 	
 	private StringBuilder sql = new StringBuilder();
-	private StringBuilder orderAscSql = new StringBuilder();
-	private StringBuilder orderDescSql = new StringBuilder();
+	private StringBuilder orderSql = new StringBuilder();
+	
+	private StringBuilder extendSql = new StringBuilder();
 	
 	public Conditions(Class<? extends BaseEntity> entityClazz){
 		if(entityClazz == null){
@@ -145,6 +146,11 @@ public class Conditions extends AbstractEntity {
 		return this;
 	}
 	
+	public Conditions addSql(String sql) {
+		extendSql.append(sql);
+		return this;
+	}
+	
 	/**
 	 * 添加升序排序字段
 	 * 
@@ -154,7 +160,7 @@ public class Conditions extends AbstractEntity {
 	public Conditions orderByAsc(String... columns){
 		if(columns != null && columns.length > 0){
 			for (String column : columns) {
-				orderAscSql.append(column).append(",");
+				orderSql.append(column).append(" ASC,");
 			}
 		}
 		return this;
@@ -169,7 +175,7 @@ public class Conditions extends AbstractEntity {
 	public Conditions orderByDesc(String... columns){
 		if(columns != null && columns.length > 0){
 			for (String column : columns) {
-				orderDescSql.append(column).append(",");
+				orderSql.append(column).append(" DESC,");
 			}
 		}
 		return this;
@@ -240,14 +246,10 @@ public class Conditions extends AbstractEntity {
 	}
 	
 	StringBuilder getSql() {
-		return sql;
+		return sql.append(extendSql);
 	}
 	
-	StringBuilder getOrderAscSql() {
-		return orderAscSql;
-	}
-
-	StringBuilder getOrderDescSql() {
-		return orderDescSql;
+	StringBuilder getOrderSql() {
+		return orderSql;
 	}
 }

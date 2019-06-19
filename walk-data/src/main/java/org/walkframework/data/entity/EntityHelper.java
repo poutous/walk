@@ -58,22 +58,9 @@ public abstract class EntityHelper {
 	 */
 	public static String getConditionsSql(Conditions conditions) {
 		StringBuilder sql = conditions.getSql();
-		StringBuilder orderAscSql = conditions.getOrderAscSql();
-		StringBuilder orderDescSql = conditions.getOrderDescSql();
-		
-		if(orderAscSql.length() > 0 || orderDescSql.length() > 0){
-			sql.append(" ORDER BY ");
-		}
-		if(orderAscSql.length() > 0){
-			orderAscSql.deleteCharAt(orderAscSql.length() - 1).append(" ASC ");
-			if(orderDescSql.length() > 0){
-				orderAscSql.append(",");
-			}
-			sql.append(orderAscSql);
-		}
-		if(orderDescSql.length() > 0){
-			orderDescSql.deleteCharAt(orderDescSql.length() - 1).append(" DESC");
-			sql.append(orderDescSql);
+		StringBuilder orderSql = conditions.getOrderSql();
+		if(orderSql.length() > 0){
+			sql.append(" ORDER BY ").append(orderSql.deleteCharAt(orderSql.length() - 1));
 		}
 		return sql.toString();
 	}

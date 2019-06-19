@@ -17,7 +17,7 @@ public class Condition {
 	private SQLSymbol symbol;
 
 	private Object[] values;
-
+	
 	public Condition(String column) {
 		this.column = column;
 	}
