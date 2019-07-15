@@ -249,6 +249,9 @@ $.walk = {
 		} else {
 			serializeStr = $.param(area.find("input,select,textarea").serializeArray());
 		}
+		if(serializeStr){
+			serializeStr = serializeStr.replace(/\+/g, " ");
+		}
 		return serializeStr;
 	},
 	
