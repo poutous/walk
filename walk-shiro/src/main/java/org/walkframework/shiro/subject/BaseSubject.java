@@ -31,7 +31,7 @@ public class BaseSubject implements Subject{
 	/************ 以下实现subject接口方法****************************************/
 	
 	public Object getPrincipal() {
-		return subject().getPrincipal();
+		return subject().getPrincipal() == null ? PrincipalHolder.getPrincipal():subject().getPrincipal();
 	}
 	
 	public <V> Callable<V> associateWith(Callable<V> paramCallable) {
