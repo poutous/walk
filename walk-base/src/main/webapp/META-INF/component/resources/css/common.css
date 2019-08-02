@@ -256,7 +256,7 @@ ul.w-header-dropdown li a:hover{background-color:#3875d7;color:#fff;}
 .w-message.info{background-color:#bce5f7;background-image:url("../images/icons/color/24/message-info.png");border-color:#a6d3e8;color:#11689e}
 .w-message.info .w-message-close{background-position:left top}
 
-.w-tab {height: 31px;}
+.w-tab {height: 30px;border-bottom: 1px solid #dddddd;}
 .w-tab .tab { float: left; border-top-left-radius: 5px; border-top-right-radius: 5px; border-top: 1px solid #dddddd; border-left: 1px solid #dddddd; border-right: 1px solid #dddddd; width: 88px; height: 30px; margin-left: 10px; line-height: 30px; text-align: center; cursor: pointer; }
 .w-tab .tab.active {background-color: #ff841c;border: 1px solid #ff841c!important;color: #fff;}
 

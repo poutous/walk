@@ -16,4 +16,5 @@ public interface TaskConstants {
 	
 	//健康检查缓存key名称
 	String TASK_HEALTH_KEY_NAME = "TASK_HEALTH_KEY_NAME";
+	
 }

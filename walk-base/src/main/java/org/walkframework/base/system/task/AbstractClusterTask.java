@@ -80,7 +80,7 @@ public abstract class AbstractClusterTask extends Subscriber implements IMessage
 	 * @param messageBody
 	 * @param pattern
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onMessage(String channel, Object messageBody, String pattern) {
 		if (CURRENT_CHANNEL.equals(channel)) {

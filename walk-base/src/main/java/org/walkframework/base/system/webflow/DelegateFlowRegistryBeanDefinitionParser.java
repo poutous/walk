@@ -15,9 +15,9 @@ import org.walkframework.base.tools.utils.PropertyAndExpressionUtil;
 import org.walkframework.base.tools.utils.ReflectionUtils;
 
 /**
- * @author shf675
+  *  处理webflow标签中的属性值
  * 
- * 处理webflow标签中的属性值
+ * @author shf675
  * 
  */
 public class DelegateFlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -43,7 +43,7 @@ public class DelegateFlowRegistryBeanDefinitionParser extends AbstractSingleBean
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes" })
 	@Override
 	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder definitionBuilder) {
 		try {

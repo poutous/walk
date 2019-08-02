@@ -45,7 +45,7 @@ public class EntityOrMap {
 
 	public void set(String name, Object value) {
 		Class<?> getterType = this.nativeObjectMeta.getGetterType(name);
-		if(value != null && !value.getClass().equals(getterType)){
+		if(value != null && !(value.getClass().equals(getterType) || getterType.isAssignableFrom(value.getClass()))){
 			value = EntityHelper.parseString(value.toString(), getterType);
 		}
 		this.nativeObjectMeta.setValue(name, value);

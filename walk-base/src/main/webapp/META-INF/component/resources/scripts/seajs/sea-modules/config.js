@@ -23,8 +23,8 @@ seajs.config({
 		//walk框架通用js
 		'$walk': 'walk',
 		
-		//jQuery.EasyUI 相关插件在jquery/easyui/1.5/easyloader.sea.js里配置。 easyloader方式按需加载 http://www.jeasyui.com
-		'$easyloader': 'jquery/easyui/1.5/easyloader.sea',
+		//jQuery.EasyUI 相关插件在jquery/easyui/1.8.1/easyloader.sea.js里配置。 easyloader方式按需加载 http://www.jeasyui.com
+		'$easyloader': 'jquery/easyui/1.8.1/easyloader.sea',
 		
 		//jQuery.form 表单插件，可做ajax提交
 		'$form': 'jquery/form/1.3.2/form',

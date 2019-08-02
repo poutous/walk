@@ -197,7 +197,7 @@ function menuRightBind(tabId, tab){
 			afterShow : function(){
 				//低版本IE遮罩select
 				if($.isIE8Under()){
-					$("#smartMenu_menu").bgiframe();
+//					$("#smartMenu_menu").bgiframe();
 				}
 			}
 		});
@@ -392,7 +392,10 @@ function getFrameContentHeight(frame){
 			if(childrens.length > 1){
 				var totalHeight = 0;
 				childrens.each(function(){
-					totalHeight += $(this).height();
+					if($(this).hasClass("window-mask")){
+					} else {
+						totalHeight += $(this).height();
+					}
 				});
 //				if(body.find(".bodyWrapInner").size() == 0){
 //					body.wrapInner("<div class='bodyWrapInner'></div>");

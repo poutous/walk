@@ -261,9 +261,10 @@ public class TranslatorEnhancer implements InitializingBean {
 	 * @param inBootJarClass
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes" })
 	public void writeToBootJar(Map<String, CtClass> inBootJarClass) throws Exception {
 		String bootJarPath = getBootJarPath();
+		@SuppressWarnings("resource")
 		JarFile jarFile = new JarFile(bootJarPath);
 		TreeMap<String, byte[]> entries = new TreeMap<String, byte[]>();
 		Enumeration es = jarFile.entries();

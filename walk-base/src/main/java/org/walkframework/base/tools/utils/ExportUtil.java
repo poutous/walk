@@ -161,8 +161,19 @@ public abstract class ExportUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public static String writeZipFileByXml(List dataset, String xml) throws Exception {
+		ExportXml exportXml = getExportXmlConfig(xml);
+		return writeZipFile(dataset, exportXml.getHeaderJSON(), exportXml.getFileName());
+	}
+	
+	/**
+	 * 通过xml配置获取导出配置
+	 * 
+	 * @param xml
+	 * @return
+	 * @throws Exception
+	 */
+	public static ExportXml getExportXmlConfig(String xml) throws Exception {
 		//读取xml文件
 		StringBuilder result = new StringBuilder();
 		BufferedReader br = null;
@@ -198,11 +209,10 @@ public abstract class ExportUtil {
 				josonArray.put(((JSONObject) object).getJSONArray("th"));
 			}
 		}
-
-		//导出
-		String headerJSON = josonArray.toString();
-		String fileName = table.getString("name");
-		return writeZipFile(dataset, headerJSON, fileName);
+		ExportXml exportXml = new ExportXml();
+		exportXml.setFileName(table.getString("name"));
+		exportXml.setHeaderJSON(josonArray.toString());
+		return exportXml;
 	}
 
 	/**

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * Json处理类
@@ -29,6 +31,15 @@ public abstract class JacksonUtil {
 		
 		//设置null值不参加序列化
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		
+		/**
+        * 序列换成json时,将所有的long变成string
+        * 因为js中得数字类型不能包含所有的java long值
+		**/
+		SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
 	}
 	
 	/**

@@ -59,7 +59,7 @@ public class MasterFactory {
 	 * 
 	 * @param timeoutMillis
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes" })
 	public void tryLockMaster(final long timeoutMillis) {
 		final ICache healthCache = cacheManager.getICache(TaskConstants.TASK_HEALTH_CACHE_NAME);
 		if (healthCache.getNativeCache() instanceof RedisOperations) {

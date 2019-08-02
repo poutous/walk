@@ -545,7 +545,7 @@ $.walk = {
 	        }
 	        if($.isIE8Under()){
 		        //ie6遮罩select
-		        $(".blockOverlay").bgiframe();
+//		        $(".blockOverlay").bgiframe();
 	        }
 		});
 	},

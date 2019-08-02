@@ -53,36 +53,38 @@
 	
 	<!-- 查询导出日志列表 -->
 	<select id="queryExportList" resultType="org.walkframework.data.util.DataMap" useCache="false" flushCache="true">
-		SELECT a.*,
-			   CASE WHEN a.export_mode = '1' THEN '同步' WHEN a.export_mode = '2' THEN '异步' END EXPORT_MODE_NAME,
-			   CASE WHEN a.export_state = '0' THEN '导出中' WHEN a.export_state = '1' THEN '导出成功' WHEN a.export_state = '2' THEN '导出失败' END EXPORT_STATE_NAME
-		  FROM tl_m_exportlog a
+		SELECT A.LOG_ID, A.EXPORT_NAME, A.EXPORT_MODE, A.EXPORT_STATE, A.EXPORT_PATH, A.REQ_URI,
+			   A.TOTAL, A.FILE_SIZE, A.OPERATE_IP, A.CREATE_STAFF, A.CREATE_TIME, A.APPOINTMENT_TIME, 
+			   A.FINISH_TIME, A.RETRY_NUMS, A.ERROR_INFO, A.REMARK,
+			   CASE WHEN A.EXPORT_MODE = '1' THEN '同步' WHEN A.EXPORT_MODE = '2' THEN '异步' END EXPORT_MODE_NAME,
+			   CASE WHEN A.EXPORT_STATE = '0' THEN '导出中' WHEN A.EXPORT_STATE = '1' THEN '导出成功' WHEN A.EXPORT_STATE = '2' THEN '导出失败' WHEN A.EXPORT_STATE = '3' THEN '预约导出中'  END EXPORT_STATE_NAME
+		  FROM TL_M_EXPORTLOG A
 		<where>
 			<if test="exportId != null and exportId != ''">
-				AND a.log_id = #{exportId}
+				AND A.LOG_ID = #{exportId}
 			</if>
 			<if test="exportName != null and exportName != ''">
-				AND a.export_name like '%' || #{exportName} || '%'
+				AND A.EXPORT_NAME LIKE '%' || #{exportName} || '%'
 			</if>
 			<if test="exportMode != null and exportMode != ''">
-				AND a.export_mode = #{exportMode}
+				AND A.EXPORT_MODE = #{exportMode}
 			</if>
 			<if test="exportState != null and exportState != ''">
-				AND a.export_state = #{exportState}
+				AND A.EXPORT_STATE = #{exportState}
 			</if>
 			<if test="createStaff != null and createStaff != ''">
-				AND a.create_staff = #{createStaff}
+				AND A.CREATE_STAFF = #{createStaff}
 			</if>
 			<!-- 开始时间 -->
 			<if test="beginDate != null and beginDate != ''">
-				<![CDATA[AND a.create_time >= TO_DATE(#{beginDate}, 'YYYY-MM-DD')]]>
+				<![CDATA[AND A.CREATE_TIME >= TO_DATE(#{beginDate}, 'YYYY-MM-DD')]]>
 			</if>
 			<!-- 结束时间 -->
 			<if test="endDate != null and endDate != ''">
-				<![CDATA[AND a.create_time <= TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1]]>
+				<![CDATA[AND A.CREATE_TIME <= TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1]]>
 			</if>
 		</where>
-		ORDER BY a.create_time DESC
+		ORDER BY A.CREATE_TIME DESC
 	</select>
 	
 </mapper>
