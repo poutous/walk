@@ -1,3 +1,7 @@
+walk2.1.7  
+1、easyui升级到1.8.1
+2、增加定时导出功能
+
 walk2.1.6  
 1、walk-batis Conditions方式优化  
 2、增加ajaxfileupload组件，ajax方式上传文件  
