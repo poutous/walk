@@ -36,11 +36,22 @@ public class ShiroExtHttpServletResponse extends ShiroHttpServletResponse {
 	/**
 	 * 当容器是http，代理或负载是https时，解决重定向协议问题。
 	 * 
+	 * underscores_in_headers on;
+	 * proxy_set_header https_ignore_servers xxx.xxx.xxx.xx1|xxx.xxx.xxx.xx2;
+	 * 
+	 * proxy_set_header X-Forwarded-Proto https;
+	 * 
 	 * @param location
 	 * @return
 	 */
 	protected String resolveHttpsRedirect(String location) {
 		HttpServletRequest request = getRequest();
+		//忽略的服务处理
+		String httpsIgnoreServers = request.getHeader("https_ignore_servers") + "";
+		if(request.getServerName().matches(httpsIgnoreServers)) {
+			return location;
+		}
+				
 		String scheme = request.getScheme();
 		String protocolHeaderValue = request.getHeader("X-Forwarded-Proto");
 		if ("http".equalsIgnoreCase(scheme) && "https".equalsIgnoreCase(protocolHeaderValue) 
