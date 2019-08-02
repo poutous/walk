@@ -10,14 +10,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import name.pachler.nio.file.FileSystems;
-import name.pachler.nio.file.Path;
-import name.pachler.nio.file.Paths;
-import name.pachler.nio.file.StandardWatchEventKind;
-import name.pachler.nio.file.WatchEvent;
-import name.pachler.nio.file.WatchKey;
-import name.pachler.nio.file.WatchService;
-
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -33,6 +25,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.ResourceUtils;
+
+import name.pachler.nio.file.FileSystems;
+import name.pachler.nio.file.Path;
+import name.pachler.nio.file.Paths;
+import name.pachler.nio.file.StandardWatchEventKind;
+import name.pachler.nio.file.WatchEvent;
+import name.pachler.nio.file.WatchKey;
+import name.pachler.nio.file.WatchService;
 
 /**
  * @description: 扩展SqlSessionFactoryBean，支持Mybatis热部署
@@ -101,8 +102,11 @@ public class HotSqlSessionFactoryBean extends SqlSessionFactoryBean {
 			
 			//监控目录
 			for (String hotDeployLocation : hotDeployLocations) {
-				String monitorPath = this.getClass().getClassLoader().getResource("").getPath() + hotDeployLocation;
-				if(new File(monitorPath).isDirectory()){
+//				String monitorPath = this.getClass().getClassLoader().getResource("").getPath() + hotDeployLocation;
+//				File monitorDir = new File(monitorPath);
+				File monitorDir = ResourceUtils.getFile("classpath:" + hotDeployLocation);
+				String monitorPath = monitorDir.getAbsolutePath();
+				if(monitorDir.isDirectory()){
 					new Thread(new Monitor(Paths.get(monitorPath), new AtomicBoolean(false), configuration)).start();
 					log.debug("Mybatis hot deployment process. Monitor root directory：{}", monitorPath);
 				} else {
