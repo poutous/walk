@@ -288,6 +288,9 @@ public class Common {
 	 * @throws Exception
 	 */
 	public String decodeTimestamp(String format, Date time) {
+		if(time == null) {
+			return null;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(time);
 	}
