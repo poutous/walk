@@ -94,24 +94,36 @@ public class RedisQueue<E> extends AbstractQueue<E> implements IQueue<E>{
 	 * 移除队列指定元素
 	 * 
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean remove(final Object valueWrapper) {
-		return (Boolean) redisOperations.execute(new RedisCallback<Boolean>() {
-			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				Long nums = connection.lRem(queueNameBytes, 1, serialize(valueWrapper));
-				return nums.longValue() > 0;
+	public boolean remove(final Object o) {
+		if(o instanceof ValueWrapper) {
+			return (Boolean) redisOperations.execute(new RedisCallback<Boolean>() {
+				public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+					Long nums = connection.lRem(queueNameBytes, 1, serialize(o));
+					return nums.longValue() > 0;
+				}
+			});
+		} else {
+			RedisQueue.QueueIterator iterator = (RedisQueue.QueueIterator)iterator();
+			while (iterator.hasNext()) {
+				ValueWrapper valueWrapper = iterator.nextValueWrapper();   
+				if(Arrays.equals(serialize(valueWrapper.get()), serialize(o))) {
+					return remove(valueWrapper);
+				}
 			}
-		});
+		}
+		return false;
 	}
 	
 	/**
-	 * 从队列中删除在valueWrappers中的元素
+	 * 从队列中删除在values中的元素
 	 */
 	@Override
-	public boolean removeAll(Collection<?> valueWrappers) {
+	public boolean removeAll(Collection<?> values) {
 		boolean modified = false;
-		for (Object valueWrapper : valueWrappers) {
-			if(remove(valueWrapper) == true){
+		for (Object value : values) {
+			if(remove(value) == true){
 				modified = true;
 			}
 		}
@@ -119,20 +131,20 @@ public class RedisQueue<E> extends AbstractQueue<E> implements IQueue<E>{
 	}
 	
 	/**
-	 * 从队列中删除不在valueWrappers中的元素
+	 * 从队列中删除不在values中的元素
 	 * 
 	 * 为提高效率，采用先删后重新入队的方式
 	 */
 	@Override
-	public boolean retainAll(Collection<?> valueWrappers) {
+	public boolean retainAll(Collection<?> values) {
 		boolean modified = false;
 		
-		Collection<ValueWrapper> exists = new ArrayList<ValueWrapper>();
+		Collection<Object> exists = new ArrayList<Object>();
 		
 		//1、将存在的元素从队列中删除，并缓存
-		for (Object valueWrapper : valueWrappers) {
-			if(remove(valueWrapper) == true){
-				exists.add((ValueWrapper)valueWrapper);
+		for (Object value : values) {
+			if(remove(value) == true){
+				exists.add(value);
 				modified = true;
 			}
 		}
@@ -141,7 +153,7 @@ public class RedisQueue<E> extends AbstractQueue<E> implements IQueue<E>{
 		clear();
 		
 		//3、将缓存的数据重新入队
-		for (ValueWrapper exist : exists) {
+		for (Object exist : exists) {
 			offer((E)exist);
 		}
 		return modified;
