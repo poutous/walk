@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.stereotype.Service;
@@ -24,6 +22,7 @@ import org.walkframework.data.util.InParam;
 import org.walkframework.mq.queue.IQueue;
 import org.walkframework.mq.queue.IQueueManager;
 import org.walkframework.mq.queue.redis.RedisQueue;
+import org.walkframework.mq.queue.redis.RedisQueueManager;
 import org.walkframework.mq.queue.redis.ValueWrapper;
 
 import com.alibaba.fastjson.JSONObject;
@@ -54,9 +53,18 @@ public class QueueManagerService extends BaseConsoleService {
 	 * @param inParam
 	 * @param pagination
 	 * @return
+	 * @throws Exception 
 	 */
 	@SuppressWarnings( { "unchecked", "serial" })
-	public PageData<IData<String, Object>> queryQueueList(InParam<String, Object> inParam, Pagination pagination) {
+	public PageData<IData<String, Object>> queryQueueList(InParam<String, Object> inParam, Pagination pagination){
+		try {
+			//先加载队列
+			RedisQueueManager redisQueueManager = (RedisQueueManager)getQueueManager();
+			redisQueueManager.afterPropertiesSet();
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		
 		Collection<String> queueNames = getQueueManager().getQueueNames();
 		final String queueName = inParam.getString("queueName", "");
 		

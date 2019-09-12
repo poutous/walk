@@ -44,18 +44,14 @@
 		<div class="w-panel-content">
 			<table id="dataGrid" class="easyui-datagrid" 
 				   url="${request.contextPath}/console/cache/queryCacheElementList"
-				   data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false,frozenAlign:'right'">
-				<thead data-options="frozen:true">
-					<tr>
-						<th data-options="field:'oper', width:150, halign:'center', formatter:operRecord, exportable:false">操作区</th>
-					</tr>
-				</thead>
+				   data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false">
 				<thead>
 					<tr>
 						<th data-options="field:'ck', checkbox:true, exportable:false"></th>
 						<th data-options="field:'cacheKeyIndex',align:'left',hidden:true">元素key索引</th>
 						<th data-options="field:'cacheKey',align:'left',width:770,tip:true">元素key</th>
 						<th data-options="field:'cacheTTL',width:150,formatter:function(val){return val ? parseInt(val/1000):'';}">剩余存活时间(秒)</th>
+						<th data-options="field:'oper',formatter:operRecord,width:150">操作区</th>
 					</tr>
 				</thead>
 			</table>

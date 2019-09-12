@@ -38,18 +38,14 @@
 		<!-- 数据表 -->
 		<div class="w-panel-content">
 			<table id="dataGrid" class="easyui-datagrid" url="${request.contextPath}/console/staticparam/queryStaticParamCacheList" 
-				data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false,frozenAlign:'right'">
-				<thead data-options="frozen:true">
-					<tr>
-						<th data-options="field:'oper', width:150, halign:'center', formatter:operRecord, exportable:false">操作区</th>
-					</tr>
-				</thead>
+				data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false">
 				<thead>
 					<tr>
 						<th data-options="field:'ck', checkbox:true, exportable:false"></th>
 						<th data-options="field:'cacheName',hidden:true">缓存名称</th>
 						<th data-options="field:'showCacheName',align:'left',tip:true,width:600">参数表名称</th>
 						<th data-options="field:'cacheSize',width:400">元素数量</th>
+						<th data-options="field:'oper',formatter:operRecord,width:150">操作区</th>
 					</tr>
 				</thead>
 			</table>
@@ -72,7 +68,7 @@ function operRecord(val, row) {
 //元素管理
 function manager(cacheName, showCacheName){
 	var url = $.walk.ctx + "/console/cache/go/cacheElementManager?cacheName=" + cacheName;
-	$.walk.openUrlDialog(url, "元素管理[" + showCacheName + "]", 1100, 625, 5, "auto");
+	$.walk.openUrlDialog(url, "元素管理[" + showCacheName + "]", 1100, 625, 5);
 }
 
 //批量清空

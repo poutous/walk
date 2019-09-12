@@ -37,17 +37,13 @@
 		<!-- 数据表 -->
 		<div class="w-panel-content">
 			<table id="dataGrid" class="easyui-datagrid" url="${request.contextPath}/console/queue/queryQueueList" 
-				data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false,frozenAlign:'right'">
-				<thead data-options="frozen:true">
-					<tr>
-						<th data-options="field:'oper', width:150, halign:'center', formatter:operRecord, exportable:false">操作区</th>
-					</tr>
-				</thead>
+				data-options="queryParams:$.walk.getQueryParams('conditionForm'),selectOnCheck:false">
 				<thead>
 					<tr>
 						<th data-options="field:'ck', checkbox:true, exportable:false"></th>
 						<th data-options="field:'queueName',align:'left',tip:true,width:600">队列名称</th>
 						<th data-options="field:'queueSize',width:400">元素数量</th>
+						<th data-options="field:'oper',formatter:operRecord,width:150">操作区</th>
 					</tr>
 				</thead>
 			</table>
