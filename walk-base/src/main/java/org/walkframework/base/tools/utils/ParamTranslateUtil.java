@@ -79,14 +79,14 @@ public abstract class ParamTranslateUtil {
 					String[] srcs = datasrc.split(";");
 					for (int i = 0; i < srcs.length; i++) {
 						String[] array = srcs[i].split("\\.");
-						String tableName = array[0];
-						String colName = array[2];
+						String tableName = array[0].toUpperCase();
+						String colName = array[2].toUpperCase();
 						IData<String, Object> cacheData = StaticParamUtil.getCache(tableName).getValue(StaticParamUtil.getMapCacheKey(srcValue));
 						if (cacheData == null || cacheData.isEmpty()) {
 							flag = false;
 							break;
 						}
-						staticValue = cacheData.getString(colName);
+						staticValue = cacheData.getString(colName.toUpperCase(), cacheData.getString(colName.toLowerCase()));
 						if (staticValue == null) {
 							flag = false;
 							break;

@@ -197,7 +197,8 @@ public class StaticParamLoadManager extends AbstractBaseService implements BeanN
 			if (subList.size() > 0) {
 				try {
 					for (IData<String, String> data : subList) {
-						cache.put(StaticParamUtil.getMapCacheKey(data.getString(staticParam.getPrimaryKey())), data);
+						String primaryKeyValue = data.getString(staticParam.getPrimaryKey().toUpperCase(), data.getString(staticParam.getPrimaryKey().toLowerCase()));
+						cache.put(StaticParamUtil.getMapCacheKey(primaryKeyValue), data);
 					}
 					cache.put(StaticParamUtil.getListCacheKey(), subList);
 				} catch (Exception e) {
