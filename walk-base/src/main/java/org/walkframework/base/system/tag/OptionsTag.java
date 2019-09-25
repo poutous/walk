@@ -1,12 +1,11 @@
 package org.walkframework.base.system.tag;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import org.walkframework.base.tools.spring.SpringContextHolder;
 import org.walkframework.base.tools.utils.ParamTranslateUtil;
@@ -184,12 +183,16 @@ public class OptionsTag extends BaseTag {
 
     private static String getIsSelected(String value, String selectValue) {
         String isSelected = "";
-        if (value != null && selectValue.equals(value)) {
-            isSelected = " selected=\"selected\"";
+        if (value != null) {
+        	String[] arr = value.split(",");
+        	if(Arrays.asList(arr).contains(selectValue)) {
+        		isSelected = " selected=\"selected\"";
+        		
+        	}
         }
         return isSelected;
     }
-
+    
     private static String stringValue(Object value) {
         return null == value ? "" : value.toString();
     }
