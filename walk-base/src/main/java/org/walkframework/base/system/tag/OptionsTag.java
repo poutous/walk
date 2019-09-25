@@ -44,6 +44,8 @@ public class OptionsTag extends BaseTag {
     /** 全部选项显示文本 */
     private String fullText;
     
+    private List defaultValueList;
+    
 	public void doTag() throws IOException {
         super.doTag();
         options();
@@ -181,14 +183,11 @@ public class OptionsTag extends BaseTag {
         return optionsList(ParamTranslateUtil.staticlist(typeId), "dataId", "dataName", defaultValue);
     }
 
-    private static String getIsSelected(String value, String selectValue) {
+    private String getIsSelected(String value, String selectValue) {
         String isSelected = "";
-        if (value != null) {
-        	String[] arr = value.split(",");
-        	if(Arrays.asList(arr).contains(selectValue)) {
-        		isSelected = " selected=\"selected\"";
-        		
-        	}
+        List defaultValueList = getDefaultValueList();
+        if (defaultValueList != null && defaultValueList.contains(selectValue)) {
+        	isSelected = " selected=\"selected\"";
         }
         return isSelected;
     }
@@ -269,6 +268,17 @@ public class OptionsTag extends BaseTag {
 
 	public void setFullText(String fullText) {
 		this.fullText = fullText;
+	}
+
+	public List getDefaultValueList() {
+		if(defaultValue == null) {
+			return null;
+		}
+		
+		if(defaultValueList == null) {
+			defaultValueList = Arrays.asList(defaultValue.split(","));
+		}
+		return defaultValueList;
 	}
 
 }
