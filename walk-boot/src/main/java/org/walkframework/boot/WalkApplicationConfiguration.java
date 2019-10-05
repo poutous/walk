@@ -34,6 +34,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -65,10 +66,13 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 	private Environment environment;
 	
 	@Autowired
-	private ApplicationContext context;
+	private WebApplicationContext context;
 	
 	@Autowired
 	private ErrorPageProperties errorPageProperties;
+	
+	@Autowired
+	private DispatcherServlet dispatcherServlet;
 	
 	/**
 	 * jar或直接运行BootRun方式启动工程入口
@@ -177,9 +181,9 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 	public void onStartup(ServletContext container) throws ServletException {
 		// Spring MVC配置
 		if ("true".equals(environment.getProperty("spring.boot.mvc.load", "true"))) {
-			DispatcherServlet springMVC = new DispatcherServlet();
-			springMVC.setContextConfigLocation(environment.getProperty("spring.boot.mvc.location", "classpath:spring/spring-mvc.xml"));
-			ServletRegistration.Dynamic springMVCRegistration = container.addServlet("springMVC", springMVC);
+//			DispatcherServlet springMVC = new DispatcherServlet();
+//			springMVC.setContextConfigLocation(environment.getProperty("spring.boot.mvc.location", "classpath:spring/spring-mvc.xml"));
+			ServletRegistration.Dynamic springMVCRegistration = container.addServlet("springMVC", dispatcherServlet);
 			springMVCRegistration.setLoadOnStartup(1);
 			springMVCRegistration.addMapping("/");
 		}
