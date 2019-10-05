@@ -55,7 +55,16 @@ public class ValidatorResultInterceptor {
 				//避免将sql抛到前台
 				if (e instanceof BadSqlGrammarException) {
 					errorMessage = e.getCause();
+				} 
+				//阿里sentinel：流控
+				else if(e.getClass().getName().equals("com.alibaba.csp.sentinel.slots.block.flow.FlowException")) {
+					errorMessage = "服务流控->调用太频繁了";
 				}
+				//阿里sentinel：降级
+				else if(e.getClass().getName().equals("com.alibaba.csp.sentinel.slots.block.degrade.DegradeException")) {
+					errorMessage = "服务降级->响应超时或内部异常";
+				}
+				
 				String errorMsg = RspConstants.RSP.get(RspConstants.INTERNAL_ERROR) + "：" + errorMessage;
 				retVal = getRspInfo(RspConstants.INTERNAL_ERROR, errorMsg);
 				log.error(errorMsg, e);
