@@ -92,8 +92,8 @@ public class WalkApplicationConfiguration implements ServletContextInitializer {
 		ApplicationContext applicationContext = app.run(arguments.toArray(new String[arguments.size()]));
 		
 		//打印项目启动信息
-		String serverPort = applicationContext.getEnvironment().getProperty("server.port");
-		String serverContextPath = applicationContext.getEnvironment().getProperty("server.context-path");
+		String serverPort = applicationContext.getEnvironment().getProperty("server.port", "");
+		String serverContextPath = applicationContext.getEnvironment().getProperty("server.context-path", "");
 		System.out.println("====================================================");
 		System.out.println(String.format("Project is running at http://127.0.0.1:%s%s", serverPort, serverContextPath));
 		System.out.println("====================================================");
