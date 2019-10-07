@@ -2785,10 +2785,7 @@ cc.push("<td field=\""+_226+"\" "+cls+" "+_228+">");
 var _228="";
 if(!col.checkbox){
 //Start:add by shf675
-if(!col.align){
-//_228+="text-align:"+col.align+";";
-col.align="center";
-}
+_228+="text-align:"+(col.align||"left")+";";
 //End:add by shf675
 if(!opts.nowrap){
 _228+="white-space:normal;height:auto;";
