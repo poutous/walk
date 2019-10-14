@@ -1,9 +1,0 @@
-/* ----- 美化checkboxes, radios ----- */
-.w-cr-box input[type=checkbox],.w-cr-box input[type=radio]{opacity: 0;}
-span.w-cr-box input[type=checkbox],span.w-cr-box input[type=radio]{opacity: 0;}
-.w-cr-box .w-checkbox{background:url(../images/checkbox.gif) no-repeat;}
-.w-cr-box .w-radio{background:url(../images/radiobutton.gif) no-repeat;}
-.w-cr-box .w-checkbox,.w-cr-box .w-radio{padding:3px 6px 6px 6px;background-position:-10px -14px; }
-.w-cr-box .w-checkbox.hover,.w-cr-box .w-radio.hover{background-position:-10px -114px;}
-.w-cr-box .w-checkbox.checked{background-position:-10px -314px;}
-.w-cr-box .w-radio.checked{background-position:-10px -214px;}
