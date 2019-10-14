@@ -1,0 +1,60 @@
+@charset "utf-8";
+
+.left{ float:left;}
+.right{ float:right;}
+.f_size12{ font-size:12px;}
+.f_size14{ font-size:14px;}
+.f_size18{ font-size:18px;}
+.f_size36{ font-size:36px;}
+
+.container{margin: 0px; font:14px "微软雅黑"; background:#f5f5f5; color:#333; *position:static !important; *overflow:hidden !important;}
+
+/*1 顶部区域*/
+/*1.1 信息栏*/
+.nav-top .nav-top-info { margin-left: 0px; font-size: 12px; padding: 0px 5px 0px 15px; line-height: 27px; height: 27px; }
+.nav-top .nav-top-info .left { float: left; }
+.nav-top .nav-top-info .right { float: right; }
+.nav-top .nav-top-info .right span { padding-right: 10px;}
+.nav-top .nav-top-info .right span img { width: 18px; height: 18px; position: relative; top: 5px; margin-right: 5px; }
+.nav-top .nav-top-info .right span.pointer { cursor: pointer;}
+.nav-top .nav-top-info .right span.blue { color: #5197ff;}
+/*1.2 顶部菜单*/
+.nav-top .nav-top-menu { height: 80px; background: url("../images/nav/menuMid.png")center repeat-x;border-radius:5px; width: 100%; box-shadow: rgb(206, 206, 206) 0px 4px 5px; }
+.nav-top .nav-top-menu span{display:inline-block;}
+.nav-top .nav-top-menu .left {width: 380px; margin-left: 5px;}
+.nav-top .nav-top-menu .left .logo {margin-top: 16px; margin-left: 15px;height: 52px;line-height: 52px; vertical-align: middle; color: #fff;font-size: 30px; font-weight: bold; }
+.nav-top .nav-top-menu .left .text {margin-top: 16px; margin-left: 15px; border-left: 1px solid #fff;height: 52px; padding-left:10px; line-height: 52px; vertical-align: middle; color: #fff;font-size: 25px; }
+.nav-top .nav-top-menu .right {width:60%; text-align: right;}
+.nav-top .nav-top-menu .right .menu {text-align: center; cursor: pointer;width: 79px;margin-right: 30px;}
+.nav-top .nav-top-menu .right .menu .menuName { font-size: 16px; color: #fff; position: relative; top: 30px; height: 50px; text-decoration: none;}
+.nav-top .nav-top-menu .right .menu .menuName.active {background: url("../images/nav/thisMenu.png")bottom no-repeat;}
+.nav-top .nav-top-menu .right .menu .menuName.active:hover {background: url("../images/nav/thisMenu.png")bottom no-repeat;}
+.nav-top .nav-top-menu .right .menu .menuName:hover {background: url("../images/nav/thisMenuHover.png")bottom no-repeat;}
+.nav-top .nav-top-menu .right .menu img { width: 76px; height: 16px; }
+
+/*2 中间区域*/
+.nav-mid{ width:100%; height: auto; margin: 0 auto; clear:both; padding-top: 10px; overflow: hidden;}
+/*2.1 左侧导航区域*/
+.nav-mid .nav-mid-left { width: 17%; border: 3px solid #ff841c; border-radius: 10px; background-color: #fff7f0; float: left; margin-left: 10px;*margin-left: 5px;}
+.nav-mid .nav-mid-left .search { margin-top: 15px; margin-bottom: 15px; text-align: center;}
+.nav-mid .nav-mid-left .search input { border: 1px solid #ff841c; border-radius: 3px; width: 80%; height: 30px;line-height: 30px; font-size: 12px; color: #999; padding-left: 10px;}
+.nav-mid .nav-mid-left .search img { width: 16px; height: 17px; margin-top: 7px; margin-right: 10px; position: absolute; z-index: 100; margin-left: -28px; cursor: pointer; }
+.nav-mid .nav-mid-left .menuPart { margin-top: 10px; padding-bottom: 10px; }
+.nav-mid .nav-mid-left .menuPart.underline { border-bottom: 2px solid #ff841c;}
+.nav-mid .nav-mid-left .menuPart .title { font-size: 16px; cursor: pointer;}
+.nav-mid .nav-mid-left .menuPart .title .icon { width: 30px; float: left; margin-left: 10px;}
+.nav-mid .nav-mid-left .menuPart .title .arrow { float: right; margin-right:10px; margin-top: 8px; *margin-top: -13px; width: 14px; height: 8px; cursor: pointer; }
+.nav-mid .nav-mid-left .menuPart .title .arrow.down { background: url("../images/nav/arrow_down.png"); }
+.nav-mid .nav-mid-left .menuPart .title .arrow.up { background: url("../images/nav/arrow_up.png"); }
+.nav-mid .nav-mid-left .menuPart .menuList { margin-top: 10px;}
+.nav-mid .nav-mid-left .menuPart .menuList .menu { height: 32px; cursor: pointer; line-height: 32px; padding-left: 45px; }
+.nav-mid .nav-mid-left .menuPart .menuList .menu.active { color: #fff; background: #ff841c;}
+.nav-mid .nav-mid-left .menuPart .menuList .menu:hover {border-top: 1px solid #ff841c;border-bottom: 1px solid #ff841c;}
+/*2.2 右侧内容区域*/
+.nav-mid .nav-mid-right {width: 80.9%;float: left;margin-left: 5px; overflow: hidden; }
+.nav-mid .nav-mid-right .home{font-size: 50px; color: #fd7a00; text-align: center;line-height: 350px; background-color: #fff;min-height: 675px;}
+
+/*3 底部区域*/
+.nav-bottom{margin:0 auto;padding:20px 0;margin-top:10px; text-align:center; background-color: #FFFFFF;font-size: 12px; }
+.nav-bottom .flinks a{margin:0 5px;color: #333;}
+.nav-bottom p{margin-bottom:5px;}
