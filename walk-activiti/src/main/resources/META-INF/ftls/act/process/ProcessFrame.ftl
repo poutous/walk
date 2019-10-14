@@ -9,7 +9,7 @@
 	<div>
 		<!-- 流程图 -->
 		<div style="border-bottom: 1px solid #dcdee2;">
-			<iframe id="imageIframe" width="100%" height="${height}" src="${request.contextPath}/component/diagram-viewer/index.html?processDefinitionId=${nodeInfo.procDefId}&processInstanceId=${orderInfo.procInstId}" frameborder="0" scrolling="no" onload="imageDeal(this)"></iframe>
+			<iframe id="imageIframe" width="100%" height="${height}" src="${request.contextPath}/static/component/diagram-viewer/index.html?processDefinitionId=${nodeInfo.procDefId}&processInstanceId=${orderInfo.procInstId}" frameborder="0" scrolling="no" onload="imageDeal(this)"></iframe>
 		</div>
 		
 		<!-- 流程节点页面 -->

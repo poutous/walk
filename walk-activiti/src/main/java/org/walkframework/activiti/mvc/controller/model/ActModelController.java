@@ -59,7 +59,7 @@ public class ActModelController extends BaseController {
 	@RequestMapping(value = "create")
 	public void create(InParam<String, Object> inParam, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Model modelData = actModelService.doCreate(inParam);
-		response.sendRedirect(request.getContextPath() + "/component/modeler.html?modelId=" + modelData.getId());
+		response.sendRedirect(request.getContextPath() + "/static/component/modeler.html?modelId=" + modelData.getId());
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ActModelController extends BaseController {
 	@RequestMapping(value = "copy")
 	public void copy(String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Model modelData = actModelService.doCopy(id);
-		response.sendRedirect(request.getContextPath() + "/component/modeler.html?modelId=" + modelData.getId());
+		response.sendRedirect(request.getContextPath() + "/static/component/modeler.html?modelId=" + modelData.getId());
 	}
 
 	/**

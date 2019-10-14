@@ -43,7 +43,7 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="showModelPopWindow(true)"><img src="${request.contextPath}/component/resources/images/icons/color/18/new.png"/>新建模型</a></li>
+       		    <li><a onclick="showModelPopWindow(true)"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/new.png"/>新建模型</a></li>
 		    </ul>
 		</div>
 		
@@ -128,7 +128,7 @@ function operRecord(val, row) {
 	var operhtml = [];
 	operhtml.push('<a onclick="modify(\'' + encodeURIComponent(JSON.stringify(row)) + '\')">修改</a>');
 	operhtml.push('<a href="${request.contextPath}/act/model/copy?id=' + row.id + '" target="_blank" onclick="setTimeout(function(){$(\'#queryBtn\').click();},1000)">复制</a>');
-	operhtml.push('<a href="${request.contextPath}/component/modeler.html?modelId=' + row.id + '" target="_blank">设计</a>');
+	operhtml.push('<a href="${request.contextPath}/static/component/modeler.html?modelId=' + row.id + '" target="_blank">设计</a>');
 	operhtml.push('<a onclick="deploy(\'' + row.id + '\')">部署</a>');
 	operhtml.push('<a href="${request.contextPath}/act/model/export?id=' + row.id + '" target="_blank">导出</a>');
 	operhtml.push('<a onclick="del(\'' + row.id + '\')">删除</a>');
