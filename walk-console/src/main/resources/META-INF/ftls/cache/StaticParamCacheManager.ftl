@@ -30,8 +30,8 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="clearCache();"><img src="${request.contextPath}/component/resources/images/icons/color/18/delete.png"/>批量清空</a></li>
-       		    <li><a onclick="reloadStaticParam();"><img src="${request.contextPath}/component/resources/images/icons/color/18/quota.png"/>重新加载</a></li>
+       		    <li><a onclick="clearCache();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/delete.png"/>批量清空</a></li>
+       		    <li><a onclick="reloadStaticParam();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/quota.png"/>重新加载</a></li>
 		    </ul>
 		</div>
 		

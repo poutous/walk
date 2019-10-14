@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <#include "../../common/base/meta.ftl"/>
-<link rel="stylesheet" type="text/css" href="${request.contextPath}/component/resources/css/error.css">
+<link rel="stylesheet" type="text/css" href="${request.contextPath}/static/component/resources/css/error.css">
 <title>您访问的页面不存在...</title>
 </head>
 <body>

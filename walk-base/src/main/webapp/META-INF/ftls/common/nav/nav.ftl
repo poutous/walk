@@ -4,9 +4,9 @@
 <#include "../../common/base/meta.ftl">
 <#include "../../common/base/resources.ftl">
 <title>WALK开发平台</title>
-<link type="text/css" rel="stylesheet" href="${request.contextPath}/component/resources/css/nav.css"/>
-<script type="text/javascript" src="${request.contextPath}/component/resources/scripts/nav/tab.js"></script>
-<script type="text/javascript" src="${request.contextPath}/component/resources/scripts/nav/nav.js"></script>
+<link type="text/css" rel="stylesheet" href="${request.contextPath}/static/component/resources/css/nav.css"/>
+<script type="text/javascript" src="${request.contextPath}/static/component/resources/scripts/nav/tab.js"></script>
+<script type="text/javascript" src="${request.contextPath}/static/component/resources/scripts/nav/nav.js"></script>
 </head>
 <body>
 <div class="container">
@@ -17,7 +17,7 @@
    			<div class="right">
    				<span>部门：${SecurityUtils.getSubject().principal.departName}</span>
    				<span>员工：${SecurityUtils.getSubject().principal.staffName}</span>
-   				<span class="pointer"><img src="${request.contextPath}/component/resources/images/nav/notice.png"/>公告</span>
+   				<span class="pointer"><img src="${request.contextPath}/static/component/resources/images/nav/notice.png"/>公告</span>
    				<span class="pointer" onclick="window.open('https://www.kancloud.cn/shf675/walk')">帮助文档</span>
    				<span class="pointer blue" id="logout">[系统退出]</span>
    			</div>
@@ -40,7 +40,7 @@
 		<div class="nav-mid-left" id="nav-mid-left">
 			<div class="search">
 			    <input id="quickSearch" type="text" placeholder="菜单快捷搜索..."/>
-			    <img id="quickSearchBtn" src="${request.contextPath}/component/resources/images/nav/search.png" />
+			    <img id="quickSearchBtn" src="${request.contextPath}/static/component/resources/images/nav/search.png" />
 			</div>
 			
 			<!-- 本地开发 -->
@@ -55,7 +55,7 @@
 			<div class="menuModule" id="searchMenuModule" style="display: none">
 				<div class="menuPart">
 				    <div class="title">
-					    <div class="icon"><img src="${request.contextPath}/component/resources/images/nav/title_0.png"/></div>
+					    <div class="icon"><img src="${request.contextPath}/static/component/resources/images/nav/title_0.png"/></div>
 				        <span>搜索结果</span>
 				        <div class="arrow down"></div>
 				    </div>

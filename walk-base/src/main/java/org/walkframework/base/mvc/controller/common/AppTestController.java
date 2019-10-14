@@ -10,7 +10,7 @@ import org.walkframework.base.mvc.controller.base.BaseController;
  * 
  */
 @RestController
-@RequestMapping("/apptest")
+@RequestMapping("/special/apptest")
 public class AppTestController extends BaseController{
 	
     /**

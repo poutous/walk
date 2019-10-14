@@ -20,8 +20,8 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="openOfferDialog();"><img src="${request.contextPath}/component/resources/images/icons/color/18/new.png"/>新元素入队</a></li>
-       		    <li><a onclick="removeQueueElement();"><img src="${request.contextPath}/component/resources/images/icons/color/18/delete.png"/>批量删除</a></li>
+       		    <li><a onclick="openOfferDialog();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/new.png"/>新元素入队</a></li>
+       		    <li><a onclick="removeQueueElement();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/delete.png"/>批量删除</a></li>
 		    </ul>
 		</div>
 		

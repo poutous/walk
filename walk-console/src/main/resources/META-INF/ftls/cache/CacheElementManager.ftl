@@ -34,9 +34,9 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="openAddElementDialog();"><img src="${request.contextPath}/component/resources/images/icons/color/18/new.png"/>新增元素</a></li>
-       		    <li><a onclick="setExpireCacheElement();"><img src="${request.contextPath}/component/resources/images/icons/color/18/set.png"/>设置过期时间</a></li>
-       		    <li><a onclick="removeCacheElement();"><img src="${request.contextPath}/component/resources/images/icons/color/18/delete.png"/>批量删除</a></li>
+       		    <li><a onclick="openAddElementDialog();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/new.png"/>新增元素</a></li>
+       		    <li><a onclick="setExpireCacheElement();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/set.png"/>设置过期时间</a></li>
+       		    <li><a onclick="removeCacheElement();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/delete.png"/>批量删除</a></li>
 		    </ul>
 		</div>
 		

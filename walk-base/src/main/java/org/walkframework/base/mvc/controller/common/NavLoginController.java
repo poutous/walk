@@ -18,7 +18,7 @@ import org.walkframework.shiro.util.AuthErrorUtil;
  *
  */
 @RestController
-@RequestMapping(value = "/nav")
+@RequestMapping(value = "/login")
 public class NavLoginController extends BaseController {
 	
 	/**
@@ -26,7 +26,7 @@ public class NavLoginController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/login")
+	@RequestMapping(value = "/navlogin")
 	public ModelAndView login(Model model, HttpServletRequest request) {
 		String failureKeyAttribute = SpringContextHolder.getBean(FormAuthenticationFilter.class).getFailureKeyAttribute();
         model.addAttribute("error", AuthErrorUtil.getErrorInfo((AuthenticationException)SecurityUtils.getSubject().getSession().getAttribute(failureKeyAttribute)));
@@ -39,7 +39,7 @@ public class NavLoginController extends BaseController {
 	 * @param request
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/logout")
+	@RequestMapping(value = "/navlogout")
 	public String logout(HttpServletRequest request) throws Exception {
 		//退出
 		SecurityUtils.getSubject().logout();

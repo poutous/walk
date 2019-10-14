@@ -38,8 +38,8 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="forceLogout();"><img src="${request.contextPath}/component/resources/images/icons/color/18/delete.png"/>强制下线</a></li>
-       		    <li><a onclick="setSessionTimeout();"><img src="${request.contextPath}/component/resources/images/icons/color/18/set.png"/>设置会话时长</a></li>
+       		    <li><a onclick="forceLogout();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/delete.png"/>强制下线</a></li>
+       		    <li><a onclick="setSessionTimeout();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/set.png"/>设置会话时长</a></li>
 		    </ul>
 		</div>
 		

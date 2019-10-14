@@ -74,14 +74,14 @@ public class AjaxFileUploadTag extends BaseTag {
 		for (TdMFile file : fileList) {
 			files.append("	<div class=\"file-item\">");
 			files.append("		<input type=\"text\" class=\"fileId\" name=\"" + getId() + "_fileId\" value=\"" + file.getFileId() + "\" style=\"display: none\" />");
-			files.append("		<img class=\"folder\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/folder.png\" alt=\"\" />");
+			files.append("		<img class=\"folder\" src=\"" + request.getContextPath() + "/static/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/folder.png\" alt=\"\" />");
 			files.append("		<span class=\"file\">");
 			files.append("			<a class=\"fileName\" href=\"javascript:void(0)\" title=\"" + file.getFileName() + "\">" + file.getFileName() + "</a>");
 			files.append("			<a class=\"fileSize\" href=\"javascript:void(0)\">" + Math.floor(file.getFileSize().intValue() / 1024) + "KB</a>");
 			files.append("		</span>");
-			files.append("		<img class=\"download\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/download.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDownload('" + file.getFileId() + "')\"/>");
+			files.append("		<img class=\"download\" src=\"" + request.getContextPath() + "/static/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/download.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDownload('" + file.getFileId() + "')\"/>");
 			if(!isReadonly()){
-				files.append("		<img class=\"delete\" src=\"" + request.getContextPath() + "/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/delete.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDelete(this)\"/>");
+				files.append("		<img class=\"delete\" src=\"" + request.getContextPath() + "/static/component/resources/scripts/seajs/sea-modules/jquery/ajaxfileupload/1.0.0/images/delete.png\" alt=\"\" onclick=\"$.walk.ajaxFileUploadDelete(this)\"/>");
 			}
 			files.append("	</div>");
 		}

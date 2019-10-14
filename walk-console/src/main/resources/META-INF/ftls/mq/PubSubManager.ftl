@@ -30,7 +30,7 @@
 		<!-- 工具栏 -->
 		<div class="w-panel-toolbar">
        		<ul>
-       		    <li><a onclick="openMessageDialog();"><img src="${request.contextPath}/component/resources/images/icons/color/18/publish.png"/>发布消息</a></li>
+       		    <li><a onclick="openMessageDialog();"><img src="${request.contextPath}/static/component/resources/images/icons/color/18/publish.png"/>发布消息</a></li>
 		    </ul>
 		</div>
 		

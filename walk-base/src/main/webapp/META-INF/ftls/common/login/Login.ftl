@@ -3,7 +3,7 @@
 <head>
 <#include "../../common/base/meta.ftl">
 <#include "../../common/base/resources.ftl">
-<link type="text/css" rel="stylesheet" href="${request.contextPath}/component/resources/css/login.css"/>
+<link type="text/css" rel="stylesheet" href="${request.contextPath}/static/component/resources/css/login.css"/>
 <title>WALK开发平台</title>
 </head>
 <body>
@@ -18,7 +18,7 @@
 			<div class="o-box-up"></div>
 			<div class="o-box-down">
 				<div class="error-box">${error}</div>
-				<form class="loginForm" action="${request.contextPath}/formlogin" method="POST">
+				<form class="loginForm" action="${request.contextPath}/login/formlogin" method="POST">
 					<div class="fm-item">
 						<label for="logonId" class="form-label">登录</label>
 						<input type="text" class="i-text i-user" placeholder="账号" name="username" autocomplete="off"/>
