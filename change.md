@@ -1,6 +1,24 @@
+walk2.1.9  
+修改静态资源文件路径，保持与springboot规范一致。新建static目录，将component目录挪到其下  
+工程配置需做相关调整，最新请看webdemo工程  
+1、spring-config-shiro.xml：修改/nav/login为/login/navlogin;修改formlogin为/login/formlogin;删除component/、pages/等配置  
+2、spring-mvc.xml：增加/static/component/**映射，删除component/**映射  
+3、application.properties：修改page.loginUrl为/login/navlogin  
+4、Login.jsp：/formlogin修改为/login/formlogin
+5、批量替换component/为static/component/
+
+walk2.1.8  
+解决springcloud环境中配置热加载问题  
+工程配置需做相关调整，最新请看webdemo工程  
+	1、spring-config.xml、spring-mvc.xml中去掉属性配置<bean id="propertyConfigurer" class="org.walkframework.base.tools.spring.SpringPropertyHolder">...  
+	2、spring-config.xml中引入spring-mvc.xml，在<beans:import resource="classpath:spring/ds/ds-dbcp.xml"/>后面加上如下配置  
+		<!-- 引入springmvc-->  
+		<beans:import resource="#{'${spring.boot.mvc.load}'=='true'?'classpath:spring/spring-mvc.xml':'classpath:base/common/spring/emptyfile.xml'}"/>  
+	3、spring-mvc.xml中去掉<bean class="org.walkframework.base.tools.spring.SpringContextHolder" lazy-init="false" />   
+
 walk2.1.7  
-1、easyui升级到1.8.1
-2、增加定时导出功能
+1、easyui升级到1.8.1  
+2、增加定时导出功能  
 
 walk2.1.6  
 1、walk-batis Conditions方式优化  
