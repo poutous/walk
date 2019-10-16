@@ -12,13 +12,13 @@ seajs.config({
 	alias: {
 		/********1、jQuery插件开始*********************************************/
 		//jQuery
-		'$': 'jquery/jquery/1.12.4/jquery',
+		'$': 'jquery/jquery/jquery',
 		
 		//jQuery
-		'$-debug': 'jquery/jquery/1.12.4/jquery-debug',
+		'$-debug': 'jquery/jquery/jquery-debug',
 		
 		//jQuery.extend
-		'$-extend': 'jquery/jquery/1.12.4/jquery-extend',
+		'$-extend': 'jquery/jquery/jquery-extend',
 		
 		//walk框架通用js
 		'$walk': 'walk',
