@@ -81,7 +81,7 @@ public class ValidatorResultInterceptor {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	private RspInfo<?> getRspInfo(Integer rspCode, String rspDesc) {
+	protected RspInfo<?> getRspInfo(Integer rspCode, String rspDesc) {
 		RspInfo<?> rspInfo = new RspInfo();
 		rspInfo.setRspCode(rspCode);
 		rspInfo.setRspDesc(rspDesc);

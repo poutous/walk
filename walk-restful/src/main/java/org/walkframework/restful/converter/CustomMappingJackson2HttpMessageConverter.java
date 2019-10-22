@@ -149,7 +149,7 @@ public class CustomMappingJackson2HttpMessageConverter extends MappingJackson2Ht
 	 * @throws IOException
 	 */
 	@SuppressWarnings("rawtypes")
-	private RspInfo getRspInfo(Integer rspCode, String rspDesc) {
+	protected RspInfo getRspInfo(Integer rspCode, String rspDesc) {
 		RspInfo rspInfo = new RspInfo();
 		rspInfo.setRspCode(rspCode);
 		rspInfo.setRspDesc(rspDesc);
