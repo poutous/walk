@@ -1,6 +1,7 @@
 package org.walkframework.batis.spring;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -102,9 +103,7 @@ public class HotSqlSessionFactoryBean extends SqlSessionFactoryBean {
 			
 			//监控目录
 			for (String hotDeployLocation : hotDeployLocations) {
-//				String monitorPath = this.getClass().getClassLoader().getResource("").getPath() + hotDeployLocation;
-//				File monitorDir = new File(monitorPath);
-				File monitorDir = ResourceUtils.getFile("classpath:" + hotDeployLocation);
+				File monitorDir = getMonitorDir(hotDeployLocation);
 				String monitorPath = monitorDir.getAbsolutePath();
 				if(monitorDir.isDirectory()){
 					new Thread(new Monitor(Paths.get(monitorPath), new AtomicBoolean(false), configuration)).start();
@@ -117,6 +116,24 @@ public class HotSqlSessionFactoryBean extends SqlSessionFactoryBean {
 		} catch (Exception e) {
 			log.error("Error starting Mybatis hot deployment", e);
 		}
+	}
+	
+	/**
+	 * 获取监控目录
+	 * 
+	 * @param hotDeployLocation
+	 * @return
+	 */
+	private File getMonitorDir(String hotDeployLocation) {
+		File monitorDir = null;
+		try {
+			monitorDir = ResourceUtils.getFile("classpath:" + hotDeployLocation);
+		} catch (FileNotFoundException e) {
+			String monitorPath = this.getClass().getClassLoader().getResource("").getPath() + hotDeployLocation;
+			monitorDir = new File(monitorPath);
+		}
+		
+		return monitorDir;
 	}
 
 	/**
