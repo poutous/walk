@@ -48,39 +48,5 @@
 * walk-boot：支持spring boot方式启动，同时也支持直接以单独jar包方式运行
 
 * * * * *
-gradle：
-
-web开发依赖
-~~~
-//walk框架相关
-compile "org.walkframework:walk-base:${walk_version}";
-runtime "org.walkframework:walk-base:${walk_version}:walk-webapp@jar"
-
-//如果使用spring boot
-compile "org.walkframework:walk-boot:${walk_version}"
-runtime "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcat_version}"
-
-//如果使用activiti
-compile "org.walkframework:walk-activiti:${walk_version}"
-
-//如果使用walk管理控制台
-runtime "org.walkframework:walk-console:${walk_version}"
-
-//其他
-runtime "javax.servlet:jstl:${jstl_version}"
-//runtime "com.oracle:ojdbc6:${ojdbc_version}"
-runtime "mysql:mysql-connector-java:${mysql_connector_java_version}"
-compile "junit:junit:${junit_version}"
-~~~
-web示例工程下载：[后续开放](#)
-
-* * * * *
-接口开发依赖
-~~~
-//walk框架相关
-compile "org.walkframework:walk-restful:${walk_version}";
-
-//如果使用spring boot
-compile "org.walkframework:walk-boot:${walk_version}"
-~~~
-接口示例工程下载：[后续开放](#)
+**示例工程**  
+详细请看示例工程：https://github.com/shf675/walk-demo
